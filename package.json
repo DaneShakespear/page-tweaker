@@ -1,0 +1,28 @@
+{
+  "name": "page-tweaker",
+  "version": "0.1.0",
+  "description": "Fast visual QA and AI handoff for HTML artifacts and public web pages.",
+  "author": "Dane Shakespear",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DaneShakespear/page-tweaker.git"
+  },
+  "main": "src/main.cjs",
+  "bin": { "page-tweaker": "bin/page-tweaker.cjs" },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test",
+    "package:mac": "electron-builder --mac dmg"
+  },
+  "build": {
+    "appId": "com.kre8works.pagetweaker",
+    "productName": "Page Tweaker",
+    "files": ["src/**", "package.json"],
+    "fileAssociations": [{ "ext": ["html", "htm"], "name": "HTML artifact", "role": "Editor" }],
+    "mac": { "category": "public.app-category.developer-tools", "target": ["dmg"] }
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12"
+  }
+}
