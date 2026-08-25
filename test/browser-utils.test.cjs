@@ -21,3 +21,8 @@ test('builds scripts that execute inside the selected page', () => {
   assert.match(script, /document\.querySelector/);
   assert.match(script, /font-size/);
 });
+
+test('keeps an existing file URL intact instead of nesting file schemes', () => {
+  const source = 'file:///Users/dane/report.html';
+  assert.equal(utils.normalizeSource(source), source);
+});

@@ -2,9 +2,16 @@ const { ipcRenderer } = require('electron');
 let enabled = true;
 let hovered;
 
-const hoverStyle = document.createElement('style');
-hoverStyle.textContent = '.page-tweaker-hover { outline: 2px solid #64d7ff !important; outline-offset: 2px !important; }';
-document.documentElement.appendChild(hoverStyle);
+function installHoverStyle() {
+  if (document.getElementById('page-tweaker-hover-style')) return;
+  const hoverStyle = document.createElement('style');
+  hoverStyle.id = 'page-tweaker-hover-style';
+  hoverStyle.textContent = '.page-tweaker-hover { outline: 2px solid #64d7ff !important; outline-offset: 2px !important; }';
+  (document.head || document.documentElement).appendChild(hoverStyle);
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', installHoverStyle, { once: true });
+else installHoverStyle();
 
 function locator(element) {
   if (element.id) return `#${CSS.escape(element.id)}`;

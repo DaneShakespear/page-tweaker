@@ -29,6 +29,8 @@ npm install
 npm start
 ```
 
+Do not open `src/index.html` directly in Chrome or another browser. It is the Electron app shell and its element-selection and export bridges exist only when you launch Page Tweaker with `npm start` or the installed `.app`.
+
 The repository includes `.npmrc` so Electron's official post-install runtime download is permitted in environments that require package-script allowlisting.
 
 ## Terminal opener
