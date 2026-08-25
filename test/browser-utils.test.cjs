@@ -17,8 +17,9 @@ test('reads CSS computed styles and keeps controls centred on the selected value
 });
 
 test('builds scripts that execute inside the selected page', () => {
-  const script = utils.styleScript('html > body > h1:nth-of-type(1)', { 'font-size': '24px' });
+  const script = utils.styleScript('target-123', { 'font-size': '24px' });
   assert.match(script, /document\.querySelector/);
+  assert.match(script, /data-page-tweaker-target/);
   assert.match(script, /font-size/);
 });
 

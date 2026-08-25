@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 let enabled = true;
 let hovered;
+let selectedElement;
 
 function installHoverStyle() {
   if (document.getElementById('page-tweaker-hover-style')) return;
@@ -44,10 +45,15 @@ document.addEventListener('click', (event) => {
   event.preventDefault();
   event.stopPropagation();
   const element = event.target;
+  selectedElement?.removeAttribute('data-page-tweaker-target');
+  selectedElement = element;
+  const targetId = `target-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  element.setAttribute('data-page-tweaker-target', targetId);
   const box = element.getBoundingClientRect();
   const style = getComputedStyle(element);
   ipcRenderer.sendToHost('element-selected', {
     selector: locator(element),
+    targetId,
     tag: element.tagName.toLowerCase(),
     text: (element.innerText || '').trim().slice(0, 240),
     inlineStyle: element.getAttribute('style'),

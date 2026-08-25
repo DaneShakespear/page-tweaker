@@ -23,8 +23,9 @@
     return { min: 0, max: Math.max(160, Math.ceil(numeric * 2)), step: 1, value: numeric };
   };
   const cssValue = (property, raw) => ['line-height', 'font-family', 'color', 'background-color'].includes(property) ? String(raw) : `${raw}px`;
-  const styleScript = (selector, changes) => `(() => { const el = document.querySelector(${JSON.stringify(selector)}); if (!el) return false; for (const [property, value] of Object.entries(${JSON.stringify(changes)})) el.style.setProperty(property, value); return true; })()`;
-  const textScript = (selector, text) => `(() => { const el = document.querySelector(${JSON.stringify(selector)}); if (!el) return false; el.innerText = ${JSON.stringify(text)}; return true; })()`;
-  const restoreStyleScript = (selector, inlineStyle) => `(() => { const el = document.querySelector(${JSON.stringify(selector)}); if (!el) return false; ${inlineStyle === null ? 'el.removeAttribute("style");' : `el.setAttribute("style", ${JSON.stringify(inlineStyle)});`} return true; })()`;
+  const targetSelector = (targetId) => `[data-page-tweaker-target=${JSON.stringify(targetId)}]`;
+  const styleScript = (targetId, changes) => `(() => { const el = document.querySelector(${JSON.stringify(targetSelector(targetId))}); if (!el) return false; for (const [property, value] of Object.entries(${JSON.stringify(changes)})) el.style.setProperty(property, value); return true; })()`;
+  const textScript = (targetId, text) => `(() => { const el = document.querySelector(${JSON.stringify(targetSelector(targetId))}); if (!el) return false; el.innerText = ${JSON.stringify(text)}; return true; })()`;
+  const restoreStyleScript = (targetId, inlineStyle) => `(() => { const el = document.querySelector(${JSON.stringify(targetSelector(targetId))}); if (!el) return false; ${inlineStyle === null ? 'el.removeAttribute("style");' : `el.setAttribute("style", ${JSON.stringify(inlineStyle)});`} return true; })()`;
   return { normalizeSource, readableValue, sliderBounds, cssValue, styleScript, textScript, restoreStyleScript };
 }));
