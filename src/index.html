@@ -11,7 +11,7 @@
     <button id="reload" class="icon" title="Reload this page and start with a clean session" aria-label="Reload this page and start with a clean session">↻</button>
     <input id="address" aria-label="HTML file path, file URL, or public URL" placeholder="Paste or drop a file://, https://, or local .html path, then press Enter">
     <button id="file" title="Choose a local HTML file or Safari web link">Choose file</button>
-    <button class="primary" id="export" title="Export the AI/developer handoff bundle">Export</button>
+    <button class="primary" id="export" title="Create a complete handoff file for your AI session">Create handoff</button>
   </header>
   <main>
     <section id="stage">
@@ -25,6 +25,7 @@
         <button id="inspectTab" class="tab active" role="tab" aria-selected="true" aria-controls="inspectPanel" tabindex="0">Inspect</button>
         <button id="markupTab" class="tab" role="tab" aria-selected="false" aria-controls="annotationControls" tabindex="-1">Markup</button>
         <button id="helpTab" class="tab" role="tab" aria-selected="false" aria-controls="helpPanel" tabindex="-1">How it works</button>
+        <button id="handoffTab" class="tab" role="tab" aria-selected="false" aria-controls="handoffPanel" tabindex="-1">Handoff</button>
       </div>
       <section id="inspectPanel" role="tabpanel" aria-labelledby="inspectTab">
         <div id="selection"><h2>Select an element</h2><p>Click anything in the preview to adjust it.</p></div>
@@ -62,10 +63,28 @@
           <article><span>1</span><div><strong>Open</strong><p>Paste a URL and press Enter, drop a page anywhere, or choose a local file.</p></div></article>
           <article><span>2</span><div><strong>Select and tweak</strong><p>Click an element. Preview changes on just that element or widen the selector at the bottom.</p></div></article>
           <article><span>3</span><div><strong>Explain</strong><p>Pin a note to one element or draw in Markup and describe what your drawing means.</p></div></article>
-          <article><span>4</span><div><strong>Export</strong><p>Create one bundle with selectors, values, notes, markup, and a copy-ready AI prompt.</p></div></article>
+          <article><span>4</span><div><strong>Hand off to your AI session</strong><p>Create one file containing every preview edit, element locator, pinned note, drawing, markup explanation, and available screenshot. Drag it into your AI chat or copy its path.</p></div></article>
         </div>
         <div class="help-callout"><strong>Open from another app</strong><p>Install Page Tweaker in Applications. It registers as a handler for public web links and HTML/web-link files, so apps with an “Open with” or browser picker can offer Page Tweaker. It never makes itself your default browser automatically.</p></div>
         <p class="help-footnote">Everything is preview-only. Your original file or website is never modified.</p>
+      </section>
+      <section id="handoffPanel" role="tabpanel" aria-labelledby="handoffTab" hidden>
+        <div id="handoffEmpty">
+          <h2>Your AI handoff</h2>
+          <p>Create a handoff after making your changes. Page Tweaker packages everything your AI session needs to understand what you changed and what should happen next.</p>
+          <button id="createHandoff" class="primary">Create handoff file</button>
+        </div>
+        <div id="handoffReady" hidden>
+          <h2>Ready for your AI session</h2>
+          <p>Drag this file into your AI chat. It contains the full brief, selectors, preview values, pinned notes, markup explanation, drawing data, and a visual markup overlay when available.</p>
+          <div id="handoffFile" class="handoff-file" draggable="true" tabindex="0" aria-label="Drag handoff file into an AI chat">
+            <img src="app-icon.png" alt="">
+            <strong id="handoffName">Page Tweaker handoff</strong>
+            <span>Drag into your AI chat</span>
+          </div>
+          <label>Full file path<textarea id="handoffPath" readonly spellcheck="false"></textarea></label>
+          <div class="handoff-actions"><button id="copyHandoffPath">Copy path</button><button id="showHandoff">Show in Finder</button></div>
+        </div>
       </section>
     </aside>
   </main>

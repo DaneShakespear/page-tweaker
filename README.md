@@ -6,7 +6,7 @@
 
 Page Tweaker is a focused macOS desktop app for the frustrating last mile of AI-generated HTML: the report, interface, or landing page is almost right, but getting it there requires too much back-and-forth.
 
-Open the page. Click what looks wrong. Tune the visible value. Mark up what needs a bigger change. Export one handoff bundle that gives an AI or developer the exact visual context to finish the work.
+Open the page. Click what looks wrong. Tune the visible value. Mark up what needs a bigger change. Create one handoff file that gives an AI session or developer the exact implementation brief.
 
 ![Concept render of Page Tweaker](assets/page-tweaker-concept.png)
 
@@ -26,7 +26,7 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 - Lets you select visible elements and preview typography, spacing, and color adjustments immediately.
 - Supports plain-text replacement when the words need to fit the layout.
 - Pins natural-language AI notes to elements and supports freehand markup with a plain-language explanation that travels in the export.
-- Exports `handoff.json`, `prompt.md`, and an annotated screenshot when capture is available.
+- Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and a visual markup overlay when drawings or pins exist.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
 ## How the handoff works
@@ -34,10 +34,10 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 1. **Open** a local report, page, or public URL.
 2. **Tune** the element until it looks right.
 3. **Explain** larger changes with a pinned note or markup.
-4. **Export** the package.
-5. Give the package to Codex, Claude, another AI, or a developer.
+4. **Create the handoff**. Page Tweaker saves one ZIP in `Downloads/Page Tweaker Handoffs`.
+5. Drag its icon directly into Codex, Claude, another AI chat, or copy the displayed full path.
 
-The AI receives selectors, values, replacement text, notes, viewport context, a copy-ready prompt, and an optional annotated image. That is enough to implement the visual decision without playing telephone.
+The AI receives the original page address, selectors, scope, previewed values, replacement text, pinned notes, viewport context, drawing coordinates, the markup explanation, a ready-to-follow brief, and a visual markup overlay when available. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
 
 ## Install
 
@@ -47,7 +47,7 @@ The top bar always shows the running version. Paste a path or URL and press Ente
 
 The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer Page Tweaker without Page Tweaker silently replacing your default browser.
 
-When you select an element, Page Tweaker defaults to changing only that exact element. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element. Use the top reset icon to restore the active selector, and use the Markup panel to remove one stroke, undo the latest stroke, or clear all drawing.
+When you select an element, Page Tweaker defaults to changing only that exact element. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element. Use the Inspector reset controls to restore the active selector, and use the Markup panel to remove one stroke, undo the latest stroke, or clear all drawing.
 
 The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 

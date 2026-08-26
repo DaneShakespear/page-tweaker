@@ -59,5 +59,5 @@ The result is written to `dist/`. The repository's packaging hook applies an ad-
 | --- | --- |
 | `Electron failed to install correctly` | Delete `node_modules`, run `npm install` again, and ensure outbound access to Electron's official GitHub release downloads. |
 | A page does not load | Confirm it is a public `http` or `https` URL. v1 intentionally does not reuse browser cookies or authenticated sessions. |
-| The exported bundle has no image | The JSON and prompt are still exported. Retry after the page has fully loaded; some pages restrict capture behavior. |
-| An edit does not match the source | Use the exported locator, values, note, and screenshot together. Page Tweaker is a handoff tool, not a source-code writer. |
+| The handoff button appears to do nothing | Use the installed packaged app, not `src/index.html` in a browser. A successful handoff opens the Handoff tab and saves one ZIP in `Downloads/Page Tweaker Handoffs`. |
+| An edit does not match the source | Give the entire ZIP to the AI session so it can use the locator, scope, previewed values, notes, drawing data, and markup explanation together. Page Tweaker is a handoff tool, not a source-code writer. |

@@ -49,11 +49,13 @@ async function connect() {
   try {
     client = await connect();
     const { command, evaluate } = client;
+    process.stdout.write('Smoke connected to packaged app.\n');
     const initialWindow = await poll(() => windowPosition());
     dragNativeWindow(initialWindow);
     await delay(350);
     const movedWindow = windowPosition();
     assert.notEqual(movedWindow, initialWindow, 'The draggable title bar did not move the native window.');
+    process.stdout.write('Native window drag passed.\n');
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
@@ -89,14 +91,29 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('#strokeList').textContent.includes('Stroke 1')`), false);
     await evaluate(`document.querySelector('#helpTab').click()`);
     assert.equal(await evaluate(`document.querySelector('#helpPanel').hidden`), false);
-    assert.match(await evaluate(`document.querySelector('#helpPanel').textContent`), /Open from another app/);
+    assert.match(await evaluate(`document.querySelector('#helpPanel').textContent`), /Drag it into your AI chat or copy its path/);
+
+    await evaluate(`document.querySelector('#export').click()`);
+    process.stdout.write('Creating AI handoff file.\n');
+    await poll(() => evaluate(`!document.querySelector('#handoffReady').hidden`), 20000);
+    const handoffPath = await evaluate(`document.querySelector('#handoffPath').value`);
+    assert.equal(fs.existsSync(handoffPath), true, 'The handoff ZIP was not created.');
+    const archiveContents = execFileSync('/usr/bin/unzip', ['-Z1', handoffPath], { encoding: 'utf8' });
+    assert.match(archiveContents, /START-HERE\.md/);
+    assert.match(archiveContents, /handoff\.json/);
+    const handoffJson = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/handoff.json'], { encoding: 'utf8' });
+    assert.match(handoffJson, /Move the marked block closer to the heading/);
+    assert.equal(await evaluate(`document.querySelector('#handoffName').textContent.endsWith('.zip')`), true);
+    await evaluate(`document.querySelector('#copyHandoffPath').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('path copied')`));
+    process.stdout.write('AI handoff archive and path controls passed.\n');
 
     await evaluate(`(() => { const address = document.querySelector('#address'); address.value = 'https://example.com'; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL().startsWith('https://example.com')`));
     const fileUrl = pathToFileURL(fixture).href;
     await evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(fileUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(fileUrl)}`));
-    process.stdout.write('Packaged UI smoke passed: native window drag, local path, HTTP Enter, file URL drop, exact/all scope, live edit, scoped reset, clean reload, markup explanation/removal, and Help tab.\n');
+    process.stdout.write('Packaged UI smoke passed: native window drag, local path, HTTP Enter, file URL drop, exact/all scope, live edit, scoped reset, clean reload, markup explanation/removal, Help tab, and single-file AI handoff.\n');
   } finally {
     client?.socket.close();
     app.kill('SIGTERM');

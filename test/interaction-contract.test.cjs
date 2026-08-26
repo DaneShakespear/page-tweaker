@@ -44,3 +44,16 @@ test('browser-style header relies on Enter and does not repeat tab actions', () 
   assert.doesNotMatch(html, /id="annotate"/);
   assert.match(html, /id="reload"[\s\S]*id="address"/);
 });
+
+test('AI handoff is a draggable archive with a selectable and copyable path', () => {
+  const html = read('src/index.html');
+  const renderer = read('src/renderer.js');
+  const main = read('src/main.cjs');
+  assert.match(html, /id="handoffFile"[^>]*draggable="true"/);
+  assert.match(html, /id="handoffPath"[^>]*readonly/);
+  assert.match(html, /id="copyHandoffPath"/);
+  assert.match(renderer, /desktopBridge\.startDrag/);
+  assert.match(main, /const name = `page-tweaker-handoff-\$\{stamp\}`/);
+  assert.match(main, /const archive = `\$\{folder\}\.zip`/);
+  assert.match(main, /START-HERE\.md/);
+});
