@@ -2,6 +2,8 @@
 
 > Make the change you can see.
 
+<img src="assets/page-tweaker-app-icon-v2.png" alt="Page Tweaker app icon" width="160">
+
 Page Tweaker is a focused macOS desktop app for the frustrating last mile of AI-generated HTML: the report, interface, or landing page is almost right, but getting it there requires too much back-and-forth.
 
 Open the page. Click what looks wrong. Tune the visible value. Mark up what needs a bigger change. Export one handoff bundle that gives an AI or developer the exact visual context to finish the work.
@@ -23,7 +25,7 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 - Opens a local HTML artifact or public `http(s)` URL in a dedicated desktop workspace.
 - Lets you select visible elements and preview typography, spacing, and color adjustments immediately.
 - Supports plain-text replacement when the words need to fit the layout.
-- Pins natural-language AI notes to elements and supports freehand markup over the page.
+- Pins natural-language AI notes to elements and supports freehand markup with a plain-language explanation that travels in the export.
 - Exports `handoff.json`, `prompt.md`, and an annotated screenshot when capture is available.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
@@ -41,7 +43,9 @@ The AI receives selectors, values, replacement text, notes, viewport context, a 
 
 Download the Apple Silicon DMG from [Releases](../../releases), drag Page Tweaker to Applications, then Control-click and choose **Open** the first time.
 
-The top bar always shows the running version. You can paste, drop, or open a local `.html`, `file://` URL, public URL, or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with Page Tweaker or use `page-tweaker://open?url=` followed by an encoded URL.
+The top bar always shows the running version. Paste a path or URL and press Enter, drop it anywhere, or choose a local `.html` or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with Page Tweaker or use `page-tweaker://open?url=` followed by an encoded URL.
+
+The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer Page Tweaker without Page Tweaker silently replacing your default browser.
 
 When you select an element, Page Tweaker defaults to changing only that exact element. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element. Use the top reset icon to restore the active selector, and use the Markup panel to remove one stroke, undo the latest stroke, or clear all drawing.
 

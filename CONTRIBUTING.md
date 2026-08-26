@@ -8,6 +8,8 @@ Page Tweaker is intentionally narrow: it makes visual review and AI handoff fast
 npm install
 npm test
 npm start
+npm run package:mac
+npm run smoke:ui
 ```
 
 Before opening a pull request, confirm local HTML files and public URLs still open without modifying their source, and export still produces a useful handoff bundle.

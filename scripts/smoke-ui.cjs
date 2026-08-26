@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
+const { execFileSync, spawn } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -13,6 +13,18 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
 const app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const windowPosition = () => {
+  const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerName as String] as? String) == "Page Tweaker", let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
+  const output = execFileSync('/usr/bin/swift', ['-e', script], { encoding: 'utf8' }).trim();
+  return output || null;
+};
+const dragNativeWindow = (position) => {
+  const [windowX, windowY] = position.split(',').map(Number);
+  const startX = windowX + 120;
+  const startY = windowY + 30;
+  const script = `import CoreGraphics\nimport Foundation\nlet start = CGPoint(x: ${startX}, y: ${startY})\nlet end = CGPoint(x: ${startX + 100}, y: ${startY + 80})\nCGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: start, mouseButton: .left)?.post(tap: .cghidEventTap)\nThread.sleep(forTimeInterval: 0.1)\nCGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: start, mouseButton: .left)?.post(tap: .cghidEventTap)\nThread.sleep(forTimeInterval: 0.1)\nCGEvent(mouseEventSource: nil, mouseType: .leftMouseDragged, mouseCursorPosition: end, mouseButton: .left)?.post(tap: .cghidEventTap)\nThread.sleep(forTimeInterval: 0.2)\nCGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: end, mouseButton: .left)?.post(tap: .cghidEventTap)`;
+  execFileSync('/usr/bin/swift', ['-e', script]);
+};
 
 async function poll(check, timeout = 12000) {
   const started = Date.now();
@@ -37,6 +49,11 @@ async function connect() {
   try {
     client = await connect();
     const { command, evaluate } = client;
+    const initialWindow = await poll(() => windowPosition());
+    dragNativeWindow(initialWindow);
+    await delay(350);
+    const movedWindow = windowPosition();
+    assert.notEqual(movedWindow, initialWindow, 'The draggable title bar did not move the native window.');
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
@@ -50,7 +67,7 @@ async function connect() {
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('2 elements')`));
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
 
-    await evaluate(`document.querySelector('#resetSelectedTop').click()`);
+    await evaluate(`document.querySelector('#reset').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset 2 selected elements')`));
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
 
@@ -66,15 +83,20 @@ async function connect() {
     await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 0, clickCount: 1 });
     await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Stroke 1')`));
+    await evaluate(`(() => { const input = document.querySelector('#markupExplanation'); input.value = 'Move the marked block closer to the heading.'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    assert.match(await evaluate(`document.querySelector('#markupSaved').textContent`), /Explanation saved/);
     await evaluate(`document.querySelector('[data-remove-stroke="0"]').click()`);
     assert.equal(await evaluate(`document.querySelector('#strokeList').textContent.includes('Stroke 1')`), false);
+    await evaluate(`document.querySelector('#helpTab').click()`);
+    assert.equal(await evaluate(`document.querySelector('#helpPanel').hidden`), false);
+    assert.match(await evaluate(`document.querySelector('#helpPanel').textContent`), /Open from another app/);
 
     await evaluate(`(() => { const address = document.querySelector('#address'); address.value = 'https://example.com'; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL().startsWith('https://example.com')`));
     const fileUrl = pathToFileURL(fixture).href;
     await evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(fileUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(fileUrl)}`));
-    process.stdout.write('Packaged UI smoke passed: local path, HTTP Enter, file URL drop, exact/all scope, live edit, scoped reset, clean reload, and individual markup removal.\n');
+    process.stdout.write('Packaged UI smoke passed: native window drag, local path, HTTP Enter, file URL drop, exact/all scope, live edit, scoped reset, clean reload, markup explanation/removal, and Help tab.\n');
   } finally {
     client?.socket.close();
     app.kill('SIGTERM');

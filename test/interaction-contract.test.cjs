@@ -20,11 +20,27 @@ test('clean reload forces a new webview document and clears session state', () =
   assert.match(renderer, /page\.reloadIgnoringCache\(\)/);
 });
 
-test('selected reset and markup removal controls are wired', () => {
+test('selected reset, markup explanation, help, and removal controls are wired', () => {
   const html = read('src/index.html');
   const renderer = read('src/renderer.js');
-  assert.match(html, /id="resetSelectedTop"/);
+  assert.match(html, /id="reset"/);
   assert.match(html, /id="undoStroke"/);
   assert.match(html, /id="clearStrokes"/);
+  assert.match(html, /id="markupExplanation"/);
+  assert.match(html, /id="helpTab"/);
+  assert.match(renderer, /markupExplanation: state\.markupExplanation\.trim\(\)/);
   assert.match(renderer, /data-remove-stroke/);
+});
+
+test('the title bar is draggable and interactive header controls opt out', () => {
+  const css = read('src/shell.css');
+  assert.match(css, /header\{[^}]*-webkit-app-region:drag/);
+  assert.match(css, /header input,header button\{[^}]*-webkit-app-region:no-drag/);
+});
+
+test('browser-style header relies on Enter and does not repeat tab actions', () => {
+  const html = read('src/index.html');
+  assert.doesNotMatch(html, /id="open"/);
+  assert.doesNotMatch(html, /id="annotate"/);
+  assert.match(html, /id="reload"[\s\S]*id="address"/);
 });

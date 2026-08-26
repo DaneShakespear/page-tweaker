@@ -1,4 +1,76 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Page Tweaker</title><link rel="stylesheet" href="shell.css"></head><body>
-<header><strong>Page Tweaker <small id="version">v…</small></strong><input id="address" aria-label="HTML file path, file URL, or public URL" placeholder="Paste or drop a file://, https://, or local .html path"><button id="open" class="icon" title="Open pasted URL or file path" aria-label="Open pasted URL or file path">↗</button><button id="file" class="icon" title="Choose a local HTML file or Safari web link" aria-label="Choose a local HTML file or Safari web link">⌕</button><button id="reload" class="icon" title="Reload page and clear this session's edits" aria-label="Reload page and clear this session's edits">↻</button><button id="resetSelectedTop" class="icon" title="Reset the active selector to its original values" aria-label="Reset the active selector to its original values" disabled>⌫</button><button id="annotate" class="icon" title="Enter markup mode" aria-label="Enter markup mode">✎</button><button class="primary icon" id="export" title="Export handoff bundle" aria-label="Export handoff bundle">⇧</button></header>
-<main><section id="stage"><webview id="page" preload="" partition="page-tweaker-public"></webview><canvas id="markup"></canvas><div id="dropHint" hidden>Drop a local HTML file, <code>file://</code> URL, or public URL to open it</div><div id="empty"><h1>Open a page to start tweaking.</h1><p>Paste or drop a local <code>file://</code> URL, a public URL, or choose an HTML file.</p></div></section><aside><div class="tabs" role="tablist"><button id="inspectTab" class="tab active" role="tab" aria-selected="true">Inspect</button><button id="markupTab" class="tab" role="tab" aria-selected="false">Markup</button></div><section id="inspectPanel"><div id="selection"><h2>Select an element</h2><p>Click anything in the preview to adjust it.</p></div><div id="controls" hidden><label>Font family<select data-style="font-family"><option value="">Keep page font</option><option>Arial, sans-serif</option><option>Inter, sans-serif</option><option>Georgia, serif</option><option>"Helvetica Neue", sans-serif</option></select><button class="reset-control" data-reset-style="font-family" title="Reset font family">Reset</button></label><label>Font size <input data-style="font-size" type="range"><output></output><button class="reset-control" data-reset-style="font-size">Reset</button></label><label>Line height <input data-style="line-height" type="range"><output></output><button class="reset-control" data-reset-style="line-height">Reset</button></label><label>Letter spacing <input data-style="letter-spacing" type="range"><output></output><button class="reset-control" data-reset-style="letter-spacing">Reset</button></label><label>Text color <input data-style="color" type="color"><button class="reset-control" data-reset-style="color">Reset</button></label><label>Background <input data-style="background-color" type="color"><button class="reset-control" data-reset-style="background-color">Reset</button></label><label>Margin <input data-style="margin" type="range"><output></output><button class="reset-control" data-reset-style="margin">Reset</button></label><label>Padding <input data-style="padding" type="range"><output></output><button class="reset-control" data-reset-style="padding">Reset</button></label><label>Replace text <small>(this element only)</small><textarea id="text"></textarea></label><button id="applyText">Apply text change</button><p id="pinContext" class="hint"></p><label>AI note<textarea id="note" placeholder="Explain the change this selected element needs"></textarea></label><button id="pinNote">Pin note to selected element</button><button id="reset">Reset active selector to original</button></div><div id="notes"></div></section><section id="annotationControls" hidden><h3>Markup</h3><p class="hint">Draw over the page. This does not change the page.</p><div class="swatches" aria-label="Markup color"><button data-color="#f25f5c" class="swatch active" title="Coral"></button><button data-color="#ffca56" class="swatch" title="Yellow"></button><button data-color="#64d7ff" class="swatch" title="Blue"></button><button data-color="#8be28b" class="swatch" title="Green"></button><button data-color="#ffffff" class="swatch" title="White"></button></div><label>Line thickness <input id="annotationThickness" type="range" min="1" max="14" step="1" value="3"><output id="annotationThicknessValue">3 px</output></label><div class="markup-actions"><button id="undoStroke">Undo last</button><button id="clearStrokes">Clear all</button></div><div id="strokeList"><p class="hint">No drawing strokes yet.</p></div></section></aside></main><section id="selectorBar" hidden><span id="selectorPath"></span><div id="scopeChoices"></div><strong id="scopeSummary"></strong></section><footer id="status">Preview-only changes. Your source is never modified.</footer><script src="browser-utils.js"></script><script src="renderer.js"></script></body></html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Page Tweaker</title>
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body>
+  <header>
+    <strong>Page Tweaker <small id="version">v…</small></strong>
+    <button id="reload" class="icon" title="Reload this page and start with a clean session" aria-label="Reload this page and start with a clean session">↻</button>
+    <input id="address" aria-label="HTML file path, file URL, or public URL" placeholder="Paste or drop a file://, https://, or local .html path, then press Enter">
+    <button id="file" title="Choose a local HTML file or Safari web link">Choose file</button>
+    <button class="primary" id="export" title="Export the AI/developer handoff bundle">Export</button>
+  </header>
+  <main>
+    <section id="stage">
+      <webview id="page" preload="" partition="page-tweaker-public"></webview>
+      <canvas id="markup"></canvas>
+      <div id="dropHint" hidden>Drop a local HTML file, <code>file://</code> URL, or public URL to open it</div>
+      <div id="empty"><h1>Open a page to start tweaking.</h1><p>Paste or drop a local <code>file://</code> URL, a public URL, or choose an HTML file.</p></div>
+    </section>
+    <aside>
+      <div class="tabs" role="tablist" aria-label="Page Tweaker tools">
+        <button id="inspectTab" class="tab active" role="tab" aria-selected="true" aria-controls="inspectPanel" tabindex="0">Inspect</button>
+        <button id="markupTab" class="tab" role="tab" aria-selected="false" aria-controls="annotationControls" tabindex="-1">Markup</button>
+        <button id="helpTab" class="tab" role="tab" aria-selected="false" aria-controls="helpPanel" tabindex="-1">How it works</button>
+      </div>
+      <section id="inspectPanel" role="tabpanel" aria-labelledby="inspectTab">
+        <div id="selection"><h2>Select an element</h2><p>Click anything in the preview to adjust it.</p></div>
+        <div id="controls" hidden>
+          <label>Font family<select data-style="font-family"><option value="">Keep page font</option><option>Arial, sans-serif</option><option>Inter, sans-serif</option><option>Georgia, serif</option><option>"Helvetica Neue", sans-serif</option></select><button class="reset-control" data-reset-style="font-family" title="Reset font family">Reset</button></label>
+          <label>Font size <input data-style="font-size" type="range"><output></output><button class="reset-control" data-reset-style="font-size">Reset</button></label>
+          <label>Line height <input data-style="line-height" type="range"><output></output><button class="reset-control" data-reset-style="line-height">Reset</button></label>
+          <label>Letter spacing <input data-style="letter-spacing" type="range"><output></output><button class="reset-control" data-reset-style="letter-spacing">Reset</button></label>
+          <label>Text color <input data-style="color" type="color"><button class="reset-control" data-reset-style="color">Reset</button></label>
+          <label>Background <input data-style="background-color" type="color"><button class="reset-control" data-reset-style="background-color">Reset</button></label>
+          <label>Margin <input data-style="margin" type="range"><output></output><button class="reset-control" data-reset-style="margin">Reset</button></label>
+          <label>Padding <input data-style="padding" type="range"><output></output><button class="reset-control" data-reset-style="padding">Reset</button></label>
+          <label>Replace text <small>(this element only)</small><textarea id="text"></textarea></label>
+          <button id="applyText">Apply text change</button>
+          <p id="pinContext" class="hint"></p>
+          <label>AI note<textarea id="note" placeholder="Explain the change this selected element needs"></textarea></label>
+          <button id="pinNote">Pin note to selected element</button>
+          <button id="reset">Reset active selector to original</button>
+        </div>
+        <div id="notes"></div>
+      </section>
+      <section id="annotationControls" role="tabpanel" aria-labelledby="markupTab" hidden>
+        <h3>Markup</h3>
+        <p class="hint">Draw on the preview, then explain what the drawing means so the handoff is actionable.</p>
+        <div class="swatches" aria-label="Markup color"><button data-color="#f25f5c" class="swatch active" title="Coral"></button><button data-color="#ffca56" class="swatch" title="Yellow"></button><button data-color="#64d7ff" class="swatch" title="Blue"></button><button data-color="#8be28b" class="swatch" title="Green"></button><button data-color="#ffffff" class="swatch" title="White"></button></div>
+        <label>Line thickness <input id="annotationThickness" type="range" min="1" max="14" step="1" value="3"><output id="annotationThicknessValue">3 px</output></label>
+        <label>What should the AI understand from this drawing?<textarea id="markupExplanation" placeholder="Example: Move the circled section closer to the heading and align both edges."></textarea></label>
+        <p id="markupSaved" class="saved-state">Saved with the export automatically.</p>
+        <div class="markup-actions"><button id="undoStroke">Undo last</button><button id="clearStrokes">Clear all</button></div>
+        <div id="strokeList"><p class="hint">No drawing strokes yet.</p></div>
+      </section>
+      <section id="helpPanel" role="tabpanel" aria-labelledby="helpTab" hidden>
+        <div class="help-hero"><img src="app-icon.png" alt=""><div><h2>Make the change you can see.</h2><p>Page Tweaker turns visual feedback into a clear handoff without changing the original page.</p></div></div>
+        <div class="help-steps">
+          <article><span>1</span><div><strong>Open</strong><p>Paste a URL and press Enter, drop a page anywhere, or choose a local file.</p></div></article>
+          <article><span>2</span><div><strong>Select and tweak</strong><p>Click an element. Preview changes on just that element or widen the selector at the bottom.</p></div></article>
+          <article><span>3</span><div><strong>Explain</strong><p>Pin a note to one element or draw in Markup and describe what your drawing means.</p></div></article>
+          <article><span>4</span><div><strong>Export</strong><p>Create one bundle with selectors, values, notes, markup, and a copy-ready AI prompt.</p></div></article>
+        </div>
+        <div class="help-callout"><strong>Open from another app</strong><p>Install Page Tweaker in Applications. It registers as a handler for public web links and HTML/web-link files, so apps with an “Open with” or browser picker can offer Page Tweaker. It never makes itself your default browser automatically.</p></div>
+        <p class="help-footnote">Everything is preview-only. Your original file or website is never modified.</p>
+      </section>
+    </aside>
+  </main>
+  <section id="selectorBar" hidden><span id="selectorPath"></span><div id="scopeChoices"></div><strong id="scopeSummary"></strong></section>
+  <footer id="status">Preview-only changes. Your source is never modified.</footer>
+  <script src="browser-utils.js"></script><script src="renderer.js"></script>
+</body>
+</html>

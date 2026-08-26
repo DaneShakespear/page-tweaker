@@ -10,6 +10,10 @@ Page Tweaker currently ships as an ad-hoc signed Apple Silicon (`arm64`) macOS a
 
 This grants an exception for this app only. Do not disable Gatekeeper system-wide.
 
+## Open links from other apps
+
+When Page Tweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links as well as HTML and Safari `.webloc` files. Apps with an **Open with** or browser-selection menu can then list Page Tweaker. Page Tweaker does not make itself the default browser automatically.
+
 If macOS still blocks a known-good download, inspect the file first, then remove only that file's quarantine flag:
 
 ```sh
