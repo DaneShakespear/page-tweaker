@@ -16,11 +16,11 @@ Page Tweaker is a public macOS Electron app for visual QA of local HTML artifact
 - Status: active local product.
 - Workspace: `/Users/daneshakespear/Workspace/Page Tweaker App`.
 - Repository: <https://github.com/DaneShakespear/page-tweaker>.
-- Current release: `v0.1.8`, Apple Silicon DMG.
-- Visible releases: `v0.1.8` only.
+- Current release: `v0.1.9`, Apple Silicon DMG.
+- Visible releases: `v0.1.9` only.
 - Release signing: ad-hoc signed and strict-signature verified; not Developer ID signed or Apple notarized.
-- Current release commit: `f4064c2`.
-- DMG SHA-256: `aa753b7868cb70aa142d46a3535bfe5c3064f839d4ec67a7b7cfb09b6e519a38`.
+- Current release commit: `acf6a99`.
+- DMG SHA-256: `6cc132ea382af31a6f527cc427d65e287920a735e0b85d5cb8f630bf4e8e9d36`.
 
 ## Current objective
 
@@ -28,7 +28,7 @@ Stabilize the approved v1 interaction boundary through testing of the packaged E
 
 ## Next meaningful action
 
-Test `v0.1.8` against representative local HTML artifacts and public URLs. Record the next verified interaction defect or usability issue before expanding scope.
+Test `v0.1.9` against representative local HTML artifacts and public URLs. Record the next verified interaction defect or usability issue before expanding scope.
 
 ## Approved v1 boundary
 
@@ -53,4 +53,3 @@ Test `v0.1.8` against representative local HTML artifacts and public URLs. Recor
 3. `docs/INSTALLING.md`
 4. `src/page-preload.cjs` and `src/renderer.js` for interaction work
 5. `scripts/smoke-ui.cjs` for packaged-app regression testing
-

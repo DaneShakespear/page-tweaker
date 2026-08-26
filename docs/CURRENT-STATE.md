@@ -1,8 +1,8 @@
 # Page Tweaker Current State
 
 **Last verified:** 2026-08-26  
-**Current release:** `v0.1.8`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.8>
+**Current release:** `v0.1.9`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.9>
 
 ## Product state
 
@@ -36,16 +36,21 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Added an exact-versus-repeated selector bar with visible affected-element counts.
 - Added a visible runtime version and icon tooltips.
 - Added `.webloc`, custom app-link, and app-icon opening support.
+- Restored native macOS window dragging while keeping the browser-style controls interactive.
+- Simplified the top bar to reload, address, file selection, and export; Enter loads the typed target.
+- Added a concise How it works tab and a production application icon.
+- Added a markup explanation that travels with `handoff.json` and `prompt.md`.
+- Registered the installed app as an alternate HTTP, HTTPS, file, and Page Tweaker URL handler without changing the system default browser.
 
 ## Verification evidence
 
-- `npm test`: 11 of 11 tests passing.
-- Packaged Electron smoke: local path, public HTTP URL through Enter, `file://` URL drop, exact/all selector scope, live style editing, scoped reset, true clean reload, and individual markup removal passed.
+- `npm test`: 13 of 13 tests passing.
+- Packaged Electron smoke: native window drag, local path, public HTTP URL through Enter, `file://` URL drop, exact/all selector scope, live style editing, scoped reset, true clean reload, markup explanation/removal, and Help tab passed.
 - `hdiutil verify`: DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and hosted DMG SHA-256 match: `aa753b7868cb70aa142d46a3535bfe5c3064f839d4ec67a7b7cfb09b6e519a38`.
+- Local and hosted DMG SHA-256 match: `6cc132ea382af31a6f527cc427d65e287920a735e0b85d5cb8f630bf4e8e9d36`.
 - GitHub assets include the DMG and blockmap.
-- `v0.1.8` is the only visible release.
+- `v0.1.9` is the only visible release.
 
 ## Architecture that matters
 
@@ -67,5 +72,4 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 
 ## Next-session starting point
 
-Start from the packaged `v0.1.8` app, not `src/index.html` in a browser. Reproduce any new issue there first. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release. Keep only the current verified release visible and compare the hosted DMG hash with the local validated artifact.
-
+Start from the packaged `v0.1.9` app, not `src/index.html` in a browser. Reproduce any new issue there first. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release. Keep only the current verified release visible and compare the hosted DMG hash with the local validated artifact.
