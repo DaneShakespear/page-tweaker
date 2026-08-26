@@ -1,8 +1,8 @@
 # Page Tweaker Current State
 
 **Last verified:** 2026-08-26  
-**Current release:** `v0.1.11`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.11>
+**Current release:** `v0.1.12`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.12>
 
 ## Product state
 
@@ -49,16 +49,21 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Rebuilt Inspector control rows so every Reset button explicitly names and restores one property without appearing attached to a neighboring control.
 - Added native right-click Copy, Cut, Paste, and Select All context menus.
 - Rewrote beginner-facing Help and the AI brief. Selectors and preview values are explicitly outcome evidence, not instructions to paste code or replace the real system architecture.
+- Replaced breakpoint glyphs with standard monitor, tablet, and smartphone SVG icons.
+- Made property reset refresh only its own Inspector control while leaving every other slider, color, and preview change untouched.
+- Replaced breakpoint reloads with an acknowledged in-place restore/apply cycle. Exact-element and repeated-selector changes now remain isolated and persistent across size switches.
+- Fixed exact locators that incorrectly began with `html:nth-of-type(0)` and therefore could not be restored.
+- Replaced context-free markup overlays with full annotated page screenshots for each visited breakpoint.
 
 ## Verification evidence
 
-- `npm test`: 17 of 17 tests passing.
-- Packaged Electron smoke: native window drag, desktop/mobile isolation, exact/all selector scope, property-specific reset, clean reload, scroll-attached per-mark explanation, beginner Help, local/public/file loading, ZIP inspection, goal-focused AI instructions, and path copying passed.
+- `npm test`: 18 of 18 tests passing.
+- Packaged Electron smoke: native window drag, exact and repeated breakpoint persistence, property-specific reset without neighboring UI changes, clean reload, scroll-attached per-mark explanation, local/public/file loading, ZIP inspection, full annotated screenshots, goal-focused AI instructions, and path copying passed.
 - `hdiutil verify`: DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and hosted DMG SHA-256 match: `f7ba4bde5bc3d918d9d291e5713f886997d15e5aa11900d87a38a23f06645256`.
+- Local and hosted DMG SHA-256 match: `4f07ce839db58cec5a1cfe65b9951668a782acc5e5acf8c9f8872b58bcfce07c`.
 - GitHub assets include the DMG and blockmap.
-- `v0.1.11` is the only visible release.
+- `v0.1.12` is the only visible release.
 
 ## Architecture that matters
 
@@ -74,10 +79,10 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - The app is ad-hoc signed, not Developer ID signed or Apple notarized. Gatekeeper may require Control-click > Open or a per-app quarantine removal for a trusted download.
 - Public pages only. The app does not inherit Chrome/Safari cookies or authenticated browser sessions.
 - Preview changes exist only in the current session and export bundle. They do not modify source code.
-- The handoff includes a transparent markup overlay rather than a full-page screenshot; the source address, DOM locators, values, notes, and drawing coordinates remain the durable implementation evidence.
+- Annotated screenshots capture the visible viewport at each visited breakpoint. Very long content outside that viewport remains represented through selectors, notes, drawing coordinates, and structured evidence rather than a stitched full-page image.
 - The repository does not yet grant an open-source license.
 - The README still uses a concept render; a real product screenshot walkthrough remains planned.
 
 ## Next-session starting point
 
-Start from the packaged `v0.1.11` app, not `src/index.html` in a browser. Test responsive pages at all three preview sizes and give the resulting ZIP to representative AI chats. Verify each agent understands the feedback as desired outcomes without treating selectors or preview values as prescribed implementation. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release.
+Start from the packaged `v0.1.12` app, not `src/index.html` in a browser. Test exact-element and repeated-selector edits across all preview sizes, then visually inspect the generated annotated images before giving the ZIP to an AI chat. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release.
