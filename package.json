@@ -1,6 +1,6 @@
 {
   "name": "page-tweaker",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Fast visual QA and AI handoff for HTML artifacts and public web pages.",
   "author": "Dane Shakespear",
   "repository": {
@@ -19,7 +19,8 @@
     "productName": "Page Tweaker",
     "afterPack": "scripts/after-pack.cjs",
     "files": ["src/**", "package.json"],
-    "fileAssociations": [{ "ext": ["html", "htm"], "name": "HTML artifact", "role": "Editor" }],
+    "fileAssociations": [{ "ext": ["html", "htm", "webloc"], "name": "HTML artifact or web link", "role": "Editor" }],
+    "protocols": [{ "name": "Page Tweaker link", "schemes": ["page-tweaker"] }],
     "mac": { "category": "public.app-category.developer-tools", "target": ["dmg"] }
   },
   "devDependencies": {

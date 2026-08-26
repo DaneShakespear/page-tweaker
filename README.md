@@ -41,6 +41,8 @@ The AI receives selectors, values, replacement text, notes, viewport context, a 
 
 Download the Apple Silicon DMG from [Releases](../../releases), drag Page Tweaker to Applications, then Control-click and choose **Open** the first time.
 
+The top bar always shows the running version. You can paste, drop, or open a local `.html`, `file://` URL, public URL, or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with Page Tweaker or use `page-tweaker://open?url=` followed by an encoded URL.
+
 The app is currently unsigned. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 
 ## Run from source

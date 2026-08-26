@@ -33,6 +33,15 @@ function clearHover() {
   hovered = undefined;
 }
 
+function positionSelected() {
+  if (!selectedElement) return;
+  const box = selectedElement.getBoundingClientRect();
+  ipcRenderer.sendToHost('element-position', { targetId: selectedElement.dataset.pageTweakerTarget, box: { x: box.x, y: box.y, width: box.width, height: box.height } });
+}
+
+window.addEventListener('scroll', positionSelected, true);
+window.addEventListener('resize', positionSelected);
+
 document.addEventListener('mouseover', (event) => {
   if (!enabled || event.target === hovered) return;
   clearHover();
@@ -51,12 +60,14 @@ document.addEventListener('click', (event) => {
   element.setAttribute('data-page-tweaker-target', targetId);
   const box = element.getBoundingClientRect();
   const style = getComputedStyle(element);
+  const properties = ['font-family', 'font-size', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'];
   ipcRenderer.sendToHost('element-selected', {
     selector: locator(element),
     targetId,
     tag: element.tagName.toLowerCase(),
     text: (element.innerText || '').trim().slice(0, 240),
     inlineStyle: element.getAttribute('style'),
+    inlineProperties: Object.fromEntries(properties.map((property) => [property, element.style.getPropertyValue(property)])),
     box: { x: box.x, y: box.y, width: box.width, height: box.height },
     style: {
       fontSize: style.fontSize,
@@ -82,9 +93,14 @@ ipcRenderer.on('apply-edit', (_event, request) => {
     if (!element) throw new Error('The selected element is no longer present. Select it again.');
     if (request.action === 'style') Object.entries(request.changes).forEach(([property, value]) => element.style.setProperty(property, value));
     if (request.action === 'text') element.innerText = request.text;
+    if (request.action === 'reset-property') {
+      if (request.value) element.style.setProperty(request.property, request.value);
+      else element.style.removeProperty(request.property);
+    }
     if (request.action === 'restore') {
       if (request.inlineStyle === null) element.removeAttribute('style');
       else element.setAttribute('style', request.inlineStyle);
+      if (request.text !== undefined) element.innerText = request.text;
     }
     ipcRenderer.sendToHost('edit-result', { id: request.id, ok: true });
   } catch (error) {
