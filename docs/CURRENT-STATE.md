@@ -65,7 +65,7 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Packaged Electron smoke: native window drag, exact and repeated breakpoint persistence, property-specific reset without neighboring UI changes, clean reload, scroll-attached per-mark explanation, local/public/file loading, ZIP inspection, full annotated screenshots, goal-focused AI instructions, and path copying passed.
 - `hdiutil verify`: DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local DMG SHA-256: `61b1ae91f0277cfd687ec07b247882d74c9a06744bf2e422249e68f2230488b7`.
+- Local and downloaded GitHub DMG SHA-256 match: `61b1ae91f0277cfd687ec07b247882d74c9a06744bf2e422249e68f2230488b7`.
 - GitHub assets include the DMG and blockmap.
 - `v0.1.13` is the only visible release.
 
