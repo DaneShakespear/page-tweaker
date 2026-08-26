@@ -19,7 +19,7 @@ PageTweaker is a public macOS Electron app for visual QA of local HTML artifacts
 - Current release: `v0.1.13`, Apple Silicon DMG.
 - Visible releases: `v0.1.13` only.
 - Release signing: ad-hoc signed and strict-signature verified; not Developer ID signed or Apple notarized.
-- Current implementation commit: pending v0.1.13 publication.
+- Current implementation commit: `1ea43f1`.
 - DMG SHA-256: `61b1ae91f0277cfd687ec07b247882d74c9a06744bf2e422249e68f2230488b7`.
 
 ## Current objective
