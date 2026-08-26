@@ -75,3 +75,19 @@ ipcRenderer.on('set-inspector', (_event, value) => {
   enabled = value;
   if (!enabled) clearHover();
 });
+
+ipcRenderer.on('apply-edit', (_event, request) => {
+  try {
+    const element = document.querySelector(`[data-page-tweaker-target=${JSON.stringify(request.targetId)}]`);
+    if (!element) throw new Error('The selected element is no longer present. Select it again.');
+    if (request.action === 'style') Object.entries(request.changes).forEach(([property, value]) => element.style.setProperty(property, value));
+    if (request.action === 'text') element.innerText = request.text;
+    if (request.action === 'restore') {
+      if (request.inlineStyle === null) element.removeAttribute('style');
+      else element.setAttribute('style', request.inlineStyle);
+    }
+    ipcRenderer.sendToHost('edit-result', { id: request.id, ok: true });
+  } catch (error) {
+    ipcRenderer.sendToHost('edit-result', { id: request.id, ok: false, message: error.message });
+  }
+});

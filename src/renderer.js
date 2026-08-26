@@ -6,9 +6,12 @@ const selection = document.querySelector('#selection');
 const canvas = document.querySelector('#markup');
 const ctx = canvas.getContext('2d');
 const annotationControls = document.querySelector('#annotationControls');
+const stage = document.querySelector('#stage');
+const dropHint = document.querySelector('#dropHint');
 const utils = window.PageTweakerUtils;
 const desktopBridge = window.pageTweaker;
 const state = { source: '', selected: null, cssTweaks: new Map(), textChanges: new Map(), originalStyles: new Map(), notes: [], strokes: [], annotating: false, annotationColor: '#f25f5c', annotationWidth: 3 };
+const pendingEdits = new Map();
 
 function setStatus(message) { status.textContent = message; }
 function makePrompt(handoff) { return `# Page Tweaker handoff\n\nApply these preview-validated changes to the source artifact. Preserve unrelated work.\n\n- Source: ${handoff.source}\n- CSS tweaks: ${handoff.cssTweaks.length}\n- Text changes: ${handoff.textChanges.length}\n- Notes: ${handoff.notes.length}\n\nRead \`handoff.json\` for element locators and exact values. Review \`annotated.png\` for visual markup before implementing.`; }
@@ -16,7 +19,14 @@ function resizeCanvas() { const box = page.getBoundingClientRect(); canvas.width
 function drawMarkup() { const box = page.getBoundingClientRect(); ctx.clearRect(0, 0, box.width, box.height); for (const stroke of state.strokes) { ctx.strokeStyle = stroke.color; ctx.lineWidth = stroke.width; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); stroke.points.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.stroke(); } state.notes.forEach((note, index) => { const { x, y } = note.box; ctx.fillStyle = '#ffca56'; ctx.beginPath(); ctx.arc(x + 10, y + 10, 10, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#161616'; ctx.font = '11px sans-serif'; ctx.fillText(String(index + 1), x + 7, y + 14); }); }
 function open(rawValue) { if (!desktopBridge) return setStatus('Launch Page Tweaker.app. Opening src/index.html directly in a browser cannot inspect elements or export bundles.'); const source = utils.normalizeSource(rawValue); if (!source) return setStatus('Paste a file:// URL, public http(s) URL, or path to an .html file.'); state.source = source; address.value = source; document.querySelector('#empty').hidden = true; page.src = source; setStatus('Loading preview…'); }
 function currentChanges() { return state.cssTweaks.get(state.selected.selector) || {}; }
-async function executeSelected(script) { const applied = await page.executeJavaScript(script); if (!applied) throw new Error('The selected element is no longer present. Select it again.'); }
+function executeSelected(action, payload) {
+  const id = `edit-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => { pendingEdits.delete(id); reject(new Error('The page did not acknowledge the change. Select the element again.')); }, 1500);
+    pendingEdits.set(id, { resolve, reject, timeout });
+    page.send('apply-edit', { id, action, targetId: state.selected.targetId, ...payload });
+  });
+}
 function setControlValues(style) {
   document.querySelectorAll('[data-style]').forEach((control) => {
     const property = control.dataset.style;
@@ -33,7 +43,7 @@ function showSelection(selected) { selection.innerHTML = `<h2>Selected: ${select
 function setAnnotationColor(color) { state.annotationColor = color; document.querySelectorAll('[data-color]').forEach((button) => button.classList.toggle('active', button.dataset.color === color)); }
 
 page.addEventListener('did-finish-load', () => { page.send('set-inspector', !state.annotating); resizeCanvas(); setStatus('Click an element to inspect and tweak it.'); });
-page.addEventListener('ipc-message', (_event) => { const [selected] = _event.args; if (_event.channel !== 'element-selected' || state.annotating) return; state.selected = selected; if (!state.originalStyles.has(selected.selector)) state.originalStyles.set(selected.selector, selected.inlineStyle); showSelection(selected); controls.hidden = false; document.querySelector('#text').value = state.textChanges.get(selected.selector) || selected.text; setControlValues({ ...selected.style, ...currentChanges() }); });
+page.addEventListener('ipc-message', (_event) => { const [message] = _event.args; if (_event.channel === 'edit-result') { const pending = pendingEdits.get(message.id); if (!pending) return; clearTimeout(pending.timeout); pendingEdits.delete(message.id); if (message.ok) pending.resolve(); else pending.reject(new Error(message.message)); return; } if (_event.channel !== 'element-selected' || state.annotating) return; const selected = message; state.selected = selected; if (!state.originalStyles.has(selected.selector)) state.originalStyles.set(selected.selector, selected.inlineStyle); showSelection(selected); controls.hidden = false; document.querySelector('#text').value = state.textChanges.get(selected.selector) || selected.text; setControlValues({ ...selected.style, ...currentChanges() }); });
 
 document.querySelectorAll('[data-style]').forEach((control) => control.addEventListener('input', async () => {
   if (!state.selected) return;
@@ -44,18 +54,25 @@ document.querySelectorAll('[data-style]').forEach((control) => control.addEventL
   if (property === 'font-family' && !rawValue) delete changes[property];
   state.cssTweaks.set(state.selected.selector, changes);
   if (control.nextElementSibling?.tagName === 'OUTPUT') control.nextElementSibling.value = rawValue;
-  try { await executeSelected(utils.styleScript(state.selected.targetId, changes)); setStatus(`Preview updated: ${property}.`); } catch (error) { setStatus(error.message); }
+  try { await executeSelected('style', { changes }); setStatus(`Preview updated: ${property}.`); } catch (error) { setStatus(error.message); }
 }));
-document.querySelector('#applyText').addEventListener('click', async () => { if (!state.selected) return; const text = document.querySelector('#text').value; state.textChanges.set(state.selected.selector, text); try { await executeSelected(utils.textScript(state.selected.targetId, text)); setStatus('Preview text updated.'); } catch (error) { setStatus(error.message); } });
+document.querySelector('#applyText').addEventListener('click', async () => { if (!state.selected) return; const text = document.querySelector('#text').value; state.textChanges.set(state.selected.selector, text); try { await executeSelected('text', { text }); setStatus('Preview text updated.'); } catch (error) { setStatus(error.message); } });
 document.querySelector('#pinNote').addEventListener('click', () => { const note = document.querySelector('#note').value.trim(); if (!state.selected || !note) return setStatus('Select an element and enter a note first.'); state.notes.push({ selector: state.selected.selector, tag: state.selected.tag, text: state.selected.text, note, box: state.selected.box }); document.querySelector('#note').value = ''; renderNotes(); drawMarkup(); setStatus(`Pinned note ${state.notes.length} to the selected ${state.selected.tag}.`); });
-document.querySelector('#reset').addEventListener('click', async () => { if (!state.selected) return; state.cssTweaks.delete(state.selected.selector); state.textChanges.delete(state.selected.selector); try { await executeSelected(utils.restoreStyleScript(state.selected.targetId, state.originalStyles.get(state.selected.selector))); setControlValues(state.selected.style); document.querySelector('#text').value = state.selected.text; setStatus('Selected preview overrides cleared.'); } catch (error) { setStatus(error.message); } });
+document.querySelector('#reset').addEventListener('click', async () => { if (!state.selected) return; state.cssTweaks.delete(state.selected.selector); state.textChanges.delete(state.selected.selector); try { await executeSelected('restore', { inlineStyle: state.originalStyles.get(state.selected.selector) }); setControlValues(state.selected.style); document.querySelector('#text').value = state.selected.text; setStatus('Selected preview overrides cleared.'); } catch (error) { setStatus(error.message); } });
 
 document.querySelector('#open').addEventListener('click', () => open(address.value));
 address.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); open(address.value); } });
+function openDropped(event) { event.preventDefault(); event.stopPropagation(); dropHint.hidden = true; const dropped = event.dataTransfer.getData('text/uri-list') || event.dataTransfer.getData('text/plain') || event.dataTransfer.files[0]?.path; if (dropped) open(dropped.split('\n')[0]); }
 address.addEventListener('dragover', (event) => event.preventDefault());
-address.addEventListener('drop', (event) => { event.preventDefault(); event.stopPropagation(); const dropped = event.dataTransfer.getData('text/uri-list') || event.dataTransfer.getData('text/plain') || event.dataTransfer.files[0]?.path; if (dropped) open(dropped.split('\n')[0]); });
+address.addEventListener('drop', openDropped);
+stage.addEventListener('dragenter', (event) => { event.preventDefault(); dropHint.hidden = false; });
+stage.addEventListener('dragover', (event) => event.preventDefault());
+stage.addEventListener('dragleave', (event) => { if (!stage.contains(event.relatedTarget)) dropHint.hidden = true; });
+stage.addEventListener('drop', openDropped);
+page.addEventListener('dragover', (event) => { event.preventDefault(); dropHint.hidden = false; });
+page.addEventListener('drop', openDropped);
 document.body.addEventListener('dragover', (event) => event.preventDefault());
-document.body.addEventListener('drop', (event) => { if (event.target === address) return; event.preventDefault(); const dropped = event.dataTransfer.getData('text/uri-list') || event.dataTransfer.getData('text/plain') || event.dataTransfer.files[0]?.path; if (dropped) open(dropped.split('\n')[0]); });
+document.body.addEventListener('drop', (event) => { if (stage.contains(event.target)) return; openDropped(event); });
 document.querySelector('#file').addEventListener('click', async () => { if (!desktopBridge) return open(''); const picked = await desktopBridge.chooseSource(); if (picked) open(picked); });
 document.querySelector('#annotate').addEventListener('click', () => { state.annotating = !state.annotating; canvas.style.pointerEvents = state.annotating ? 'auto' : 'none'; annotationControls.hidden = !state.annotating; page.send('set-inspector', !state.annotating); document.querySelector('#annotate').textContent = state.annotating ? 'Done annotating' : 'Annotate'; setStatus(state.annotating ? 'Choose a color and thickness, then draw over the page.' : 'Markup saved to this session.'); });
 document.querySelectorAll('[data-color]').forEach((button) => button.addEventListener('click', () => setAnnotationColor(button.dataset.color)));
