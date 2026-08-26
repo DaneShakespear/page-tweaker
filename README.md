@@ -8,7 +8,7 @@ Open the page. Click what looks wrong. Tune the visible value. Mark up what need
 
 ![Concept render of Page Tweaker](assets/page-tweaker-concept.png)
 
-*Concept render. Real product screenshots will be added after the first public signed build.*
+*Concept render. A real product screenshot walkthrough remains planned.*
 
 ## Why it exists
 
@@ -45,7 +45,7 @@ The top bar always shows the running version. You can paste, drop, or open a loc
 
 When you select an element, Page Tweaker defaults to changing only that exact element. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element. Use the top reset icon to restore the active selector, and use the Markup panel to remove one stroke, undo the latest stroke, or clear all drawing.
 
-The app is currently unsigned. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
+The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 
 ## Run from source
 
@@ -72,6 +72,7 @@ Page Tweaker v1 supports public pages and local HTML artifacts. It does not reus
 ```sh
 npm test
 npm run package:mac
+npm run smoke:ui
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance and current licensing status.

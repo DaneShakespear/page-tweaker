@@ -1,0 +1,56 @@
+# Page Tweaker Project Compass
+
+## What this is
+
+Page Tweaker is a public macOS Electron app for visual QA of local HTML artifacts and public web pages. It supports preview-only element edits, pinned notes, drawing markup, and portable AI/developer handoff bundles. It never modifies the opened source artifact.
+
+## Authority
+
+- Durable project meaning and decisions: `06-PROJECTS/Page-Tweaker.md` in the Brain Vault.
+- Current implementation and release evidence: this repository.
+- Public distribution: <https://github.com/DaneShakespear/page-tweaker/releases/latest>.
+- Brain Search is retrieval only. It is not the project record.
+
+## Current state
+
+- Status: active local product.
+- Workspace: `/Users/daneshakespear/Workspace/Page Tweaker App`.
+- Repository: <https://github.com/DaneShakespear/page-tweaker>.
+- Current release: `v0.1.8`, Apple Silicon DMG.
+- Visible releases: `v0.1.8` only.
+- Release signing: ad-hoc signed and strict-signature verified; not Developer ID signed or Apple notarized.
+- Current release commit: `f4064c2`.
+- DMG SHA-256: `aa753b7868cb70aa142d46a3535bfe5c3064f839d4ec67a7b7cfb09b6e519a38`.
+
+## Current objective
+
+Stabilize the approved v1 interaction boundary through testing of the packaged Electron app. Keep the workflow simple: open, select, preview, explain, export.
+
+## Next meaningful action
+
+Test `v0.1.8` against representative local HTML artifacts and public URLs. Record the next verified interaction defect or usability issue before expanding scope.
+
+## Approved v1 boundary
+
+- Local `.html`/`.htm` artifacts, `file://` URLs, Safari `.webloc` files, and public `http(s)` URLs.
+- Exact-element editing by default, with deliberate class-wide or tag-wide style scope.
+- Immediate preview-only typography, spacing, color, background, and text changes.
+- Pinned notes attached to the exact clicked element.
+- Freehand markup with color, thickness, undo, individual removal, and clear-all controls.
+- Portable export bundle containing structured JSON, an implementation prompt, and an annotated screenshot when capture succeeds.
+
+## Non-goals
+
+- Modifying source files in place.
+- Becoming a full browser, page builder, CMS, or deployment tool.
+- Reusing browser profiles, cookies, or authenticated sessions.
+- Claiming Apple notarization before a Developer ID and notarization workflow exists.
+
+## Read first
+
+1. `docs/CURRENT-STATE.md`
+2. `README.md`
+3. `docs/INSTALLING.md`
+4. `src/page-preload.cjs` and `src/renderer.js` for interaction work
+5. `scripts/smoke-ui.cjs` for packaged-app regression testing
+

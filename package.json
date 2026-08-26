@@ -12,7 +12,8 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test",
-    "package:mac": "electron-builder --mac dmg"
+    "package:mac": "electron-builder --mac dmg",
+    "smoke:ui": "node scripts/smoke-ui.cjs"
   },
   "build": {
     "appId": "com.kre8works.pagetweaker",

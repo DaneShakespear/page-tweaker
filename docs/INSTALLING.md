@@ -1,6 +1,6 @@
 # Installing Page Tweaker on macOS
 
-Page Tweaker currently ships as an unsigned Apple Silicon (`arm64`) macOS app. macOS will warn because the app is not yet signed and notarized with an Apple Developer certificate.
+Page Tweaker currently ships as an ad-hoc signed Apple Silicon (`arm64`) macOS app. The ad-hoc signature protects bundle integrity and is verified during release QA, but it is not an Apple Developer ID signature and the app is not notarized. macOS may therefore warn on first launch.
 
 ## Install from a release
 
@@ -47,7 +47,7 @@ page-tweaker https://example.com
 npm run package:mac
 ```
 
-The result is written to `dist/`. A locally built DMG is also unsigned unless you configure an Apple Developer ID Application certificate and notarization credentials.
+The result is written to `dist/`. The repository's packaging hook applies an ad-hoc signature. A locally built DMG is not Developer ID signed or notarized unless you separately configure an Apple Developer ID Application certificate and notarization credentials.
 
 ## Troubleshooting
 
