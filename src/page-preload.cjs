@@ -71,7 +71,8 @@ function positionSelected() {
   ipcRenderer.sendToHost('element-position', { targetId: selectedElement.dataset.pageTweakerTarget, box: { x: box.x, y: box.y, width: box.width, height: box.height } });
 }
 
-window.addEventListener('scroll', positionSelected, true);
+function reportScroll() { ipcRenderer.sendToHost('page-scroll', { x: window.scrollX, y: window.scrollY }); positionSelected(); }
+window.addEventListener('scroll', reportScroll, true);
 window.addEventListener('resize', positionSelected);
 
 document.addEventListener('mouseover', (event) => {
@@ -143,4 +144,19 @@ ipcRenderer.on('apply-edit', (_event, request) => {
   } catch (error) {
     ipcRenderer.sendToHost('edit-result', { id: request.id, ok: false, message: error.message });
   }
+});
+
+ipcRenderer.on('apply-session', (_event, request) => {
+  try {
+    (request.styles || []).forEach((edit) => document.querySelectorAll(edit.selector).forEach((element) => { rememberOriginal(element); Object.entries(edit.changes).forEach(([property, value]) => element.style.setProperty(property, value)); }));
+    (request.texts || []).forEach((edit) => { const element = document.querySelector(edit.selector); if (element) { rememberOriginal(element); element.innerText = edit.text; } });
+    ipcRenderer.sendToHost('session-applied', { id: request.id, ok: true });
+  } catch (error) {
+    ipcRenderer.sendToHost('session-applied', { id: request.id, ok: false, message: error.message });
+  }
+});
+
+ipcRenderer.on('identify-point', (_event, request) => {
+  const element = document.elementFromPoint(request.x, request.y);
+  ipcRenderer.sendToHost('point-context', { id: request.id, selector: element ? locator(element) : null, tag: element?.tagName.toLowerCase() || null, text: (element?.innerText || '').trim().slice(0, 160) });
 });

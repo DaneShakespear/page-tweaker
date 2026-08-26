@@ -24,8 +24,9 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 
 - Opens a local HTML artifact or public `http(s)` URL in a dedicated desktop workspace.
 - Lets you select visible elements and preview typography, spacing, and color adjustments immediately.
+- Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to the size where it was created.
 - Supports plain-text replacement when the words need to fit the layout.
-- Pins natural-language AI notes to elements and supports freehand markup with a plain-language explanation that travels in the export.
+- Pins natural-language AI notes to elements and gives every freehand mark its own editable explanation and nearby element locator.
 - Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and a visual markup overlay when drawings or pins exist.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
@@ -37,7 +38,7 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 4. **Create the handoff**. Page Tweaker saves one ZIP in `Downloads/Page Tweaker Handoffs`.
 5. Drag its icon directly into Codex, Claude, another AI chat, or copy the displayed full path.
 
-The AI receives the original page address, selectors, scope, previewed values, replacement text, pinned notes, viewport context, drawing coordinates, the markup explanation, a ready-to-follow brief, and a visual markup overlay when available. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
+The AI receives the original page address, selectors, scope, previewed values, replacement text, pinned notes, breakpoint context, drawing coordinates, per-mark explanations, nearby element locators, and a plain-language brief. The brief explicitly treats those details as evidence of the desired outcome, not code or architecture to paste blindly. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
 
 ## Install
 
@@ -47,7 +48,7 @@ The top bar always shows the running version. Paste a path or URL and press Ente
 
 The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer Page Tweaker without Page Tweaker silently replacing your default browser.
 
-When you select an element, Page Tweaker defaults to changing only that exact element. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element. Use the Inspector reset controls to restore the active selector, and use the Markup panel to remove one stroke, undo the latest stroke, or clear all drawing.
+When you select an element, Page Tweaker defaults to changing only that exact element at the active desktop, tablet, or mobile preview. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element and preview size. Each Inspector reset button names the one property it restores. Markup lines move with the page while it scrolls, and each line keeps its own explanation.
 
 The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 

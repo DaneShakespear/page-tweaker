@@ -28,8 +28,37 @@ test('selected reset, markup explanation, help, and removal controls are wired',
   assert.match(html, /id="clearStrokes"/);
   assert.match(html, /id="markupExplanation"/);
   assert.match(html, /id="helpTab"/);
-  assert.match(renderer, /markupExplanation: state\.markupExplanation\.trim\(\)/);
-  assert.match(renderer, /data-remove-stroke/);
+  assert.match(renderer, /explanation: state\.markupExplanation\.trim\(\)/);
+  assert.match(renderer, /stroke\.explanation = explanation\.value/);
+});
+
+test('responsive previews scope evidence and markup by breakpoint', () => {
+  const html = read('src/index.html');
+  const renderer = read('src/renderer.js');
+  const bridge = read('src/page-preload.cjs');
+  assert.match(html, /data-breakpoint="desktop"/);
+  assert.match(html, /data-breakpoint="tablet"/);
+  assert.match(html, /data-breakpoint="mobile"/);
+  assert.match(renderer, /function scopedKey/);
+  assert.match(renderer, /breakpoint: state\.breakpoint/);
+  assert.match(renderer, /point\.y - state\.pageScroll\.y/);
+  assert.match(bridge, /'page-scroll'/);
+  assert.match(bridge, /'identify-point'/);
+});
+
+test('handoff tells the receiving AI to infer intent rather than paste preview code', () => {
+  const renderer = read('src/renderer.js');
+  assert.match(renderer, /evidence describing the user's desired outcome/);
+  assert.match(renderer, /Do not blindly paste selectors/);
+  assert.match(renderer, /previewStyleEvidence/);
+});
+
+test('reset controls have explicit property labels and native context copy is available', () => {
+  const html = read('src/index.html');
+  const main = read('src/main.cjs');
+  assert.match(html, />Reset font size</);
+  assert.match(html, />Reset text color</);
+  assert.match(main, /role: 'copy'/);
 });
 
 test('the title bar is draggable and interactive header controls opt out', () => {

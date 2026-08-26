@@ -61,3 +61,4 @@ The result is written to `dist/`. The repository's packaging hook applies an ad-
 | A page does not load | Confirm it is a public `http` or `https` URL. v1 intentionally does not reuse browser cookies or authenticated sessions. |
 | The handoff button appears to do nothing | Use the installed packaged app, not `src/index.html` in a browser. A successful handoff opens the Handoff tab and saves one ZIP in `Downloads/Page Tweaker Handoffs`. |
 | An edit does not match the source | Give the entire ZIP to the AI session so it can use the locator, scope, previewed values, notes, drawing data, and markup explanation together. Page Tweaker is a handoff tool, not a source-code writer. |
+| Right-click does not show Copy | Confirm you are using v0.1.11 or newer. Selected text in the app and preview has a native Copy context menu; Command-C continues to work. |

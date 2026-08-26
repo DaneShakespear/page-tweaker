@@ -68,30 +68,46 @@ async function connect() {
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('2 elements')`));
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
+    await evaluate(`(() => { const input = document.querySelector('[data-style="color"]'); input.value = '#ff0000'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('color')`));
+    await evaluate(`document.querySelector('[data-reset-style="font-size"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only font-size')`));
+    assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => [getComputedStyle(element).fontSize, getComputedStyle(element).color])")`), [['22px', 'rgb(255, 0, 0)'], ['22px', 'rgb(255, 0, 0)']]);
+    await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('font-size')`));
 
-    await evaluate(`document.querySelector('#reset').click()`);
-    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset 2 selected elements')`));
+    await evaluate(`document.querySelector('[data-breakpoint="mobile"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('mobile preview')`));
+    assert.equal(await evaluate(`Math.round(document.querySelector('#page').getBoundingClientRect().width)`), 390);
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
+    await evaluate(`document.querySelector('[data-breakpoint="desktop"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('desktop preview')`));
+    assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
 
-    await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '34'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
-    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('2 elements')`));
     await evaluate(`window.confirm = () => true; document.querySelector('#reload').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element') && document.querySelector('#selectorBar').hidden`));
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
 
     await evaluate(`document.querySelector('#markupTab').click()`);
+    await evaluate(`(() => { const input = document.querySelector('#markupExplanation'); input.value = 'Move the marked block closer to the heading.'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    assert.match(await evaluate(`document.querySelector('#markupSaved').textContent`), /Ready to attach/);
     const box = await evaluate(`(() => { const box = document.querySelector('#markup').getBoundingClientRect(); return { x: box.x, y: box.y }; })()`);
     await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x + 100, y: box.y + 100, button: 'left', buttons: 1, clickCount: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 0, clickCount: 1 });
-    await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Stroke 1')`));
-    await evaluate(`(() => { const input = document.querySelector('#markupExplanation'); input.value = 'Move the marked block closer to the heading.'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
-    assert.match(await evaluate(`document.querySelector('#markupSaved').textContent`), /Explanation saved/);
-    await evaluate(`document.querySelector('[data-remove-stroke="0"]').click()`);
-    assert.equal(await evaluate(`document.querySelector('#strokeList').textContent.includes('Stroke 1')`), false);
+    await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Mark 1')`));
+    assert.equal(await evaluate(`document.querySelector('#strokeList textarea').value`), 'Move the marked block closer to the heading.');
+    const markedPixels = await evaluate(`(() => { const context = document.querySelector('#markup').getContext('2d'); const scale = devicePixelRatio; return [...context.getImageData(80 * scale, 80 * scale, 100 * scale, 90 * scale).data].filter((value, index) => index % 4 === 3 && value > 0).length; })()`);
+    assert.ok(markedPixels > 0);
+    await evaluate(`document.querySelector('#page').executeJavaScript('scrollTo(0, 300)')`);
+    await delay(250);
+    const stalePixels = await evaluate(`(() => { const context = document.querySelector('#markup').getContext('2d'); const scale = devicePixelRatio; return [...context.getImageData(80 * scale, 80 * scale, 100 * scale, 90 * scale).data].filter((value, index) => index % 4 === 3 && value > 0).length; })()`);
+    assert.equal(stalePixels, 0, 'Markup stayed fixed to the screen instead of moving with the page scroll.');
+    await evaluate(`document.querySelector('#page').executeJavaScript('scrollTo(0, 0)')`);
+    await delay(200);
     await evaluate(`document.querySelector('#helpTab').click()`);
     assert.equal(await evaluate(`document.querySelector('#helpPanel').hidden`), false);
-    assert.match(await evaluate(`document.querySelector('#helpPanel').textContent`), /Drag it into your AI chat or copy its path/);
+    assert.match(await evaluate(`document.querySelector('#helpPanel').textContent`), /A handoff is simply one file/);
 
     await evaluate(`document.querySelector('#export').click()`);
     process.stdout.write('Creating AI handoff file.\n');
@@ -103,6 +119,9 @@ async function connect() {
     assert.match(archiveContents, /handoff\.json/);
     const handoffJson = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/handoff.json'], { encoding: 'utf8' });
     assert.match(handoffJson, /Move the marked block closer to the heading/);
+    assert.match(handoffJson, /"breakpoint": "desktop"/);
+    const startHere = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/START-HERE.md'], { encoding: 'utf8' });
+    assert.match(startHere, /Do not blindly paste selectors/);
     assert.equal(await evaluate(`document.querySelector('#handoffName').textContent.endsWith('.zip')`), true);
     await evaluate(`document.querySelector('#copyHandoffPath').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('path copied')`));
@@ -113,7 +132,7 @@ async function connect() {
     const fileUrl = pathToFileURL(fixture).href;
     await evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(fileUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(fileUrl)}`));
-    process.stdout.write('Packaged UI smoke passed: native window drag, local path, HTTP Enter, file URL drop, exact/all scope, live edit, scoped reset, clean reload, markup explanation/removal, Help tab, and single-file AI handoff.\n');
+    process.stdout.write('Packaged UI smoke passed: native window drag, responsive breakpoint isolation, local/public/file loading, live edit, clean reload, per-mark explanation, beginner Help, and goal-focused AI handoff.\n');
   } finally {
     client?.socket.close();
     app.kill('SIGTERM');

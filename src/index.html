@@ -8,6 +8,11 @@
 <body>
   <header>
     <strong>Page Tweaker <small id="version">v…</small></strong>
+    <div class="viewport-picker" role="group" aria-label="Preview size">
+      <button class="viewport-button active" data-breakpoint="desktop" title="Desktop preview, 1440 pixels wide" aria-label="Desktop preview">▱</button>
+      <button class="viewport-button" data-breakpoint="tablet" title="Tablet preview, 834 pixels wide" aria-label="Tablet preview">▯</button>
+      <button class="viewport-button" data-breakpoint="mobile" title="Mobile preview, 390 pixels wide" aria-label="Mobile preview">▯</button>
+    </div>
     <button id="reload" class="icon" title="Reload this page and start with a clean session" aria-label="Reload this page and start with a clean session">↻</button>
     <input id="address" aria-label="HTML file path, file URL, or public URL" placeholder="Paste or drop a file://, https://, or local .html path, then press Enter">
     <button id="file" title="Choose a local HTML file or Safari web link">Choose file</button>
@@ -30,14 +35,14 @@
       <section id="inspectPanel" role="tabpanel" aria-labelledby="inspectTab">
         <div id="selection"><h2>Select an element</h2><p>Click anything in the preview to adjust it.</p></div>
         <div id="controls" hidden>
-          <label>Font family<select data-style="font-family"><option value="">Keep page font</option><option>Arial, sans-serif</option><option>Inter, sans-serif</option><option>Georgia, serif</option><option>"Helvetica Neue", sans-serif</option></select><button class="reset-control" data-reset-style="font-family" title="Reset font family">Reset</button></label>
-          <label>Font size <input data-style="font-size" type="range"><output></output><button class="reset-control" data-reset-style="font-size">Reset</button></label>
-          <label>Line height <input data-style="line-height" type="range"><output></output><button class="reset-control" data-reset-style="line-height">Reset</button></label>
-          <label>Letter spacing <input data-style="letter-spacing" type="range"><output></output><button class="reset-control" data-reset-style="letter-spacing">Reset</button></label>
-          <label>Text color <input data-style="color" type="color"><button class="reset-control" data-reset-style="color">Reset</button></label>
-          <label>Background <input data-style="background-color" type="color"><button class="reset-control" data-reset-style="background-color">Reset</button></label>
-          <label>Margin <input data-style="margin" type="range"><output></output><button class="reset-control" data-reset-style="margin">Reset</button></label>
-          <label>Padding <input data-style="padding" type="range"><output></output><button class="reset-control" data-reset-style="padding">Reset</button></label>
+          <div class="control-group"><div class="control-heading"><label>Font family</label><button class="reset-control" data-reset-style="font-family">Reset font family</button></div><select data-style="font-family"><option value="">Keep page font</option><option>Arial, sans-serif</option><option>Inter, sans-serif</option><option>Georgia, serif</option><option>"Helvetica Neue", sans-serif</option></select></div>
+          <div class="control-group"><div class="control-heading"><label>Font size</label><button class="reset-control" data-reset-style="font-size">Reset font size</button></div><div class="control-value"><input data-style="font-size" type="range"><output></output></div></div>
+          <div class="control-group"><div class="control-heading"><label>Line height</label><button class="reset-control" data-reset-style="line-height">Reset line height</button></div><div class="control-value"><input data-style="line-height" type="range"><output></output></div></div>
+          <div class="control-group"><div class="control-heading"><label>Letter spacing</label><button class="reset-control" data-reset-style="letter-spacing">Reset letter spacing</button></div><div class="control-value"><input data-style="letter-spacing" type="range"><output></output></div></div>
+          <div class="control-group"><div class="control-heading"><label>Text color</label><button class="reset-control" data-reset-style="color">Reset text color</button></div><input data-style="color" type="color"></div>
+          <div class="control-group"><div class="control-heading"><label>Background color</label><button class="reset-control" data-reset-style="background-color">Reset background color</button></div><input data-style="background-color" type="color"></div>
+          <div class="control-group"><div class="control-heading"><label>Margin</label><button class="reset-control" data-reset-style="margin">Reset margin</button></div><div class="control-value"><input data-style="margin" type="range"><output></output></div></div>
+          <div class="control-group"><div class="control-heading"><label>Padding</label><button class="reset-control" data-reset-style="padding">Reset padding</button></div><div class="control-value"><input data-style="padding" type="range"><output></output></div></div>
           <label>Replace text <small>(this element only)</small><textarea id="text"></textarea></label>
           <button id="applyText">Apply text change</button>
           <p id="pinContext" class="hint"></p>
@@ -49,21 +54,21 @@
       </section>
       <section id="annotationControls" role="tabpanel" aria-labelledby="markupTab" hidden>
         <h3>Markup</h3>
-        <p class="hint">Draw on the preview, then explain what the drawing means so the handoff is actionable.</p>
+        <p class="hint">Describe the next mark, then draw it. Each line keeps its own explanation and preview size.</p>
         <div class="swatches" aria-label="Markup color"><button data-color="#f25f5c" class="swatch active" title="Coral"></button><button data-color="#ffca56" class="swatch" title="Yellow"></button><button data-color="#64d7ff" class="swatch" title="Blue"></button><button data-color="#8be28b" class="swatch" title="Green"></button><button data-color="#ffffff" class="swatch" title="White"></button></div>
         <label>Line thickness <input id="annotationThickness" type="range" min="1" max="14" step="1" value="3"><output id="annotationThicknessValue">3 px</output></label>
-        <label>What should the AI understand from this drawing?<textarea id="markupExplanation" placeholder="Example: Move the circled section closer to the heading and align both edges."></textarea></label>
-        <p id="markupSaved" class="saved-state">Saved with the export automatically.</p>
-        <div class="markup-actions"><button id="undoStroke">Undo last</button><button id="clearStrokes">Clear all</button></div>
+        <label>What will your next mark mean?<textarea id="markupExplanation" placeholder="Example: Move the circled section closer to the heading and align both edges."></textarea></label>
+        <p id="markupSaved" class="saved-state">This explanation will attach to the next line you draw.</p>
+        <div class="markup-actions"><button id="undoStroke">Undo last</button><button id="clearStrokes">Clear this preview size</button></div>
         <div id="strokeList"><p class="hint">No drawing strokes yet.</p></div>
       </section>
       <section id="helpPanel" role="tabpanel" aria-labelledby="helpTab" hidden>
-        <div class="help-hero"><img src="app-icon.png" alt=""><div><h2>Make the change you can see.</h2><p>Page Tweaker turns visual feedback into a clear handoff without changing the original page.</p></div></div>
+        <div class="help-hero"><img src="app-icon.png" alt=""><div><h2>Show an AI what you want changed.</h2><p>Try visual changes on a safe preview, add feedback, then give your AI session one file that explains everything.</p></div></div>
         <div class="help-steps">
-          <article><span>1</span><div><strong>Open</strong><p>Paste a URL and press Enter, drop a page anywhere, or choose a local file.</p></div></article>
-          <article><span>2</span><div><strong>Select and tweak</strong><p>Click an element. Preview changes on just that element or widen the selector at the bottom.</p></div></article>
-          <article><span>3</span><div><strong>Explain</strong><p>Pin a note to one element or draw in Markup and describe what your drawing means.</p></div></article>
-          <article><span>4</span><div><strong>Hand off to your AI session</strong><p>Create one file containing every preview edit, element locator, pinned note, drawing, markup explanation, and available screenshot. Drag it into your AI chat or copy its path.</p></div></article>
+          <article><span>1</span><div><strong>Open a page</strong><p>Drag a URL, artifact URL, HTML file, or Safari web link onto the app icon or anywhere in the window. You can also use Open With, paste a URL, or choose a file.</p></div></article>
+          <article><span>2</span><div><strong>Try your feedback</strong><p>Choose desktop, tablet, or mobile. Click an element and try sizes, spacing, colors, or replacement text without changing the real page.</p></div></article>
+          <article><span>3</span><div><strong>Explain what you want</strong><p>Pin a note to an element or draw a mark with its own explanation. Page Tweaker remembers which preview size each item belongs to.</p></div></article>
+          <article><span>4</span><div><strong>Give the brief to your AI</strong><p>A handoff is simply one file containing all your feedback and preview choices. Click Create handoff, then drag that file into your AI chat so the agent can make the real changes correctly.</p></div></article>
         </div>
         <div class="help-callout"><strong>Open from another app</strong><p>Install Page Tweaker in Applications. It registers as a handler for public web links and HTML/web-link files, so apps with an “Open with” or browser picker can offer Page Tweaker. It never makes itself your default browser automatically.</p></div>
         <p class="help-footnote">Everything is preview-only. Your original file or website is never modified.</p>
