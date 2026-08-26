@@ -3,6 +3,7 @@ let enabled = true;
 let hovered;
 let selectedElement;
 const originals = new WeakMap();
+const editedElements = new Set();
 
 function installHoverStyle() {
   if (document.getElementById('page-tweaker-hover-style')) return;
@@ -21,9 +22,9 @@ function locator(element) {
   let node = element;
   while (node && node.nodeType === Node.ELEMENT_NODE) {
     const tag = node.tagName.toLowerCase();
+    if (tag === 'html') { parts.unshift('html'); break; }
     const siblings = [...node.parentElement?.children || []].filter((s) => s.tagName === node.tagName);
     parts.unshift(`${tag}:nth-of-type(${siblings.indexOf(node) + 1})`);
-    if (tag === 'html') break;
     node = node.parentElement;
   }
   return parts.join(' > ');
@@ -57,7 +58,18 @@ function rememberOriginal(element) {
     text: element.innerText,
     properties: Object.fromEntries(['font-family', 'font-size', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'].map((property) => [property, element.style.getPropertyValue(property)]))
   });
+  editedElements.add(element);
   return originals.get(element);
+}
+
+function restoreAllEdits() {
+  editedElements.forEach((element) => {
+    if (!element.isConnected) return;
+    const original = originals.get(element);
+    if (original.inlineStyle === null) element.removeAttribute('style');
+    else element.setAttribute('style', original.inlineStyle);
+    element.innerText = original.text;
+  });
 }
 
 function clearHover() {
@@ -148,9 +160,12 @@ ipcRenderer.on('apply-edit', (_event, request) => {
 
 ipcRenderer.on('apply-session', (_event, request) => {
   try {
-    (request.styles || []).forEach((edit) => document.querySelectorAll(edit.selector).forEach((element) => { rememberOriginal(element); Object.entries(edit.changes).forEach(([property, value]) => element.style.setProperty(property, value)); }));
-    (request.texts || []).forEach((edit) => { const element = document.querySelector(edit.selector); if (element) { rememberOriginal(element); element.innerText = edit.text; } });
-    ipcRenderer.sendToHost('session-applied', { id: request.id, ok: true });
+    if (request.reset) restoreAllEdits();
+    let styleTargets = 0;
+    (request.styles || []).forEach((edit) => document.querySelectorAll(edit.selector).forEach((element) => { styleTargets += 1; rememberOriginal(element); Object.entries(edit.changes).forEach(([property, value]) => element.style.setProperty(property, value)); }));
+    let textTargets = 0;
+    (request.texts || []).forEach((edit) => { const element = document.querySelector(edit.selector); if (element) { textTargets += 1; rememberOriginal(element); element.innerText = edit.text; } });
+    ipcRenderer.sendToHost('session-applied', { id: request.id, ok: true, styleTargets, textTargets, styleRequests: (request.styles || []).length });
   } catch (error) {
     ipcRenderer.sendToHost('session-applied', { id: request.id, ok: false, message: error.message });
   }

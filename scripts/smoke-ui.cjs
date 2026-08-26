@@ -72,21 +72,37 @@ async function connect() {
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('color')`));
     await evaluate(`document.querySelector('[data-reset-style="font-size"]').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only font-size')`));
+    assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#ff0000');
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => [getComputedStyle(element).fontSize, getComputedStyle(element).color])")`), [['22px', 'rgb(255, 0, 0)'], ['22px', 'rgb(255, 0, 0)']]);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('font-size')`));
 
     await evaluate(`document.querySelector('[data-breakpoint="mobile"]').click()`);
-    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('mobile preview')`));
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Mobile preview')`));
     assert.equal(await evaluate(`Math.round(document.querySelector('#page').getBoundingClientRect().width)`), 390);
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
     await evaluate(`document.querySelector('[data-breakpoint="desktop"]').click()`);
-    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('desktop preview')`));
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Desktop preview')`));
+    assert.equal(await evaluate(`document.querySelector('#status').dataset.captureError || ''`), '');
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
 
     await evaluate(`window.confirm = () => true; document.querySelector('#reload').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element') && document.querySelector('#selectorBar').hidden`));
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
+    await evaluate(`document.querySelector('[data-breakpoint="mobile"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Mobile preview')`));
+    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
+    await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
+    await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '27'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('font-size')`));
+    await evaluate(`document.querySelector('[data-breakpoint="desktop"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Desktop preview')`));
+    assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
+    await evaluate(`document.querySelector('[data-breakpoint="mobile"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Mobile preview')`));
+    assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['27px', '22px']);
+    await evaluate(`document.querySelector('[data-breakpoint="desktop"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Desktop preview')`));
 
     await evaluate(`document.querySelector('#markupTab').click()`);
     await evaluate(`(() => { const input = document.querySelector('#markupExplanation'); input.value = 'Move the marked block closer to the heading.'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
@@ -117,6 +133,10 @@ async function connect() {
     const archiveContents = execFileSync('/usr/bin/unzip', ['-Z1', handoffPath], { encoding: 'utf8' });
     assert.match(archiveContents, /START-HERE\.md/);
     assert.match(archiveContents, /handoff\.json/);
+    assert.match(archiveContents, /desktop-annotated\.png/);
+    assert.match(archiveContents, /mobile-annotated\.png/);
+    const annotatedImage = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/desktop-annotated.png']);
+    assert.ok(annotatedImage.length > 10000, 'The annotated image does not contain meaningful page context.');
     const handoffJson = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/handoff.json'], { encoding: 'utf8' });
     assert.match(handoffJson, /Move the marked block closer to the heading/);
     assert.match(handoffJson, /"breakpoint": "desktop"/);

@@ -12,6 +12,8 @@ test('selector scope defaults to exact and supports repeated class and tag match
   assert.match(bridge, /candidates\.push\(tag\)/);
   assert.match(bridge, /document\.querySelectorAll\(request\.scope\.selector\)/);
   assert.match(renderer, /setScope\(selected\.scopes\[0\]\)/);
+  assert.match(bridge, /if \(tag === 'html'\) \{ parts\.unshift\('html'\); break; \}/);
+  assert.doesNotMatch(bridge, /html:nth-of-type\(0\)/);
 });
 
 test('clean reload forces a new webview document and clears session state', () => {
@@ -44,6 +46,8 @@ test('responsive previews scope evidence and markup by breakpoint', () => {
   assert.match(renderer, /point\.y - state\.pageScroll\.y/);
   assert.match(bridge, /'page-scroll'/);
   assert.match(bridge, /'identify-point'/);
+  assert.match(renderer, /applyCurrentBreakpoint\(\{ reset: true \}\)/);
+  assert.match(bridge, /restoreAllEdits\(\)/);
 });
 
 test('handoff tells the receiving AI to infer intent rather than paste preview code', () => {
@@ -56,9 +60,22 @@ test('handoff tells the receiving AI to infer intent rather than paste preview c
 test('reset controls have explicit property labels and native context copy is available', () => {
   const html = read('src/index.html');
   const main = read('src/main.cjs');
+  const renderer = read('src/renderer.js');
   assert.match(html, />Reset font size</);
   assert.match(html, />Reset text color</);
   assert.match(main, /role: 'copy'/);
+  assert.match(renderer, /setOneControl\(property, state\.selected\.style\)/);
+});
+
+test('breakpoint controls use standard device SVGs and handoff images include page context', () => {
+  const html = read('src/index.html');
+  const renderer = read('src/renderer.js');
+  const main = read('src/main.cjs');
+  assert.equal((html.match(/class="viewport-button/g) || []).length, 3);
+  assert.match(html, /class="viewport-button[^>]*>[\s\S]*?<svg/);
+  assert.match(renderer, /captureCurrentVisual/);
+  assert.match(renderer, /desktopBridge\.capturePage/);
+  assert.match(main, /\$\{breakpoint\}-annotated\.png/);
 });
 
 test('the title bar is draggable and interactive header controls opt out', () => {

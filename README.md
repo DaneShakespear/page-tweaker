@@ -27,7 +27,7 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 - Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to the size where it was created.
 - Supports plain-text replacement when the words need to fit the layout.
 - Pins natural-language AI notes to elements and gives every freehand mark its own editable explanation and nearby element locator.
-- Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and a visual markup overlay when drawings or pins exist.
+- Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and annotated screenshots showing the real page beneath the feedback at each visited preview size.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
 ## How the handoff works
