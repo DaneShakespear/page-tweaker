@@ -16,11 +16,11 @@ Page Tweaker is a public macOS Electron app for visual QA of local HTML artifact
 - Status: active local product.
 - Workspace: `/Users/daneshakespear/Workspace/Page Tweaker App`.
 - Repository: <https://github.com/DaneShakespear/page-tweaker>.
-- Current release: `v0.1.9`, Apple Silicon DMG.
-- Visible releases: `v0.1.9` only.
+- Current release: `v0.1.10`, Apple Silicon DMG.
+- Visible releases: `v0.1.10` only.
 - Release signing: ad-hoc signed and strict-signature verified; not Developer ID signed or Apple notarized.
-- Current release commit: `acf6a99`.
-- DMG SHA-256: `6cc132ea382af31a6f527cc427d65e287920a735e0b85d5cb8f630bf4e8e9d36`.
+- Current release commit: `0f0ce5e`.
+- DMG SHA-256: `c2b62e6ad6ce060ace08357f081c2032f44b0209c39010e1f1651da97c7cd4d6`.
 
 ## Current objective
 
@@ -28,7 +28,7 @@ Stabilize the approved v1 interaction boundary through testing of the packaged E
 
 ## Next meaningful action
 
-Test `v0.1.9` against representative local HTML artifacts and public URLs. Record the next verified interaction defect or usability issue before expanding scope.
+Test `v0.1.10` by dragging a generated handoff ZIP into representative AI chats and confirming that each can read and act on the brief without additional explanation.
 
 ## Approved v1 boundary
 
@@ -37,7 +37,7 @@ Test `v0.1.9` against representative local HTML artifacts and public URLs. Recor
 - Immediate preview-only typography, spacing, color, background, and text changes.
 - Pinned notes attached to the exact clicked element.
 - Freehand markup with color, thickness, undo, individual removal, and clear-all controls.
-- Portable export bundle containing structured JSON, an implementation prompt, and an annotated screenshot when capture succeeds.
+- One draggable AI handoff ZIP containing structured JSON, a `START-HERE.md` implementation brief, and a markup overlay when drawings or pins exist.
 
 ## Non-goals
 

@@ -1,8 +1,8 @@
 # Page Tweaker Current State
 
 **Last verified:** 2026-08-26  
-**Current release:** `v0.1.9`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.9>
+**Current release:** `v0.1.10`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.10>
 
 ## Product state
 
@@ -16,7 +16,7 @@ The current interaction model is:
 4. Preview typography, spacing, text color, background, and text changes immediately.
 5. Reset an individual property or restore the active selector to its original values.
 6. Pin an exact-element note or use the separate Markup tab for drawing.
-7. Export `handoff.json`, `prompt.md`, and `annotated.png` when screenshot capture succeeds.
+7. Create one AI handoff ZIP, then drag its in-app file icon into an AI chat or copy the selectable full path.
 
 Text replacement and pinned notes remain exact-element actions even when a broader visual selector is active. This prevents one heading's content from being copied across every matching heading.
 
@@ -41,16 +41,19 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Added a concise How it works tab and a production application icon.
 - Added a markup explanation that travels with `handoff.json` and `prompt.md`.
 - Registered the installed app as an alternate HTTP, HTTPS, file, and Page Tweaker URL handler without changing the system default browser.
+- Replaced the screenshot-dependent export dialog with an automatic single-file handoff saved under `Downloads/Page Tweaker Handoffs`.
+- Added a Handoff tab with a native draggable file icon, selectable full path, Copy Path, and Show in Finder.
+- Added `START-HERE.md` so the receiving AI understands that the ZIP is the complete brief, including previewed values, locators, notes, markup meaning, and drawing data.
 
 ## Verification evidence
 
-- `npm test`: 13 of 13 tests passing.
-- Packaged Electron smoke: native window drag, local path, public HTTP URL through Enter, `file://` URL drop, exact/all selector scope, live style editing, scoped reset, true clean reload, markup explanation/removal, and Help tab passed.
+- `npm test`: 14 of 14 tests passing.
+- Packaged Electron smoke: native window drag, local path, public HTTP URL through Enter, `file://` URL drop, exact/all selector scope, live style editing, scoped reset, true clean reload, markup explanation/removal, Help tab, ZIP creation, archive-content inspection, and path copying passed.
 - `hdiutil verify`: DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and hosted DMG SHA-256 match: `6cc132ea382af31a6f527cc427d65e287920a735e0b85d5cb8f630bf4e8e9d36`.
+- Local and hosted DMG SHA-256 match: `c2b62e6ad6ce060ace08357f081c2032f44b0209c39010e1f1651da97c7cd4d6`.
 - GitHub assets include the DMG and blockmap.
-- `v0.1.9` is the only visible release.
+- `v0.1.10` is the only visible release.
 
 ## Architecture that matters
 
@@ -66,10 +69,10 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - The app is ad-hoc signed, not Developer ID signed or Apple notarized. Gatekeeper may require Control-click > Open or a per-app quarantine removal for a trusted download.
 - Public pages only. The app does not inherit Chrome/Safari cookies or authenticated browser sessions.
 - Preview changes exist only in the current session and export bundle. They do not modify source code.
-- Screenshot capture can fail on some pages; structured JSON and prompt export remain the durable handoff.
+- The handoff includes a transparent markup overlay rather than a full-page screenshot; the source address, DOM locators, values, notes, and drawing coordinates remain the durable implementation evidence.
 - The repository does not yet grant an open-source license.
 - The README still uses a concept render; a real product screenshot walkthrough remains planned.
 
 ## Next-session starting point
 
-Start from the packaged `v0.1.9` app, not `src/index.html` in a browser. Reproduce any new issue there first. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release. Keep only the current verified release visible and compare the hosted DMG hash with the local validated artifact.
+Start from the packaged `v0.1.10` app, not `src/index.html` in a browser. Test the generated ZIP in representative AI chats and verify it is understood without extra explanation. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release. Keep only the current verified release visible and compare the hosted DMG hash with the local validated artifact.
