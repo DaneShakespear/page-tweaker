@@ -1,6 +1,6 @@
 # Contributing
 
-Page Tweaker is intentionally narrow: it makes visual review and AI handoff faster. Contributions should make that loop clearer, faster, or more reliable.
+PageTweaker is intentionally narrow: it makes visual review and AI handoff faster. Contributions should make that loop clearer, faster, or more reliable.
 
 ## Local checks
 

@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Page Tweaker</title>
+  <title>PageTweaker</title>
   <link rel="stylesheet" href="shell.css">
 </head>
 <body>
   <header>
-    <strong>Page Tweaker <small id="version">v…</small></strong>
+    <strong>PageTweaker <small id="version">v…</small></strong>
     <div class="viewport-picker" role="group" aria-label="Preview size">
       <button class="viewport-button active" data-breakpoint="desktop" title="Desktop preview, 1440 pixels wide" aria-label="Desktop preview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg></button>
       <button class="viewport-button" data-breakpoint="tablet" title="Tablet preview, 834 pixels wide" aria-label="Tablet preview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M11 18h2"></path></svg></button>
@@ -26,7 +26,7 @@
       <div id="empty"><h1>Open a page to start tweaking.</h1><p>Paste or drop a local <code>file://</code> URL, a public URL, or choose an HTML file.</p></div>
     </section>
     <aside>
-      <div class="tabs" role="tablist" aria-label="Page Tweaker tools">
+      <div class="tabs" role="tablist" aria-label="PageTweaker tools">
         <button id="inspectTab" class="tab active" role="tab" aria-selected="true" aria-controls="inspectPanel" tabindex="0">Inspect</button>
         <button id="markupTab" class="tab" role="tab" aria-selected="false" aria-controls="annotationControls" tabindex="-1">Markup</button>
         <button id="helpTab" class="tab" role="tab" aria-selected="false" aria-controls="helpPanel" tabindex="-1">How it works</button>
@@ -39,12 +39,11 @@
           <div class="control-group"><div class="control-heading"><label>Font size</label><button class="reset-control" data-reset-style="font-size">Reset font size</button></div><div class="control-value"><input data-style="font-size" type="range"><output></output></div></div>
           <div class="control-group"><div class="control-heading"><label>Line height</label><button class="reset-control" data-reset-style="line-height">Reset line height</button></div><div class="control-value"><input data-style="line-height" type="range"><output></output></div></div>
           <div class="control-group"><div class="control-heading"><label>Letter spacing</label><button class="reset-control" data-reset-style="letter-spacing">Reset letter spacing</button></div><div class="control-value"><input data-style="letter-spacing" type="range"><output></output></div></div>
-          <div class="control-group"><div class="control-heading"><label>Text color</label><button class="reset-control" data-reset-style="color">Reset text color</button></div><input data-style="color" type="color"></div>
-          <div class="control-group"><div class="control-heading"><label>Background color</label><button class="reset-control" data-reset-style="background-color">Reset background color</button></div><input data-style="background-color" type="color"></div>
+          <div class="control-group"><div class="control-heading"><label>Text color</label><button class="reset-control" data-reset-style="color">Reset text color</button></div><div class="color-value"><input data-style="color" type="color" aria-label="Choose text color"><input class="hex-input" data-hex-for="color" aria-label="Text color hex value" maxlength="7" spellcheck="false" value="#000000"></div></div>
+          <div class="control-group"><div class="control-heading"><label>Background color</label><button class="reset-control" data-reset-style="background-color">Reset background color</button></div><div class="color-value"><input data-style="background-color" type="color" aria-label="Choose background color"><input class="hex-input" data-hex-for="background-color" aria-label="Background color hex value" maxlength="7" spellcheck="false" value="#000000"></div></div>
           <div class="control-group"><div class="control-heading"><label>Margin</label><button class="reset-control" data-reset-style="margin">Reset margin</button></div><div class="control-value"><input data-style="margin" type="range"><output></output></div></div>
           <div class="control-group"><div class="control-heading"><label>Padding</label><button class="reset-control" data-reset-style="padding">Reset padding</button></div><div class="control-value"><input data-style="padding" type="range"><output></output></div></div>
-          <label>Replace text <small>(this element only)</small><textarea id="text"></textarea></label>
-          <button id="applyText">Apply text change</button>
+          <label>Replace text <small>(this element only, updates as you type)</small><textarea id="text"></textarea></label>
           <p id="pinContext" class="hint"></p>
           <label>AI note<textarea id="note" placeholder="Explain the change this selected element needs"></textarea></label>
           <button id="pinNote">Pin note to selected element</button>
@@ -67,16 +66,16 @@
         <div class="help-steps">
           <article><span>1</span><div><strong>Open a page</strong><p>Drag a URL, artifact URL, HTML file, or Safari web link onto the app icon or anywhere in the window. You can also use Open With, paste a URL, or choose a file.</p></div></article>
           <article><span>2</span><div><strong>Try your feedback</strong><p>Choose desktop, tablet, or mobile. Click an element and try sizes, spacing, colors, or replacement text without changing the real page.</p></div></article>
-          <article><span>3</span><div><strong>Explain what you want</strong><p>Pin a note to an element or draw a mark with its own explanation. Page Tweaker remembers which preview size each item belongs to.</p></div></article>
+          <article><span>3</span><div><strong>Explain what you want</strong><p>Pin a note to an element or draw a mark with its own explanation. PageTweaker remembers which preview size each item belongs to.</p></div></article>
           <article><span>4</span><div><strong>Give the brief to your AI</strong><p>A handoff is simply one file containing all your feedback and preview choices. Click Create handoff, then drag that file into your AI chat so the agent can make the real changes correctly.</p></div></article>
         </div>
-        <div class="help-callout"><strong>Open from another app</strong><p>Install Page Tweaker in Applications. It registers as a handler for public web links and HTML/web-link files, so apps with an “Open with” or browser picker can offer Page Tweaker. It never makes itself your default browser automatically.</p></div>
+        <div class="help-callout"><strong>Open from another app</strong><p>Install PageTweaker in Applications. It registers as a handler for public web links and HTML/web-link files, so apps with an “Open with” or browser picker can offer PageTweaker. It never makes itself your default browser automatically.</p></div>
         <p class="help-footnote">Everything is preview-only. Your original file or website is never modified.</p>
       </section>
       <section id="handoffPanel" role="tabpanel" aria-labelledby="handoffTab" hidden>
         <div id="handoffEmpty">
           <h2>Your AI handoff</h2>
-          <p>Create a handoff after making your changes. Page Tweaker packages everything your AI session needs to understand what you changed and what should happen next.</p>
+          <p>Create a handoff after making your changes. PageTweaker packages everything your AI session needs to understand what you changed and what should happen next.</p>
           <button id="createHandoff" class="primary">Create handoff file</button>
         </div>
         <div id="handoffReady" hidden>
@@ -84,7 +83,7 @@
           <p>Drag this file into your AI chat. It contains the full brief, selectors, preview values, pinned notes, markup explanation, drawing data, and a visual markup overlay when available.</p>
           <div id="handoffFile" class="handoff-file" draggable="true" tabindex="0" aria-label="Drag handoff file into an AI chat">
             <img src="app-icon.png" alt="">
-            <strong id="handoffName">Page Tweaker handoff</strong>
+            <strong id="handoffName">PageTweaker handoff</strong>
             <span>Drag into your AI chat</span>
           </div>
           <label>Full file path<textarea id="handoffPath" readonly spellcheck="false"></textarea></label>

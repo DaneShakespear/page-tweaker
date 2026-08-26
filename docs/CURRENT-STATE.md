@@ -1,12 +1,12 @@
-# Page Tweaker Current State
+# PageTweaker Current State
 
 **Last verified:** 2026-08-26  
-**Current release:** `v0.1.12`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.12>
+**Current release:** `v0.1.13`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.13>
 
 ## Product state
 
-Page Tweaker is a working public macOS Electron application for previewing visual changes to local HTML artifacts and public web pages. The original artifact remains untouched. The user can select an element, test visual adjustments, attach explanation, and export a portable implementation handoff.
+PageTweaker is a working public macOS Electron application for previewing visual changes to local HTML artifacts and public web pages. The original artifact remains untouched. The user can select an element, test visual adjustments, attach explanation, and export a portable implementation handoff.
 
 The current interaction model is:
 
@@ -40,8 +40,8 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Simplified the top bar to reload, address, file selection, and export; Enter loads the typed target.
 - Added a concise How it works tab and a production application icon.
 - Added a markup explanation that travels with `handoff.json` and `prompt.md`.
-- Registered the installed app as an alternate HTTP, HTTPS, file, and Page Tweaker URL handler without changing the system default browser.
-- Replaced the screenshot-dependent export dialog with an automatic single-file handoff saved under `Downloads/Page Tweaker Handoffs`.
+- Registered the installed app as an alternate HTTP, HTTPS, file, and PageTweaker URL handler without changing the system default browser.
+- Replaced the screenshot-dependent export dialog with an automatic single-file handoff saved under `Downloads/PageTweaker Handoffs`.
 - Added a Handoff tab with a native draggable file icon, selectable full path, Copy Path, and Show in Finder.
 - Added `START-HERE.md` so the receiving AI understands that the ZIP is the complete brief, including previewed values, locators, notes, markup meaning, and drawing data.
 - Added desktop, tablet, and mobile preview controls. Edits, text outcomes, pinned notes, and markup are stored and reapplied only at their recorded breakpoint.
@@ -54,16 +54,20 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Replaced breakpoint reloads with an acknowledged in-place restore/apply cycle. Exact-element and repeated-selector changes now remain isolated and persistent across size switches.
 - Fixed exact locators that incorrectly began with `html:nth-of-type(0)` and therefore could not be restored.
 - Replaced context-free markup overlays with full annotated page screenshots for each visited breakpoint.
+- Standardized the visible product name and packaged app name as `PageTweaker`.
+- Replaced the opaque square icon canvas with a real-alpha transparent master used by the app, DMG, Help, and handoff surfaces.
+- Added synchronized hex fields beside the text and background color pickers. Pasted 3- or 6-digit hex values update the preview immediately.
+- Made replacement text update in the preview while the user types; the separate Apply button is no longer required.
 
 ## Verification evidence
 
-- `npm test`: 18 of 18 tests passing.
+- `npm test`: 19 of 19 tests passing.
 - Packaged Electron smoke: native window drag, exact and repeated breakpoint persistence, property-specific reset without neighboring UI changes, clean reload, scroll-attached per-mark explanation, local/public/file loading, ZIP inspection, full annotated screenshots, goal-focused AI instructions, and path copying passed.
 - `hdiutil verify`: DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and hosted DMG SHA-256 match: `4f07ce839db58cec5a1cfe65b9951668a782acc5e5acf8c9f8872b58bcfce07c`.
+- Local DMG SHA-256: `61b1ae91f0277cfd687ec07b247882d74c9a06744bf2e422249e68f2230488b7`.
 - GitHub assets include the DMG and blockmap.
-- `v0.1.12` is the only visible release.
+- `v0.1.13` is the only visible release.
 
 ## Architecture that matters
 
@@ -85,4 +89,4 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 
 ## Next-session starting point
 
-Start from the packaged `v0.1.12` app, not `src/index.html` in a browser. Test exact-element and repeated-selector edits across all preview sizes, then visually inspect the generated annotated images before giving the ZIP to an AI chat. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release.
+Start from the packaged `v0.1.13` app, not `src/index.html` in a browser. Test exact-element and repeated-selector edits across all preview sizes, then visually inspect the generated annotated images before giving the ZIP to an AI chat. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release.

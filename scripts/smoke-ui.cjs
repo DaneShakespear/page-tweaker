@@ -7,14 +7,14 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
 const root = path.join(__dirname, '..');
-const binary = path.join(root, 'dist', 'mac-arm64', 'Page Tweaker.app', 'Contents', 'MacOS', 'Page Tweaker');
+const binary = path.join(root, 'dist', 'mac-arm64', 'PageTweaker.app', 'Contents', 'MacOS', 'PageTweaker');
 const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
 const app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const windowPosition = () => {
-  const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerName as String] as? String) == "Page Tweaker", let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
+  const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerName as String] as? String) == "PageTweaker", let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
   const output = execFileSync('/usr/bin/swift', ['-e', script], { encoding: 'utf8' }).trim();
   return output || null;
 };
@@ -59,10 +59,13 @@ async function connect() {
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
+    assert.match(await evaluate(`document.querySelector('header strong').textContent`), /PageTweaker/);
     const choices = await evaluate(`[...document.querySelectorAll('[data-scope-key]')].map((button) => button.textContent)`);
     assert.equal(choices[0], 'This element');
     assert.ok(choices.some((label) => label.startsWith('All h1')));
     assert.match(await evaluate(`document.querySelector('#scopeSummary').textContent`), /only this element/);
+    await evaluate(`(() => { const input = document.querySelector('#text'); input.value = 'Live PageTweaker heading'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').textContent")`).then((text) => text === 'Live PageTweaker heading'));
 
     await evaluate(`[...document.querySelectorAll('[data-scope-key]')].find((button) => button.textContent.startsWith('All h1')).click()`);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
@@ -70,10 +73,13 @@ async function connect() {
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
     await evaluate(`(() => { const input = document.querySelector('[data-style="color"]'); input.value = '#ff0000'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('color')`));
+    assert.equal(await evaluate(`document.querySelector('[data-hex-for="color"]').value`), '#ff0000');
+    await evaluate(`(() => { const input = document.querySelector('[data-hex-for="color"]'); input.value = '#00ff00'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).color")`).then((color) => color === 'rgb(0, 255, 0)'));
     await evaluate(`document.querySelector('[data-reset-style="font-size"]').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only font-size')`));
-    assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#ff0000');
-    assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => [getComputedStyle(element).fontSize, getComputedStyle(element).color])")`), [['22px', 'rgb(255, 0, 0)'], ['22px', 'rgb(255, 0, 0)']]);
+    assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#00ff00');
+    assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => [getComputedStyle(element).fontSize, getComputedStyle(element).color])")`), [['22px', 'rgb(0, 255, 0)'], ['22px', 'rgb(0, 255, 0)']]);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('font-size')`));
 

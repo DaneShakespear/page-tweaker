@@ -1,14 +1,14 @@
-# Page Tweaker
+# PageTweaker
 
 > Make the change you can see.
 
-<img src="assets/page-tweaker-app-icon-v2.png" alt="Page Tweaker app icon" width="160">
+<img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="PageTweaker app icon" width="160">
 
-Page Tweaker is a focused macOS desktop app for the frustrating last mile of AI-generated HTML: the report, interface, or landing page is almost right, but getting it there requires too much back-and-forth.
+PageTweaker is a focused macOS desktop app for the frustrating last mile of AI-generated HTML: the report, interface, or landing page is almost right, but getting it there requires too much back-and-forth.
 
 Open the page. Click what looks wrong. Tune the visible value. Mark up what needs a bigger change. Create one handoff file that gives an AI session or developer the exact implementation brief.
 
-![Concept render of Page Tweaker](assets/page-tweaker-concept.png)
+![Concept render of PageTweaker](assets/page-tweaker-concept.png)
 
 *Concept render. A real product screenshot walkthrough remains planned.*
 
@@ -16,9 +16,9 @@ Open the page. Click what looks wrong. Tune the visible value. Mark up what need
 
 “Make the header smaller” is not an implementation instruction. It is a guess that becomes a loop of edits, previews, and more guesses.
 
-Page Tweaker puts the visual decision where it belongs: on the page itself. It is not a browser extension, full CSS editor, or no-code site builder. It is a fast visual QA and AI-handoff layer for pages that are already close.
+PageTweaker puts the visual decision where it belongs: on the page itself. It is not a browser extension, full CSS editor, or no-code site builder. It is a fast visual QA and AI-handoff layer for pages that are already close.
 
-![Page Tweaker workflow](docs/workflow.svg)
+![PageTweaker workflow](docs/workflow.svg)
 
 ## What it does
 
@@ -35,22 +35,22 @@ Page Tweaker puts the visual decision where it belongs: on the page itself. It i
 1. **Open** a local report, page, or public URL.
 2. **Tune** the element until it looks right.
 3. **Explain** larger changes with a pinned note or markup.
-4. **Create the handoff**. Page Tweaker saves one ZIP in `Downloads/Page Tweaker Handoffs`.
+4. **Create the handoff**. PageTweaker saves one ZIP in `Downloads/PageTweaker Handoffs`.
 5. Drag its icon directly into Codex, Claude, another AI chat, or copy the displayed full path.
 
 The AI receives the original page address, selectors, scope, previewed values, replacement text, pinned notes, breakpoint context, drawing coordinates, per-mark explanations, nearby element locators, and a plain-language brief. The brief explicitly treats those details as evidence of the desired outcome, not code or architecture to paste blindly. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
 
 ## Install
 
-Download the Apple Silicon DMG from [Releases](../../releases), drag Page Tweaker to Applications, then Control-click and choose **Open** the first time.
+Download the Apple Silicon DMG from [Releases](../../releases), drag PageTweaker to Applications, then Control-click and choose **Open** the first time.
 
-The top bar always shows the running version. Paste a path or URL and press Enter, drop it anywhere, or choose a local `.html` or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with Page Tweaker or use `page-tweaker://open?url=` followed by an encoded URL.
+The top bar always shows the running version. Paste a path or URL and press Enter, drop it anywhere, or choose a local `.html` or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with PageTweaker or use `page-tweaker://open?url=` followed by an encoded URL.
 
-The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer Page Tweaker without Page Tweaker silently replacing your default browser.
+The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer PageTweaker without PageTweaker silently replacing your default browser.
 
-When you select an element, Page Tweaker defaults to changing only that exact element at the active desktop, tablet, or mobile preview. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element and preview size. Each Inspector reset button names the one property it restores. Markup lines move with the page while it scrolls, and each line keeps its own explanation.
+When you select an element, PageTweaker defaults to changing only that exact element at the active desktop, tablet, or mobile preview. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Replacement text updates as you type, and color controls include synchronized hex fields for copying or pasting exact colors. Pinned notes stay attached to the exact clicked element and preview size. Each Inspector reset button names the one property it restores. Markup lines move with the page while it scrolls, and each line keeps its own explanation.
 
-The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
+The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing PageTweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 
 ## Run from source
 
@@ -70,7 +70,7 @@ page-tweaker https://example.com
 
 ## Current boundaries
 
-Page Tweaker v1 supports public pages and local HTML artifacts. It does not reuse your Chrome profile, import cookies, log into sites on your behalf, modify the original source file, or send changes directly to an AI provider. Those limits are deliberate.
+PageTweaker v1 supports public pages and local HTML artifacts. It does not reuse your Chrome profile, import cookies, log into sites on your behalf, modify the original source file, or send changes directly to an AI provider. Those limits are deliberate.
 
 ## Development
 

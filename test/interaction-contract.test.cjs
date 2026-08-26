@@ -103,3 +103,17 @@ test('AI handoff is a draggable archive with a selectable and copyable path', ()
   assert.match(main, /const archive = `\$\{folder\}\.zip`/);
   assert.match(main, /START-HERE\.md/);
 });
+
+test('PageTweaker branding, live text, and synchronized hex color fields are wired', () => {
+  const html = read('src/index.html');
+  const renderer = read('src/renderer.js');
+  const manifest = JSON.parse(read('package.json'));
+  assert.match(html, /<strong>PageTweaker <small id="version">/);
+  assert.equal(manifest.build.productName, 'PageTweaker');
+  assert.match(html, /data-hex-for="color"/);
+  assert.match(html, /data-hex-for="background-color"/);
+  assert.doesNotMatch(html, /id="applyText"/);
+  assert.match(renderer, /function normalizeHex/);
+  assert.match(renderer, /querySelector\('#text'\)\.addEventListener\('input'/);
+  assert.match(renderer, /picker\.dispatchEvent\(new Event\('input'/);
+});

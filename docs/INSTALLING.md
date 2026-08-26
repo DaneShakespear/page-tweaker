@@ -1,23 +1,23 @@
-# Installing Page Tweaker on macOS
+# Installing PageTweaker on macOS
 
-Page Tweaker currently ships as an ad-hoc signed Apple Silicon (`arm64`) macOS app. The ad-hoc signature protects bundle integrity and is verified during release QA, but it is not an Apple Developer ID signature and the app is not notarized. macOS may therefore warn on first launch.
+PageTweaker currently ships as an ad-hoc signed Apple Silicon (`arm64`) macOS app. The ad-hoc signature protects bundle integrity and is verified during release QA, but it is not an Apple Developer ID signature and the app is not notarized. macOS may therefore warn on first launch.
 
 ## Install from a release
 
-1. Download `Page Tweaker-<version>-arm64.dmg` from Releases.
-2. Double-click the DMG and drag **Page Tweaker** to **Applications**.
+1. Download `PageTweaker-<version>-arm64.dmg` from Releases.
+2. Double-click the DMG and drag **PageTweaker** to **Applications**.
 3. On first launch, Control-click the app and choose **Open**, then choose **Open** in the confirmation dialog.
 
 This grants an exception for this app only. Do not disable Gatekeeper system-wide.
 
 ## Open links from other apps
 
-When Page Tweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links as well as HTML and Safari `.webloc` files. Apps with an **Open with** or browser-selection menu can then list Page Tweaker. Page Tweaker does not make itself the default browser automatically.
+When PageTweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links as well as HTML and Safari `.webloc` files. Apps with an **Open with** or browser-selection menu can then list PageTweaker. PageTweaker does not make itself the default browser automatically.
 
 If macOS still blocks a known-good download, inspect the file first, then remove only that file's quarantine flag:
 
 ```sh
-xattr -dr com.apple.quarantine "/Applications/Page Tweaker.app"
+xattr -dr com.apple.quarantine "/Applications/PageTweaker.app"
 ```
 
 Use that command only for a release you obtained from this repository and have chosen to trust.
@@ -33,7 +33,7 @@ npm install
 npm start
 ```
 
-Do not open `src/index.html` directly in Chrome or another browser. It is the Electron app shell and its element-selection and export bridges exist only when you launch Page Tweaker with `npm start` or the installed `.app`.
+Do not open `src/index.html` directly in Chrome or another browser. It is the Electron app shell and its element-selection and export bridges exist only when you launch PageTweaker with `npm start` or the installed `.app`.
 
 The repository includes `.npmrc` so Electron's official post-install runtime download is permitted in environments that require package-script allowlisting.
 
@@ -59,6 +59,6 @@ The result is written to `dist/`. The repository's packaging hook applies an ad-
 | --- | --- |
 | `Electron failed to install correctly` | Delete `node_modules`, run `npm install` again, and ensure outbound access to Electron's official GitHub release downloads. |
 | A page does not load | Confirm it is a public `http` or `https` URL. v1 intentionally does not reuse browser cookies or authenticated sessions. |
-| The handoff button appears to do nothing | Use the installed packaged app, not `src/index.html` in a browser. A successful handoff opens the Handoff tab and saves one ZIP in `Downloads/Page Tweaker Handoffs`. |
-| An edit does not match the source | Give the entire ZIP to the AI session so it can use the locator, scope, previewed values, notes, drawing data, and markup explanation together. Page Tweaker is a handoff tool, not a source-code writer. |
-| Right-click does not show Copy | Confirm you are using v0.1.12 or newer. Selected text in the app and preview has a native Copy context menu; Command-C continues to work. |
+| The handoff button appears to do nothing | Use the installed packaged app, not `src/index.html` in a browser. A successful handoff opens the Handoff tab and saves one ZIP in `Downloads/PageTweaker Handoffs`. |
+| An edit does not match the source | Give the entire ZIP to the AI session so it can use the locator, scope, previewed values, notes, drawing data, and markup explanation together. PageTweaker is a handoff tool, not a source-code writer. |
+| Right-click does not show Copy | Confirm you are using v0.1.13 or newer. Selected text in the app and preview has a native Copy context menu; Command-C continues to work. |

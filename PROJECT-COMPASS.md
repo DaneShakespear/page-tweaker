@@ -1,8 +1,8 @@
-# Page Tweaker Project Compass
+# PageTweaker Project Compass
 
 ## What this is
 
-Page Tweaker is a public macOS Electron app for visual QA of local HTML artifacts and public web pages. It supports preview-only element edits, pinned notes, drawing markup, and portable AI/developer handoff bundles. It never modifies the opened source artifact.
+PageTweaker is a public macOS Electron app for visual QA of local HTML artifacts and public web pages. It supports preview-only element edits, pinned notes, drawing markup, and portable AI/developer handoff bundles. It never modifies the opened source artifact.
 
 ## Authority
 
@@ -16,11 +16,11 @@ Page Tweaker is a public macOS Electron app for visual QA of local HTML artifact
 - Status: active local product.
 - Workspace: `/Users/daneshakespear/Workspace/Page Tweaker App`.
 - Repository: <https://github.com/DaneShakespear/page-tweaker>.
-- Current release: `v0.1.12`, Apple Silicon DMG.
-- Visible releases: `v0.1.12` only.
+- Current release: `v0.1.13`, Apple Silicon DMG.
+- Visible releases: `v0.1.13` only.
 - Release signing: ad-hoc signed and strict-signature verified; not Developer ID signed or Apple notarized.
-- Current release commit: `3f9a2f9`.
-- DMG SHA-256: `4f07ce839db58cec5a1cfe65b9951668a782acc5e5acf8c9f8872b58bcfce07c`.
+- Current implementation commit: pending v0.1.13 publication.
+- DMG SHA-256: `61b1ae91f0277cfd687ec07b247882d74c9a06744bf2e422249e68f2230488b7`.
 
 ## Current objective
 
@@ -28,7 +28,7 @@ Stabilize the approved v1 interaction boundary through testing of the packaged E
 
 ## Next meaningful action
 
-Test `v0.1.12` across representative responsive pages and AI chats. Confirm exact-element and repeated-selector changes persist across breakpoint switches and annotated images retain useful page context.
+Test `v0.1.13` across representative responsive pages and AI chats. Confirm exact-element and repeated-selector changes persist across breakpoint switches and annotated images retain useful page context.
 
 ## Approved v1 boundary
 
