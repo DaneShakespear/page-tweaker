@@ -1,8 +1,8 @@
 # Page Tweaker Current State
 
 **Last verified:** 2026-08-26  
-**Current release:** `v0.1.10`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.10>
+**Current release:** `v0.1.11`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.11>
 
 ## Product state
 
@@ -11,7 +11,7 @@ Page Tweaker is a working public macOS Electron application for previewing visua
 The current interaction model is:
 
 1. Open or drop a local HTML artifact, `file://` URL, Safari `.webloc`, or public URL.
-2. Click an exact DOM element. Exact-element scope is always the default.
+2. Choose desktop, tablet, or mobile, then click an exact DOM element. Exact-element scope is always the default.
 3. Optionally widen visual changes through the bottom selector bar to a repeated CSS class or all matching tags, such as all `h1` elements.
 4. Preview typography, spacing, text color, background, and text changes immediately.
 5. Reset an individual property or restore the active selector to its original values.
@@ -44,16 +44,21 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Replaced the screenshot-dependent export dialog with an automatic single-file handoff saved under `Downloads/Page Tweaker Handoffs`.
 - Added a Handoff tab with a native draggable file icon, selectable full path, Copy Path, and Show in Finder.
 - Added `START-HERE.md` so the receiving AI understands that the ZIP is the complete brief, including previewed values, locators, notes, markup meaning, and drawing data.
+- Added desktop, tablet, and mobile preview controls. Edits, text outcomes, pinned notes, and markup are stored and reapplied only at their recorded breakpoint.
+- Attached each markup line to its own explanation, breakpoint, document coordinates, and nearby element locator; drawings now move with the page while scrolling.
+- Rebuilt Inspector control rows so every Reset button explicitly names and restores one property without appearing attached to a neighboring control.
+- Added native right-click Copy, Cut, Paste, and Select All context menus.
+- Rewrote beginner-facing Help and the AI brief. Selectors and preview values are explicitly outcome evidence, not instructions to paste code or replace the real system architecture.
 
 ## Verification evidence
 
-- `npm test`: 14 of 14 tests passing.
-- Packaged Electron smoke: native window drag, local path, public HTTP URL through Enter, `file://` URL drop, exact/all selector scope, live style editing, scoped reset, true clean reload, markup explanation/removal, Help tab, ZIP creation, archive-content inspection, and path copying passed.
+- `npm test`: 17 of 17 tests passing.
+- Packaged Electron smoke: native window drag, desktop/mobile isolation, exact/all selector scope, property-specific reset, clean reload, scroll-attached per-mark explanation, beginner Help, local/public/file loading, ZIP inspection, goal-focused AI instructions, and path copying passed.
 - `hdiutil verify`: DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and hosted DMG SHA-256 match: `c2b62e6ad6ce060ace08357f081c2032f44b0209c39010e1f1651da97c7cd4d6`.
+- Local and hosted DMG SHA-256 match: `f7ba4bde5bc3d918d9d291e5713f886997d15e5aa11900d87a38a23f06645256`.
 - GitHub assets include the DMG and blockmap.
-- `v0.1.10` is the only visible release.
+- `v0.1.11` is the only visible release.
 
 ## Architecture that matters
 
@@ -75,4 +80,4 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 
 ## Next-session starting point
 
-Start from the packaged `v0.1.10` app, not `src/index.html` in a browser. Test the generated ZIP in representative AI chats and verify it is understood without extra explanation. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release. Keep only the current verified release visible and compare the hosted DMG hash with the local validated artifact.
+Start from the packaged `v0.1.11` app, not `src/index.html` in a browser. Test responsive pages at all three preview sizes and give the resulting ZIP to representative AI chats. Verify each agent understands the feedback as desired outcomes without treating selectors or preview values as prescribed implementation. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release.
