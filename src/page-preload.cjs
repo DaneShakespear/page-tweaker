@@ -2,6 +2,7 @@ const { ipcRenderer } = require('electron');
 let enabled = true;
 let hovered;
 let selectedElement;
+const originals = new WeakMap();
 
 function installHoverStyle() {
   if (document.getElementById('page-tweaker-hover-style')) return;
@@ -26,6 +27,37 @@ function locator(element) {
     node = node.parentElement;
   }
   return parts.join(' > ');
+}
+
+function selectorScopes(element) {
+  const exactSelector = locator(element);
+  const tag = element.tagName.toLowerCase();
+  const classes = [...element.classList].filter((name) => name !== 'page-tweaker-hover');
+  const scopes = [{ key: `exact:${exactSelector}`, kind: 'exact', selector: exactSelector, label: 'This element', count: 1 }];
+  const candidates = [];
+  if (classes.length) candidates.push(`${tag}${classes.map((name) => `.${CSS.escape(name)}`).join('')}`);
+  classes.forEach((name) => candidates.push(`.${CSS.escape(name)}`));
+  candidates.push(tag);
+  [...new Set(candidates)].forEach((selector) => {
+    const count = document.querySelectorAll(selector).length;
+    if (count > 1) scopes.push({ key: `all:${selector}`, kind: 'all', selector, label: `All ${selector}`, count });
+  });
+  return scopes;
+}
+
+function targetsFor(request) {
+  if (request.scope?.kind === 'all') return [...document.querySelectorAll(request.scope.selector)];
+  const element = document.querySelector(`[data-page-tweaker-target=${JSON.stringify(request.targetId)}]`);
+  return element ? [element] : [];
+}
+
+function rememberOriginal(element) {
+  if (!originals.has(element)) originals.set(element, {
+    inlineStyle: element.getAttribute('style'),
+    text: element.innerText,
+    properties: Object.fromEntries(['font-family', 'font-size', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'].map((property) => [property, element.style.getPropertyValue(property)]))
+  });
+  return originals.get(element);
 }
 
 function clearHover() {
@@ -63,6 +95,7 @@ document.addEventListener('click', (event) => {
   const properties = ['font-family', 'font-size', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'];
   ipcRenderer.sendToHost('element-selected', {
     selector: locator(element),
+    scopes: selectorScopes(element),
     targetId,
     tag: element.tagName.toLowerCase(),
     text: (element.innerText || '').trim().slice(0, 240),
@@ -89,20 +122,24 @@ ipcRenderer.on('set-inspector', (_event, value) => {
 
 ipcRenderer.on('apply-edit', (_event, request) => {
   try {
-    const element = document.querySelector(`[data-page-tweaker-target=${JSON.stringify(request.targetId)}]`);
-    if (!element) throw new Error('The selected element is no longer present. Select it again.');
-    if (request.action === 'style') Object.entries(request.changes).forEach(([property, value]) => element.style.setProperty(property, value));
-    if (request.action === 'text') element.innerText = request.text;
-    if (request.action === 'reset-property') {
-      if (request.value) element.style.setProperty(request.property, request.value);
-      else element.style.removeProperty(request.property);
-    }
-    if (request.action === 'restore') {
-      if (request.inlineStyle === null) element.removeAttribute('style');
-      else element.setAttribute('style', request.inlineStyle);
-      if (request.text !== undefined) element.innerText = request.text;
-    }
-    ipcRenderer.sendToHost('edit-result', { id: request.id, ok: true });
+    const targets = targetsFor(request);
+    if (!targets.length) throw new Error('No elements match this selector. Select the element again.');
+    targets.forEach((element) => {
+      const original = rememberOriginal(element);
+      if (request.action === 'style') Object.entries(request.changes).forEach(([property, value]) => element.style.setProperty(property, value));
+      if (request.action === 'text') element.innerText = request.text;
+      if (request.action === 'reset-property') {
+        const value = original.properties[request.property];
+        if (value) element.style.setProperty(request.property, value);
+        else element.style.removeProperty(request.property);
+      }
+      if (request.action === 'restore') {
+        if (original.inlineStyle === null) element.removeAttribute('style');
+        else element.setAttribute('style', original.inlineStyle);
+        element.innerText = original.text;
+      }
+    });
+    ipcRenderer.sendToHost('edit-result', { id: request.id, ok: true, count: targets.length });
   } catch (error) {
     ipcRenderer.sendToHost('edit-result', { id: request.id, ok: false, message: error.message });
   }

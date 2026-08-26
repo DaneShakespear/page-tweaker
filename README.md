@@ -43,6 +43,8 @@ Download the Apple Silicon DMG from [Releases](../../releases), drag Page Tweake
 
 The top bar always shows the running version. You can paste, drop, or open a local `.html`, `file://` URL, public URL, or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with Page Tweaker or use `page-tweaker://open?url=` followed by an encoded URL.
 
+When you select an element, Page Tweaker defaults to changing only that exact element. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Text replacement and pinned notes always stay attached to the exact clicked element. Use the top reset icon to restore the active selector, and use the Markup panel to remove one stroke, undo the latest stroke, or clear all drawing.
+
 The app is currently unsigned. Read the complete, safe setup and troubleshooting guide in [Installing Page Tweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 
 ## Run from source
