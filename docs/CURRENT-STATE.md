@@ -154,3 +154,10 @@ Later capture-package behavior:
 ## Next-session starting point
 
 Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.14. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
+
+## 2026-09-04 login diagnostic
+
+- The affected page is `https://portal.kre8media.com/`.
+- Packaged v0.1.14 submitted the real form with a deliberately invalid diagnostic password and received the expected `Incorrect password` response. This verifies normal form pass-through and production login endpoint reachability from PageTweaker.
+- The reported failure is limited to the successful-login response/session path. Verifying it requires one user-entered valid login in the instrumented package; diagnostics must capture only the origin and Electron network error, never the credential or request body.
+- Do not disable web security or weaken portal session protection speculatively.
