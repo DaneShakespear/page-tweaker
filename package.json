@@ -1,6 +1,6 @@
 {
   "name": "page-tweaker",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Fast visual QA and AI handoff for HTML artifacts and public web pages.",
   "author": "Dane Shakespear",
   "repository": {
@@ -8,7 +8,9 @@
     "url": "https://github.com/DaneShakespear/page-tweaker.git"
   },
   "main": "src/main.cjs",
-  "bin": { "page-tweaker": "bin/page-tweaker.cjs" },
+  "bin": {
+    "page-tweaker": "bin/page-tweaker.cjs"
+  },
   "scripts": {
     "start": "electron .",
     "test": "node --test",
@@ -19,10 +21,38 @@
     "appId": "com.kre8works.pagetweaker",
     "productName": "PageTweaker",
     "afterPack": "scripts/after-pack.cjs",
-    "files": ["src/**", "package.json"],
-    "fileAssociations": [{ "ext": ["html", "htm", "webloc"], "name": "HTML artifact or web link", "role": "Editor" }],
-    "protocols": [{ "name": "PageTweaker URL handler", "schemes": ["page-tweaker", "http", "https"] }],
-    "mac": { "category": "public.app-category.developer-tools", "icon": "assets/PageTweaker.icns", "target": ["dmg"] }
+    "files": [
+      "src/**",
+      "package.json"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "html",
+          "htm",
+          "webloc"
+        ],
+        "name": "HTML artifact or web link",
+        "role": "Editor"
+      }
+    ],
+    "protocols": [
+      {
+        "name": "PageTweaker URL handler",
+        "schemes": [
+          "page-tweaker",
+          "http",
+          "https"
+        ]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "assets/PageTweaker.icns",
+      "target": [
+        "dmg"
+      ]
+    }
   },
   "devDependencies": {
     "electron": "^39.2.7",

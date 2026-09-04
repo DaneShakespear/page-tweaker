@@ -1,8 +1,8 @@
 # PageTweaker Current State
 
 **Last verified:** 2026-09-04  
-**Current release:** `v0.1.14`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.14>
+**Current release:** `v0.1.15`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.15>
 
 ## Agent Startup
 
@@ -24,13 +24,13 @@ The current interaction model is:
 
 Text replacement and pinned notes remain exact-element actions even when a broader visual selector is active. This prevents one heading's content from being copied across every matching heading.
 
-## Unreleased changes after v0.1.14
+## v0.1.15 changes
 
 - Added a persistent Inspector tip and live status guidance explaining that page controls work normally and Option-click selects them for tweaking.
 - Reworked the Chrome bookmarklet into a shortcut-style draggable item with an illustrated Chrome bookmarks-bar target and clearer drag/copy instructions.
 - Added Help guidance for interactive controls, protected pages, and the password-manager boundary.
 - Added privacy-safe failed-request diagnostics that report only the failing origin and Electron network error, never passwords, request bodies, query strings, or tokens.
-- Login failure repair remains pending reproduction against the affected site. Do not weaken web security or claim login compatibility from generic fixture tests.
+- Verified a successful real login at `https://portal.kre8media.com/` inside packaged PageTweaker. The protected session path works without weakening web security.
 
 ## v0.1.14 changes
 
@@ -122,12 +122,11 @@ Later capture-package behavior:
 
 ## Verification evidence
 
-- `npm test`: 21 of 21 tests passing.
+- `npm test`: 22 of 22 tests passing.
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
-- `hdiutil verify`: v0.1.14 DMG valid.
+- `hdiutil verify`: v0.1.15 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and downloaded GitHub v0.1.14 DMG SHA-256 match: `9e41026a43114bc0659748ed85253e7d923d214ee897b5188d72dd3aef11bcc5`.
-- GitHub assets include the DMG and blockmap; `v0.1.14` is the only visible release.
+- Local v0.1.15 DMG SHA-256: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.
 
 ## Architecture that matters
 
@@ -153,7 +152,7 @@ Later capture-package behavior:
 
 ## Next-session starting point
 
-Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.14. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
+Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.15. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
 
 ## 2026-09-04 login diagnostic
 
@@ -161,3 +160,4 @@ Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.14. Manuall
 - Packaged v0.1.14 submitted the real form with a deliberately invalid diagnostic password and received the expected `Incorrect password` response. This verifies normal form pass-through and production login endpoint reachability from PageTweaker.
 - The reported failure is limited to the successful-login response/session path. Verifying it requires one user-entered valid login in the instrumented package; diagnostics must capture only the origin and Electron network error, never the credential or request body.
 - Do not disable web security or weaken portal session protection speculatively.
+- A subsequent user-entered valid login succeeded in packaged PageTweaker. The login hot issue is resolved; no compatibility workaround or security change was needed.
