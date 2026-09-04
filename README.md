@@ -44,6 +44,8 @@ javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.
 
 This sends only the URL. It does not copy Chrome cookies, localStorage, IndexedDB, password-manager state, or auth tokens. For protected pages, sign in once inside PageTweaker; its own persistent browser profile can keep that site session for later.
 
+Page controls work normally. Hold **Option (⌥)** while clicking a link, button, or form field when you want to select that control for tweaking instead. Chrome and Safari password-manager extensions do not run inside PageTweaker; use your password manager's standalone app or menu to copy and paste credentials.
+
 ## How the handoff works
 
 1. **Open** a local report, page, public URL, or Chrome bookmarklet target.

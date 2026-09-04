@@ -26,6 +26,8 @@ If dragging is unavailable, click **Open in PageTweaker** inside the Help tab to
 
 For protected pages, sign in once inside PageTweaker. The preview browser uses a persistent PageTweaker profile, so site cookies can survive app relaunches. Login fields, buttons, links, and other form controls pass clicks through to the page; hold Option while clicking one of those controls if you need to select it for tweaking.
 
+Chrome and Safari password-manager extensions do not run inside PageTweaker's Electron preview. Use the password manager's standalone app or menu to copy and paste credentials. PageTweaker does not store passwords itself.
+
 ## Open links from other apps
 
 When PageTweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links as well as HTML and Safari `.webloc` files. Apps with an **Open with** or browser-selection menu can then list PageTweaker. PageTweaker does not make itself the default browser automatically.

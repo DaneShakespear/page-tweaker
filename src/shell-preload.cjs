@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('pageTweaker', {
   copyText: (text) => ipcRenderer.invoke('copy-text', text),
   capturePage: (webContentsId) => ipcRenderer.invoke('capture-page', webContentsId),
   showInFolder: (target) => ipcRenderer.invoke('show-in-folder', target),
-  onOpenSource: (callback) => ipcRenderer.on('open-source', (_event, source) => callback(source))
+  onOpenSource: (callback) => ipcRenderer.on('open-source', (_event, source) => callback(source)),
+  onPreviewRequestError: (callback) => ipcRenderer.on('preview-request-error', (_event, details) => callback(details))
 });

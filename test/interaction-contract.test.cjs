@@ -121,11 +121,15 @@ test('PageTweaker branding, live text, and synchronized hex color fields are wir
 test('web pages keep a persistent login session and login controls are pass-through', () => {
   const html = read('src/index.html');
   const bridge = read('src/page-preload.cjs');
+  const renderer = read('src/renderer.js');
   assert.match(html, /partition="persist:page-tweaker-public"/);
+  assert.match(html, /<kbd>⌥ Option<\/kbd>/);
   assert.match(bridge, /interactiveSelector/);
   assert.match(bridge, /function shouldPassThrough\(event\)/);
   assert.match(bridge, /event\.target\?\.closest\?\.\(interactiveSelector\) && !event\.altKey/);
-  assert.match(bridge, /if \(!enabled \|\| shouldPassThrough\(event\)\) return/);
+  assert.match(bridge, /if \(shouldPassThrough\(event\)\)/);
+  assert.match(bridge, /'interactive-guidance'/);
+  assert.match(renderer, /Hold Option \(⌥\)/);
 });
 
 test('help includes a draggable Chrome bookmarklet for opening the current tab', () => {
@@ -134,10 +138,23 @@ test('help includes a draggable Chrome bookmarklet for opening the current tab',
   const main = read('src/main.cjs');
   const renderer = read('src/renderer.js');
   assert.match(html, /id="bookmarklet"/);
+  assert.match(html, /chrome-bookmarklet-guide\.svg/);
+  assert.match(html, /Drag this shortcut to Chrome/);
   assert.match(html, /draggable="true"/);
   assert.match(html, /javascript:location\.href='page-tweaker:\/\/open\?url='\+encodeURIComponent\(location\.href\)/);
   assert.match(css, /\.bookmarklet\{/);
   assert.match(main, /url\.searchParams\.get\('url'\)/);
   assert.match(renderer, /querySelector\('#bookmarklet'\)\.addEventListener\('click'/);
   assert.match(renderer, /desktopBridge\.copyText\(code\)/);
+});
+
+test('failed login requests report privacy-safe network diagnostics', () => {
+  const main = read('src/main.cjs');
+  const shell = read('src/shell-preload.cjs');
+  const renderer = read('src/renderer.js');
+  assert.match(main, /webRequest\.onErrorOccurred/);
+  assert.match(main, /new URL\(details\.url\)\.origin/);
+  assert.match(main, /preview-request-error/);
+  assert.match(shell, /onPreviewRequestError/);
+  assert.match(renderer, /No password or request contents were recorded/);
 });

@@ -24,6 +24,14 @@ The current interaction model is:
 
 Text replacement and pinned notes remain exact-element actions even when a broader visual selector is active. This prevents one heading's content from being copied across every matching heading.
 
+## Unreleased changes after v0.1.14
+
+- Added a persistent Inspector tip and live status guidance explaining that page controls work normally and Option-click selects them for tweaking.
+- Reworked the Chrome bookmarklet into a shortcut-style draggable item with an illustrated Chrome bookmarks-bar target and clearer drag/copy instructions.
+- Added Help guidance for interactive controls, protected pages, and the password-manager boundary.
+- Added privacy-safe failed-request diagnostics that report only the failing origin and Electron network error, never passwords, request bodies, query strings, or tokens.
+- Login failure repair remains pending reproduction against the affected site. Do not weaken web security or claim login compatibility from generic fixture tests.
+
 ## v0.1.14 changes
 
 - Changed the preview webview partition from `page-tweaker-public` to `persist:page-tweaker-public`, so PageTweaker has a durable Electron browser profile and can retain cookies after a user logs into a site inside PageTweaker.
@@ -136,6 +144,7 @@ Later capture-package behavior:
 - The app is ad-hoc signed, not Developer ID signed or Apple notarized. Gatekeeper may require Control-click > Open or a per-app quarantine removal for a trusted download.
 - PageTweaker does not inherit Chrome/Safari cookies or authenticated browser sessions.
 - PageTweaker can now retain its own login cookies after a user signs in inside PageTweaker, but this is separate from Chrome's profile.
+- Electron does not provide Chrome or Safari password-manager extension UI inside the PageTweaker webview. Use the password manager's standalone app or menu to copy and paste credentials; PageTweaker must not become a credential vault.
 - The bookmarklet sends the current URL only. It does not capture Chrome's logged-in DOM, cookies, localStorage, IndexedDB, or auth tokens.
 - Preview changes exist only in the current session and export bundle. They do not modify source code.
 - Annotated screenshots capture the visible viewport at each visited breakpoint. Very long content outside that viewport remains represented through selectors, notes, drawing coordinates, and structured evidence rather than a stitched full-page image.

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, clipboard, dialog, ipcMain, Menu, shell, webContents } = require('electron');
+const { app, BrowserWindow, clipboard, dialog, ipcMain, Menu, session, shell, webContents } = require('electron');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { execFile } = require('node:child_process');
@@ -21,6 +21,7 @@ else {
   app.on('second-instance', (_event, argv) => { const source = sourceFromArgs(argv); if (source) openSource(source); if (window) { if (window.isMinimized()) window.restore(); window.focus(); } });
   app.whenReady().then(() => {
     app.on('web-contents-created', (_event, contents) => installContextMenu(contents));
+    session.fromPartition('persist:page-tweaker-public').webRequest.onErrorOccurred({ urls: ['http://*/*', 'https://*/*'] }, (details) => { if (details.resourceType !== 'xhr' || !window?.webContents) return; let origin = 'the page service'; try { origin = new URL(details.url).origin; } catch {} window.webContents.send('preview-request-error', { origin, error: details.error }); });
     app.dock?.setIcon(path.join(__dirname, 'app-icon.png'));
     ipcMain.handle('choose-source', async () => { const result = await dialog.showOpenDialog(window, { properties: ['openFile'], filters: [{ name: 'HTML or web link', extensions: ['html', 'htm', 'webloc'] }] }); return result.canceled ? null : resolveSource(result.filePaths[0]); });
     ipcMain.handle('app-version', () => app.getVersion());

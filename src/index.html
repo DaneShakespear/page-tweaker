@@ -33,6 +33,7 @@
         <button id="handoffTab" class="tab" role="tab" aria-selected="false" aria-controls="handoffPanel" tabindex="-1">Handoff</button>
       </div>
       <section id="inspectPanel" role="tabpanel" aria-labelledby="inspectTab">
+        <div class="interaction-tip"><kbd>⌥ Option</kbd><div><strong>Select page controls</strong><p>Links, buttons, and form fields work normally. Hold Option while clicking one to select and adjust it.</p></div></div>
         <div id="selection"><h2>Select an element</h2><p>Click anything in the preview to adjust it.</p></div>
         <div id="controls" hidden>
           <div class="control-group"><div class="control-heading"><label>Font family</label><button class="reset-control" data-reset-style="font-family">Reset font family</button></div><select data-style="font-family"><option value="">Keep page font</option><option>Arial, sans-serif</option><option>Inter, sans-serif</option><option>Georgia, serif</option><option>"Helvetica Neue", sans-serif</option></select></div>
@@ -69,7 +70,9 @@
           <article><span>3</span><div><strong>Explain what you want</strong><p>Pin a note to an element or draw a mark with its own explanation. PageTweaker remembers which preview size each item belongs to.</p></div></article>
           <article><span>4</span><div><strong>Give the brief to your AI</strong><p>A handoff is simply one file containing all your feedback and preview choices. Click Create handoff, then drag that file into your AI chat so the agent can make the real changes correctly.</p></div></article>
         </div>
-        <div class="bookmarklet-panel"><strong>Open from Chrome</strong><p>Drag this bookmarklet to Chrome’s bookmarks bar. Click it here to copy the launcher code instead.</p><a id="bookmarklet" class="bookmarklet" draggable="true" href="javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)">Open in PageTweaker</a></div>
+        <div class="bookmarklet-panel"><strong>Open from Chrome</strong><p>Drag the shortcut below onto Chrome’s bookmarks bar. Then click it from any Chrome page you want to open here.</p><img class="bookmarklet-guide" src="chrome-bookmarklet-guide.svg" alt="Illustration showing the PageTweaker shortcut being dragged into Chrome’s bookmarks bar"><a id="bookmarklet" class="bookmarklet" draggable="true" href="javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)"><img src="app-icon.png" alt=""><span><strong>Open in PageTweaker</strong><small>Drag this shortcut to Chrome</small></span><b aria-hidden="true">⠿</b></a><p class="bookmarklet-fallback">Can’t drag it? Click the shortcut to copy its launcher code.</p></div>
+        <div class="help-callout"><strong>Selecting links and login controls</strong><p>Use links, buttons, and form fields normally. To select one for tweaking instead, hold <kbd>⌥ Option</kbd> while clicking it.</p></div>
+        <div class="help-callout"><strong>Passwords and protected pages</strong><p>PageTweaker keeps its own website sessions after you sign in, but it cannot use Chrome or Safari password-manager extensions. Use your password manager’s app or menu to copy and paste credentials. PageTweaker never stores them itself.</p></div>
         <div class="help-callout"><strong>Open from another app</strong><p>Install PageTweaker in Applications. It registers as a handler for public web links and HTML/web-link files, so apps with an “Open with” or browser picker can offer PageTweaker. It never makes itself your default browser automatically.</p></div>
         <p class="help-footnote">Everything is preview-only. Your original file or website is never modified.</p>
       </section>

@@ -82,6 +82,11 @@ function shouldPassThrough(event) {
   return event.target?.closest?.(interactiveSelector) && !event.altKey;
 }
 
+function describeInteractive(element) {
+  const control = element?.closest?.(interactiveSelector);
+  return control ? { tag: control.tagName.toLowerCase(), label: (control.innerText || control.getAttribute('aria-label') || control.getAttribute('placeholder') || control.getAttribute('name') || '').trim().slice(0, 80) } : null;
+}
+
 function positionSelected() {
   if (!selectedElement) return;
   const box = selectedElement.getBoundingClientRect();
@@ -93,14 +98,17 @@ window.addEventListener('scroll', reportScroll, true);
 window.addEventListener('resize', positionSelected);
 
 document.addEventListener('mouseover', (event) => {
-  if (!enabled || event.target === hovered || shouldPassThrough(event)) return;
+  if (!enabled || event.target === hovered) return;
+  const interactive = describeInteractive(event.target);
+  if (interactive && !event.altKey) { clearHover(); ipcRenderer.sendToHost('interactive-guidance', interactive); return; }
   clearHover();
   hovered = event.target;
   hovered.classList.add('page-tweaker-hover');
 });
 
 document.addEventListener('click', (event) => {
-  if (!enabled || shouldPassThrough(event)) return;
+  if (!enabled) return;
+  if (shouldPassThrough(event)) { ipcRenderer.sendToHost('interactive-guidance', describeInteractive(event.target)); return; }
   event.preventDefault();
   event.stopPropagation();
   const element = event.target;

@@ -59,6 +59,7 @@ async function connect() {
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').click(); true")`);
     assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Hold Option')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, altKey: true })); true")`);
     await poll(() => evaluate(`document.querySelector('#selection').textContent.includes('button')`));
     assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
