@@ -141,7 +141,7 @@ Later capture-package behavior:
 
 ## Current limitations
 
-- The app is ad-hoc signed, not Developer ID signed or Apple notarized. Gatekeeper may require Control-click > Open or a per-app quarantine removal for a trusted download.
+- The app is ad-hoc signed, not Developer ID signed or Apple notarized. On macOS 26.5.2, Gatekeeper can terminate v0.1.15 after launch even when the bundle passes local `codesign` verification; clearing its quarantine flag is only a fragile local mitigation. Do not publish another release until it is Developer ID signed, notarized, and stapled, then independently assessed with `spctl --assess` from a fresh download.
 - PageTweaker does not inherit Chrome/Safari cookies or authenticated browser sessions.
 - PageTweaker can now retain its own login cookies after a user signs in inside PageTweaker, but this is separate from Chrome's profile.
 - Electron does not provide Chrome or Safari password-manager extension UI inside the PageTweaker webview. Use the password manager's standalone app or menu to copy and paste credentials; PageTweaker must not become a credential vault.
