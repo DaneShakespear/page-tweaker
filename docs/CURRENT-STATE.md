@@ -126,7 +126,8 @@ Later capture-package behavior:
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
 - `hdiutil verify`: v0.1.15 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local v0.1.15 DMG SHA-256: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.
+- Local and downloaded GitHub v0.1.15 DMG SHA-256 match: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.
+- GitHub v0.1.15 is public with the DMG and blockmap assets.
 
 ## Architecture that matters
 
@@ -158,6 +159,6 @@ Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.15. Manuall
 
 - The affected page is `https://portal.kre8media.com/`.
 - Packaged v0.1.14 submitted the real form with a deliberately invalid diagnostic password and received the expected `Incorrect password` response. This verifies normal form pass-through and production login endpoint reachability from PageTweaker.
-- The reported failure is limited to the successful-login response/session path. Verifying it requires one user-entered valid login in the instrumented package; diagnostics must capture only the origin and Electron network error, never the credential or request body.
-- Do not disable web security or weaken portal session protection speculatively.
+- Before final confirmation, the reported failure appeared limited to the successful-login response/session path. Diagnostics were restricted to the origin and Electron network error and never captured credentials or request bodies.
+- Web security and portal session protection were left unchanged.
 - A subsequent user-entered valid login succeeded in packaged PageTweaker. The login hot issue is resolved; no compatibility workaround or security change was needed.
