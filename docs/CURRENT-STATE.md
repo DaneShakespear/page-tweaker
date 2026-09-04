@@ -118,7 +118,8 @@ Later capture-package behavior:
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
 - `hdiutil verify`: v0.1.14 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local v0.1.14 DMG SHA-256: `9e41026a43114bc0659748ed85253e7d923d214ee897b5188d72dd3aef11bcc5`.
+- Local and downloaded GitHub v0.1.14 DMG SHA-256 match: `9e41026a43114bc0659748ed85253e7d923d214ee897b5188d72dd3aef11bcc5`.
+- GitHub assets include the DMG and blockmap; `v0.1.14` is the only visible release.
 
 ## Architecture that matters
 
