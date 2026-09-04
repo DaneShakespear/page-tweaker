@@ -16,23 +16,37 @@ Open the page. Click what looks wrong. Tune the visible value. Mark up what need
 
 “Make the header smaller” is not an implementation instruction. It is a guess that becomes a loop of edits, previews, and more guesses.
 
-PageTweaker puts the visual decision where it belongs: on the page itself. It is not a browser extension, full CSS editor, or no-code site builder. It is a fast visual QA and AI-handoff layer for pages that are already close.
+PageTweaker puts the visual decision where it belongs: on the page itself. It is not a full CSS editor or no-code site builder. It is a fast visual QA and AI-handoff layer for pages that are already close.
 
 ![PageTweaker workflow](docs/workflow.svg)
 
 ## What it does
 
-- Opens a local HTML artifact or public `http(s)` URL in a dedicated desktop workspace.
+- Opens a local HTML artifact, public `http(s)` URL, app URL handler target, or URL sent from the Chrome bookmarklet in a dedicated desktop workspace.
+- Uses a persistent PageTweaker browser profile so sites can stay logged in after you sign in inside PageTweaker.
 - Lets you select visible elements and preview typography, spacing, and color adjustments immediately.
+- Lets login forms, links, buttons, and other interactive controls behave normally; hold Option while clicking an interactive control to select it for tweaking.
 - Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to the size where it was created.
 - Supports plain-text replacement when the words need to fit the layout.
 - Pins natural-language AI notes to elements and gives every freehand mark its own editable explanation and nearby element locator.
 - Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and annotated screenshots showing the real page beneath the feedback at each visited preview size.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
+## Open From Chrome
+
+PageTweaker includes a no-extension bookmarklet in the Help tab. Drag **Open in PageTweaker** to Chrome's bookmarks bar once, then click that bookmark on any page to send the current URL to PageTweaker. Clicking it inside PageTweaker copies the launcher code as a fallback for creating the bookmark manually.
+
+The bookmarklet launches the installed app through:
+
+```js
+javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)
+```
+
+This sends only the URL. It does not copy Chrome cookies, localStorage, IndexedDB, password-manager state, or auth tokens. For protected pages, sign in once inside PageTweaker; its own persistent browser profile can keep that site session for later.
+
 ## How the handoff works
 
-1. **Open** a local report, page, or public URL.
+1. **Open** a local report, page, public URL, or Chrome bookmarklet target.
 2. **Tune** the element until it looks right.
 3. **Explain** larger changes with a pinned note or markup.
 4. **Create the handoff**. PageTweaker saves one ZIP in `Downloads/PageTweaker Handoffs`.
@@ -70,7 +84,9 @@ page-tweaker https://example.com
 
 ## Current boundaries
 
-PageTweaker v1 supports public pages and local HTML artifacts. It does not reuse your Chrome profile, import cookies, log into sites on your behalf, modify the original source file, or send changes directly to an AI provider. Those limits are deliberate.
+PageTweaker v1 supports public pages, local HTML artifacts, and its own persistent web session for sites you log into inside PageTweaker. It does not reuse your Chrome profile, import cookies, log into sites on your behalf, modify the original source file, or send changes directly to an AI provider. Those limits are deliberate.
+
+The Chrome bookmarklet is a low-friction URL launcher, not an authenticated page capture tool. A browser extension or native bridge may be added later if PageTweaker needs to capture authenticated page context directly from Chrome without moving cookies or tokens.
 
 ## Development
 
@@ -86,5 +102,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance and current lic
 
 - Signed and notarized macOS release
 - Real product screenshot walkthrough
+- Manual verification and polish for the Chrome bookmarklet flow
+- Optional authenticated Chrome capture integration without copying browser cookies
 - More markup tools and export controls
 - Optional integrations that keep AI-provider credentials outside the app

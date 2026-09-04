@@ -11,7 +11,7 @@ const binary = path.join(root, 'dist', 'mac-arm64', 'PageTweaker.app', 'Contents
 const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
-const app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
+let app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const windowPosition = () => {
   const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerName as String] as? String) == "PageTweaker", let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
@@ -57,6 +57,11 @@ async function connect() {
     assert.notEqual(movedWindow, initialWindow, 'The draggable title bar did not move the native window.');
     process.stdout.write('Native window drag passed.\n');
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
+    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').click(); true")`);
+    assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
+    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, altKey: true })); true")`);
+    await poll(() => evaluate(`document.querySelector('#selection').textContent.includes('button')`));
+    assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
     assert.match(await evaluate(`document.querySelector('header strong').textContent`), /PageTweaker/);
@@ -130,6 +135,9 @@ async function connect() {
     await evaluate(`document.querySelector('#helpTab').click()`);
     assert.equal(await evaluate(`document.querySelector('#helpPanel').hidden`), false);
     assert.match(await evaluate(`document.querySelector('#helpPanel').textContent`), /A handoff is simply one file/);
+    assert.match(await evaluate(`document.querySelector('#bookmarklet').getAttribute('href')`), /^javascript:location\.href='page-tweaker:\/\/open\?url='/);
+    await evaluate(`document.querySelector('#bookmarklet').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Chrome launcher copied')`));
 
     await evaluate(`document.querySelector('#export').click()`);
     process.stdout.write('Creating AI handoff file.\n');
@@ -158,7 +166,22 @@ async function connect() {
     const fileUrl = pathToFileURL(fixture).href;
     await evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(fileUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(fileUrl)}`));
-    process.stdout.write('Packaged UI smoke passed: native window drag, responsive breakpoint isolation, local/public/file loading, live edit, clean reload, per-mark explanation, beginner Help, and goal-focused AI handoff.\n');
+    const protocolTarget = 'https://example.com/?from=bookmarklet';
+    const launcher = spawn(binary, [`--user-data-dir=${profile}`, `page-tweaker://open?url=${encodeURIComponent(protocolTarget)}`], { stdio: 'ignore' });
+    await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(protocolTarget)}`));
+    launcher.kill('SIGTERM');
+
+    await evaluate(`(() => { const address = document.querySelector('#address'); address.value = ${JSON.stringify(fileUrl)}; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(fileUrl)}`));
+    await evaluate(`document.querySelector('#page').executeJavaScript("localStorage.setItem('pageTweakerPersistentSmoke', 'retained')")`);
+    client.socket.close();
+    app.kill('SIGTERM');
+    await new Promise((resolve) => app.once('exit', resolve));
+    app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
+    client = await connect();
+    await poll(() => client.evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
+    assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("localStorage.getItem('pageTweakerPersistentSmoke')")`), 'retained');
+    process.stdout.write('Packaged UI smoke passed: interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
   } finally {
     client?.socket.close();
     app.kill('SIGTERM');

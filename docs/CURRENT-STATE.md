@@ -1,8 +1,12 @@
 # PageTweaker Current State
 
-**Last verified:** 2026-08-26  
-**Current release:** `v0.1.13`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.13>
+**Last verified:** 2026-09-04  
+**Current release:** `v0.1.14`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.14>
+
+## Agent Startup
+
+Before continuing work, read this file and the root `AGENTS.md`. The latest unreleased work is focused on making authenticated pages and Chrome handoff less painful.
 
 ## Product state
 
@@ -10,7 +14,7 @@ PageTweaker is a working public macOS Electron application for previewing visual
 
 The current interaction model is:
 
-1. Open or drop a local HTML artifact, `file://` URL, Safari `.webloc`, or public URL.
+1. Open or drop a local HTML artifact, `file://` URL, Safari `.webloc`, public URL, app URL handler target, or Chrome bookmarklet target.
 2. Choose desktop, tablet, or mobile, then click an exact DOM element. Exact-element scope is always the default.
 3. Optionally widen visual changes through the bottom selector bar to a repeated CSS class or all matching tags, such as all `h1` elements.
 4. Preview typography, spacing, text color, background, and text changes immediately.
@@ -19,6 +23,55 @@ The current interaction model is:
 7. Create one AI handoff ZIP, then drag its in-app file icon into an AI chat or copy the selectable full path.
 
 Text replacement and pinned notes remain exact-element actions even when a broader visual selector is active. This prevents one heading's content from being copied across every matching heading.
+
+## v0.1.14 changes
+
+- Changed the preview webview partition from `page-tweaker-public` to `persist:page-tweaker-public`, so PageTweaker has a durable Electron browser profile and can retain cookies after a user logs into a site inside PageTweaker.
+- Updated the injected page bridge so common interactive controls pass through normally: links, buttons, inputs, textareas, selects, options, labels, summaries, contenteditable elements, and common ARIA controls.
+- Added Option-click behavior for interactive controls: a normal click uses the page, while Option-click selects the control for PageTweaker inspection/tweaking.
+- Added a draggable Chrome bookmarklet in the Help panel. Users can drag `Open in PageTweaker` to Chrome's bookmarks bar, then click it on any page to launch PageTweaker with that tab's URL.
+- Added a click fallback that copies the bookmarklet launcher code for manual bookmark creation.
+- Updated install/troubleshooting docs for authenticated pages and login-form behavior.
+- Added regression tests covering the persistent partition, interactive-control pass-through, and bookmarklet markup.
+- Verified `npm test`: 21 of 21 tests passing.
+
+## Chrome Interaction Decision
+
+Do not implement direct Chrome cookie copying into Electron. It is fragile, security-sensitive, profile-dependent, and likely to break across Chrome/macOS updates.
+
+The chosen near-term direction is bookmarklet-first:
+
+- PageTweaker exposes a draggable bookmarklet in the Help panel.
+- The bookmarklet URL is `javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)`.
+- The bookmarklet uses the existing `page-tweaker://` handler to launch the app from Chrome's current tab.
+- This removes most copy/paste, drag-to-app, and "remember to open the Mac app" friction without asking users to install a Chrome extension.
+
+A Chrome extension remains the later power-user path only if richer authenticated capture is needed:
+
+- Chrome extension toolbar action: open the active Chrome tab in PageTweaker.
+- Chrome context menu action: open or capture the current page in PageTweaker.
+- Launch mechanism: use the existing `page-tweaker://` URL handler, with the current page URL encoded as a parameter.
+- Authenticated capture mode: run in the already logged-in Chrome tab and package page context for PageTweaker instead of requiring PageTweaker to load the URL with Chrome's cookies.
+
+This solves two user problems:
+
+- Users do not need to remember to open PageTweaker separately or drag/copy URLs from Chrome.
+- Users get a no-extension path now, while keeping the door open to a deeper Chrome integration later.
+
+## Planned Chrome/Browser Work
+
+Near-term bookmarklet follow-up:
+
+- Manually verify dragging the bookmarklet from PageTweaker Help to Chrome's bookmarks bar.
+- Manually verify clicking the bookmarklet on `https://example.com` opens PageTweaker through `page-tweaker://open?url=...`.
+- Manually verify clicking the bookmarklet on a logged-in page opens the matching URL in PageTweaker and uses PageTweaker's own persistent session if that site has already been logged into there.
+- Consider adding a click fallback that copies the bookmarklet code if clicking the link inside Electron is confusing.
+
+Later capture-package behavior:
+
+- Add a content script or injected script that captures URL, title, viewport, screenshot, selected DOM snapshot, and needed style evidence from the logged-in Chrome tab.
+- Send that package to PageTweaker through a local/native channel or a temporary file opened by PageTweaker.
+- Keep credentials, cookies, and auth tokens out of the package.
 
 ## Completed repair sequence
 
@@ -61,19 +114,18 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 
 ## Verification evidence
 
-- `npm test`: 19 of 19 tests passing.
-- Packaged Electron smoke: native window drag, exact and repeated breakpoint persistence, property-specific reset without neighboring UI changes, clean reload, scroll-attached per-mark explanation, local/public/file loading, ZIP inspection, full annotated screenshots, goal-focused AI instructions, and path copying passed.
-- `hdiutil verify`: DMG valid.
+- `npm test`: 21 of 21 tests passing.
+- Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
+- `hdiutil verify`: v0.1.14 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and downloaded GitHub DMG SHA-256 match: `61b1ae91f0277cfd687ec07b247882d74c9a06744bf2e422249e68f2230488b7`.
-- GitHub assets include the DMG and blockmap.
-- `v0.1.13` is the only visible release.
+- Local v0.1.14 DMG SHA-256: `9e41026a43114bc0659748ed85253e7d923d214ee897b5188d72dd3aef11bcc5`.
 
 ## Architecture that matters
 
 - `src/main.cjs`: Electron lifecycle, file/URL opening, `.webloc` resolution, version bridge, and export writes.
+- `src/index.html`: app shell, toolbar, webview, side panels, persistent webview partition, and Chrome bookmarklet UI.
 - `src/shell-preload.cjs`: safe shell IPC surface.
-- `src/page-preload.cjs`: exact clicked-node markers, selector-scope discovery, scroll position reporting, live edit application, and original-value restoration inside the loaded page.
+- `src/page-preload.cjs`: exact clicked-node markers, interactive-control pass-through, selector-scope discovery, scroll position reporting, live edit application, and original-value restoration inside the loaded page.
 - `src/renderer.js`: session state, confirmation-safe loading, selector UI, live controls, notes, markup, screenshot composition, and export handoff.
 - `scripts/after-pack.cjs`: ad-hoc signs the packaged macOS app and verifies the signature.
 - `scripts/smoke-ui.cjs`: launches the packaged app and validates critical Electron/webview interactions through the Chromium debugging protocol.
@@ -81,7 +133,9 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 ## Current limitations
 
 - The app is ad-hoc signed, not Developer ID signed or Apple notarized. Gatekeeper may require Control-click > Open or a per-app quarantine removal for a trusted download.
-- Public pages only. The app does not inherit Chrome/Safari cookies or authenticated browser sessions.
+- PageTweaker does not inherit Chrome/Safari cookies or authenticated browser sessions.
+- PageTweaker can now retain its own login cookies after a user signs in inside PageTweaker, but this is separate from Chrome's profile.
+- The bookmarklet sends the current URL only. It does not capture Chrome's logged-in DOM, cookies, localStorage, IndexedDB, or auth tokens.
 - Preview changes exist only in the current session and export bundle. They do not modify source code.
 - Annotated screenshots capture the visible viewport at each visited breakpoint. Very long content outside that viewport remains represented through selectors, notes, drawing coordinates, and structured evidence rather than a stitched full-page image.
 - The repository does not yet grant an open-source license.
@@ -89,4 +143,4 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 
 ## Next-session starting point
 
-Start from the packaged `v0.1.13` app, not `src/index.html` in a browser. Test exact-element and repeated-selector edits across all preview sizes, then visually inspect the generated annotated images before giving the ZIP to an AI chat. Run `npm test`, `npm run package:mac`, and `npm run smoke:ui` before publishing another release.
+Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.14. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.

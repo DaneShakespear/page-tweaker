@@ -4,6 +4,7 @@ let hovered;
 let selectedElement;
 const originals = new WeakMap();
 const editedElements = new Set();
+const interactiveSelector = 'a, button, input, textarea, select, option, label, summary, [contenteditable=""], [contenteditable="true"], [role="button"], [role="link"], [role="textbox"], [role="checkbox"], [role="radio"], [role="switch"], [role="menuitem"], [role="tab"]';
 
 function installHoverStyle() {
   if (document.getElementById('page-tweaker-hover-style')) return;
@@ -77,6 +78,10 @@ function clearHover() {
   hovered = undefined;
 }
 
+function shouldPassThrough(event) {
+  return event.target?.closest?.(interactiveSelector) && !event.altKey;
+}
+
 function positionSelected() {
   if (!selectedElement) return;
   const box = selectedElement.getBoundingClientRect();
@@ -88,14 +93,14 @@ window.addEventListener('scroll', reportScroll, true);
 window.addEventListener('resize', positionSelected);
 
 document.addEventListener('mouseover', (event) => {
-  if (!enabled || event.target === hovered) return;
+  if (!enabled || event.target === hovered || shouldPassThrough(event)) return;
   clearHover();
   hovered = event.target;
   hovered.classList.add('page-tweaker-hover');
 });
 
 document.addEventListener('click', (event) => {
-  if (!enabled) return;
+  if (!enabled || shouldPassThrough(event)) return;
   event.preventDefault();
   event.stopPropagation();
   const element = event.target;
