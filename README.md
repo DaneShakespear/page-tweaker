@@ -62,7 +62,7 @@ The AI receives every visited page address, selectors, scope, previewed values, 
 
 Download the Apple Silicon DMG from [Releases](../../releases), drag PageTweaker to Applications, then Control-click and choose **Open** the first time.
 
-The top bar always shows the running version. Paste a path or URL and press Enter, drop it anywhere, or choose a local `.html` or Safari `.webloc` file. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with PageTweaker or use `page-tweaker://open?url=` followed by an encoded URL.
+The top bar always shows the running version. Type a domain such as `apple.com`, paste a path or complete URL, then press Enter; you can also drop it anywhere or choose a local `.html` or Safari `.webloc` file. Bare domains open through HTTPS automatically. Loading a different page or reloading always asks before clearing the current preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with PageTweaker or use `page-tweaker://open?url=` followed by an encoded URL.
 
 The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer PageTweaker without PageTweaker silently replacing your default browser.
 

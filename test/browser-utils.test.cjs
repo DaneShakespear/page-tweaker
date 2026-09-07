@@ -4,8 +4,12 @@ const utils = require('../src/browser-utils.js');
 
 test('accepts public URLs, file URLs, and local HTML paths', () => {
   assert.equal(utils.normalizeSource('https://example.com/report'), 'https://example.com/report');
+  assert.equal(utils.normalizeSource('apple.com'), 'https://apple.com');
+  assert.equal(utils.normalizeSource('www.apple.com/mac'), 'https://www.apple.com/mac');
+  assert.equal(utils.normalizeSource('apple.com/legal.html'), 'https://apple.com/legal.html');
   assert.equal(utils.normalizeSource('file:///Users/me/report.html'), 'file:///Users/me/report.html');
   assert.equal(utils.normalizeSource('/Users/me/report.html'), 'file:///Users/me/report.html');
+  assert.equal(utils.normalizeSource('report.html'), 'file://report.html');
   assert.equal(utils.normalizeSource('not-a-page'), null);
 });
 

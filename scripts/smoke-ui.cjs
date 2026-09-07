@@ -207,7 +207,7 @@ async function connect() {
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('path copied')`));
     process.stdout.write('AI handoff archive and path controls passed.\n');
 
-    await evaluate(`(() => { const address = document.querySelector('#address'); address.value = 'https://example.com'; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
+    await evaluate(`(() => { const address = document.querySelector('#address'); address.value = 'example.com'; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL().startsWith('https://example.com')`));
     const fileUrl = pathToFileURL(fixture).href;
     await evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(fileUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);

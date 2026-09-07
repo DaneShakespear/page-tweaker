@@ -7,10 +7,18 @@
   const isHttpUrl = (value) => /^https?:\/\//i.test(value);
   const isFileUrl = (value) => /^file:\/\//i.test(value);
   const isHtmlPath = (value) => /\.html?(?:[?#].*)?$/i.test(value);
+  const isBareWebAddress = (value) => {
+    if (/\s/.test(value) || /^[./~]|^[a-z]:[\\/]/i.test(value)) return false;
+    try {
+      const hostname = new URL(`https://${value}`).hostname;
+      return hostname === 'localhost' || /^\d{1,3}(?:\.\d{1,3}){3}$/.test(hostname) || /\.[a-z]{2,}$/i.test(hostname);
+    } catch { return false; }
+  };
   const normalizeSource = (raw) => {
     const value = raw.trim();
     if (!value) return null;
     if (isHttpUrl(value) || isFileUrl(value)) return value;
+    if (isBareWebAddress(value) && !(isHtmlPath(value) && !value.includes('/'))) return `https://${value}`;
     return isHtmlPath(value) ? `file://${encodeURI(value)}` : null;
   };
   const readableValue = (style, property) => style[cssToJs[property] || property];

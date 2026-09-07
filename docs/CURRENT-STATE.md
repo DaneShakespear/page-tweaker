@@ -47,6 +47,7 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Tightened font-size, line-height, and letter-spacing slider ranges around practical values while retaining unusual existing page values. Line height is now represented as a unitless ratio rather than computed pixels.
 - Applied the first real PageTweaker-to-PageTweaker handoff. The startup headline, explanatory copy, and spacing now reflect the exported evidence; the toolbar file action uses a standard folder icon and a new confirmed clear-page action returns to startup while discarding the loaded page and its feedback.
 - Replacement content now safely previews a limited formatting set (`br`, emphasis, code, mark, subscript, and superscript), restores the original HTML correctly, persists across breakpoint changes, and remains visible as markup in the exported AI brief. Scripts, media, links, attributes, and structural tags are not inserted.
+- Bare web addresses entered in the URL bar, such as `apple.com` or `www.apple.com/mac`, now open automatically through HTTPS. Explicit HTTP(S), `file://`, absolute/relative local paths, and standalone `.html` filenames retain their existing behavior.
 - Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
 - Verification: 27 contract tests pass. Packaged smoke verifies safe formatted replacement content, the confirmed clear-page workflow, startup guidance and bookmarklet, practical slider ranges, modified-property reset highlighting, two-page navigation/restoration, grouped markup, live font-weight editing, and the complete version 6 handoff ZIP.
 
@@ -142,7 +143,7 @@ Later capture-package behavior:
 
 - `npm test`: 27 of 27 tests passing for unreleased v0.1.16.
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
-- Unreleased v0.1.16 DMG verification passed; SHA-256: `b738c414df0d86beede2b2437046ed4ab14d4645ab0c869da64555ed0419b824`.
+- Unreleased v0.1.16 DMG verification passed; SHA-256: `5bdd9f25b095fd2b9bdbe94ed80b06ec575264acbb5e9a50ac47f75a00f7f17f`.
 - `hdiutil verify`: v0.1.15 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
 - Local and downloaded GitHub v0.1.15 DMG SHA-256 match: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.
