@@ -61,6 +61,7 @@ async function connect() {
     assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drop any page here/i);
     assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drag ZIP into AI chat/);
     assert.match(await evaluate(`document.querySelector('.empty-bookmarklet').getAttribute('href')`), /^javascript:location\.href='page-tweaker:\/\/open\?url='/);
+    assert.equal(await evaluate(`document.querySelector('#back').disabled`), true);
     await evaluate(`(() => { const address = document.querySelector('#address'); address.value = ${JSON.stringify(pathToFileURL(fixture).href)}; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').click(); true")`);
@@ -122,13 +123,14 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('#address').value`), secondUrl);
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`document.querySelector('#selection').textContent.includes('h1')`));
+    await poll(() => evaluate(`document.querySelector('#back').disabled === false`));
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '31'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).fontSize")`).then((size) => size === '31px'));
-    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#first-page').click(); true")`);
+    await evaluate(`document.querySelector('#back').click()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(pathToFileURL(fixture).href)}`));
     await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).fontSize")`).then((size) => size === '30px'));
     assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).color")`), 'rgb(0, 255, 0)');
-    process.stdout.write('Multi-page navigation isolation and restoration passed.\n');
+    process.stdout.write('Browser Back navigation, multi-page isolation, and restoration passed.\n');
 
     await evaluate(`window.confirm = () => true; document.querySelector('#reload').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element') && document.querySelector('#selectorBar').hidden`));

@@ -89,7 +89,13 @@ test('modified Inspector properties highlight their own reset controls', () => {
 });
 
 test('navigation keeps feedback isolated by page URL and exports page records', () => {
+  const html = read('src/index.html');
   const renderer = read('src/renderer.js');
+  assert.match(html, /id="back"[\s\S]*disabled/);
+  assert.match(renderer, /function updateNavigationControls/);
+  assert.match(renderer, /navigationTrail/);
+  assert.match(renderer, /navigationIndex/);
+  assert.match(renderer, /executeJavaScript\('history\.back\(\)'\)/);
   assert.match(renderer, /pageOrder: \[\]/);
   assert.match(renderer, /function activateNavigatedPage/);
   assert.match(renderer, /addEventListener\('did-navigate'/);
