@@ -27,12 +27,12 @@ PageTweaker puts the visual decision where it belongs: on the page itself. It is
 - Lets you select visible elements and preview font family, size, weight, line height, spacing, and color adjustments immediately.
 - Lets login forms, links, buttons, and other interactive controls behave normally; hold Option while clicking an interactive control to select it for tweaking.
 - Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to its page URL and preview size.
-- Supports plain-text replacement when the words need to fit the layout.
+- Supports live replacement content, including safe inline formatting such as line breaks and emphasis, when the words need to fit the layout.
 - Pins natural-language AI notes to elements and groups any number of freehand strokes into one explained markup item with nearby element locators. Choosing a different drawing color naturally starts a new markup item.
 - Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and page-specific annotated screenshots showing the real page beneath the feedback.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
-The startup workspace shows every fast path in one place: drop a page on the app or window, paste a target in the address bar, choose an HTML file, or drag the Chrome shortcut to the bookmarks bar. It also previews the complete workflow from opening a page to dragging the resulting ZIP into an AI chat.
+The startup workspace shows every fast path in one place: drop a page on the app or window, paste a target in the address bar, choose an HTML file, or drag the Chrome shortcut to the bookmarks bar. It also previews the complete workflow from opening a page to dragging the resulting ZIP into an AI chat. The toolbar folder opens another file; the adjacent close control asks before clearing the loaded page and all current feedback.
 
 ## Open From Chrome
 

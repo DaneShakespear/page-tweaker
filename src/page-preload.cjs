@@ -57,10 +57,22 @@ function rememberOriginal(element) {
   if (!originals.has(element)) originals.set(element, {
     inlineStyle: element.getAttribute('style'),
     text: element.innerText,
+    html: element.innerHTML,
     properties: Object.fromEntries(['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'].map((property) => [property, element.style.getPropertyValue(property)]))
   });
   editedElements.add(element);
   return originals.get(element);
+}
+
+const allowedContentTags = new Set(['BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'CODE', 'SMALL', 'MARK', 'SUB', 'SUP']);
+function applySafeContent(element, content) {
+  const template = document.createElement('template');
+  template.innerHTML = content;
+  [...template.content.querySelectorAll('*')].forEach((node) => {
+    if (!allowedContentTags.has(node.tagName)) node.replaceWith(document.createTextNode(node.textContent || ''));
+    else [...node.attributes].forEach((attribute) => node.removeAttribute(attribute.name));
+  });
+  element.replaceChildren(template.content.cloneNode(true));
 }
 
 function restoreAllEdits() {
@@ -69,7 +81,7 @@ function restoreAllEdits() {
     const original = originals.get(element);
     if (original.inlineStyle === null) element.removeAttribute('style');
     else element.setAttribute('style', original.inlineStyle);
-    element.innerText = original.text;
+    element.innerHTML = original.html;
   });
 }
 
@@ -125,6 +137,7 @@ document.addEventListener('click', (event) => {
     targetId,
     tag: element.tagName.toLowerCase(),
     text: (element.innerText || '').trim().slice(0, 240),
+    html: element.innerHTML,
     inlineStyle: element.getAttribute('style'),
     inlineProperties: Object.fromEntries(properties.map((property) => [property, element.style.getPropertyValue(property)])),
     box: { x: box.x, y: box.y, width: box.width, height: box.height },
@@ -154,7 +167,7 @@ ipcRenderer.on('apply-edit', (_event, request) => {
     targets.forEach((element) => {
       const original = rememberOriginal(element);
       if (request.action === 'style') Object.entries(request.changes).forEach(([property, value]) => element.style.setProperty(property, value));
-      if (request.action === 'text') element.innerText = request.text;
+      if (request.action === 'text') applySafeContent(element, request.text);
       if (request.action === 'reset-property') {
         const value = original.properties[request.property];
         if (value) element.style.setProperty(request.property, value);
@@ -163,7 +176,7 @@ ipcRenderer.on('apply-edit', (_event, request) => {
       if (request.action === 'restore') {
         if (original.inlineStyle === null) element.removeAttribute('style');
         else element.setAttribute('style', original.inlineStyle);
-        element.innerText = original.text;
+        element.innerHTML = original.html;
       }
     });
     ipcRenderer.sendToHost('edit-result', { id: request.id, ok: true, count: targets.length });
@@ -178,7 +191,7 @@ ipcRenderer.on('apply-session', (_event, request) => {
     let styleTargets = 0;
     (request.styles || []).forEach((edit) => document.querySelectorAll(edit.selector).forEach((element) => { styleTargets += 1; rememberOriginal(element); Object.entries(edit.changes).forEach(([property, value]) => element.style.setProperty(property, value)); }));
     let textTargets = 0;
-    (request.texts || []).forEach((edit) => { const element = document.querySelector(edit.selector); if (element) { textTargets += 1; rememberOriginal(element); element.innerText = edit.text; } });
+    (request.texts || []).forEach((edit) => { const element = document.querySelector(edit.selector); if (element) { textTargets += 1; rememberOriginal(element); applySafeContent(element, edit.text); } });
     ipcRenderer.sendToHost('session-applied', { id: request.id, ok: true, styleTargets, textTargets, styleRequests: (request.styles || []).length });
   } catch (error) {
     ipcRenderer.sendToHost('session-applied', { id: request.id, ok: false, message: error.message });

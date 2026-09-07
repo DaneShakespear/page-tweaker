@@ -76,8 +76,8 @@ async function connect() {
     assert.equal(choices[0], 'This element');
     assert.ok(choices.some((label) => label.startsWith('All h1')));
     assert.match(await evaluate(`document.querySelector('#scopeSummary').textContent`), /only this element/);
-    await evaluate(`(() => { const input = document.querySelector('#text'); input.value = 'Live PageTweaker heading'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
-    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').textContent")`).then((text) => text === 'Live PageTweaker heading'));
+    await evaluate(`(() => { const input = document.querySelector('#text'); input.value = 'Live <strong>PageTweaker</strong><br>heading'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').innerHTML")`).then((html) => html === 'Live <strong>PageTweaker</strong><br>heading'));
 
     await evaluate(`[...document.querySelectorAll('[data-scope-key]')].find((button) => button.textContent.startsWith('All h1')).click()`);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
@@ -227,7 +227,10 @@ async function connect() {
     client = await connect();
     await poll(() => client.evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("localStorage.getItem('pageTweakerPersistentSmoke')")`), 'retained');
-    process.stdout.write('Packaged UI smoke passed: interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
+    await client.evaluate(`window.confirm = () => true; document.querySelector('#clearPage').click()`);
+    await poll(() => client.evaluate(`document.querySelector('#empty').hidden === false && document.querySelector('#address').value === ''`));
+    assert.equal(await client.evaluate(`document.querySelector('#page').getURL()`), 'about:blank');
+    process.stdout.write('Packaged UI smoke passed: safe formatted content, clear-page flow, interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
   } finally {
     client?.socket.close();
     app.kill('SIGTERM');

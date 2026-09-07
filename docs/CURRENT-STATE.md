@@ -45,8 +45,10 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Replaced the startup overlay with a concise dark onboarding workspace. It presents a large drop target, file chooser, address-bar path, draggable Chrome bookmarklet, and a three-step explanation of dragging the finished handoff ZIP into an AI chat.
 - Highlighted each property-specific Reset button only while that property differs from the selected element's original value.
 - Tightened font-size, line-height, and letter-spacing slider ranges around practical values while retaining unusual existing page values. Line height is now represented as a unitless ratio rather than computed pixels.
+- Applied the first real PageTweaker-to-PageTweaker handoff. The startup headline, explanatory copy, and spacing now reflect the exported evidence; the toolbar file action uses a standard folder icon and a new confirmed clear-page action returns to startup while discarding the loaded page and its feedback.
+- Replacement content now safely previews a limited formatting set (`br`, emphasis, code, mark, subscript, and superscript), restores the original HTML correctly, persists across breakpoint changes, and remains visible as markup in the exported AI brief. Scripts, media, links, attributes, and structural tags are not inserted.
 - Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
-- Verification: 26 contract tests pass. Packaged smoke verifies the startup guidance and bookmarklet, practical slider ranges, modified-property reset highlighting, two-page navigation/restoration, grouped markup, live font-weight editing, and the complete version 6 handoff ZIP.
+- Verification: 27 contract tests pass. Packaged smoke verifies safe formatted replacement content, the confirmed clear-page workflow, startup guidance and bookmarklet, practical slider ranges, modified-property reset highlighting, two-page navigation/restoration, grouped markup, live font-weight editing, and the complete version 6 handoff ZIP.
 
 ## v0.1.14 changes
 
@@ -138,9 +140,9 @@ Later capture-package behavior:
 
 ## Verification evidence
 
-- `npm test`: 26 of 26 tests passing for unreleased v0.1.16.
+- `npm test`: 27 of 27 tests passing for unreleased v0.1.16.
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
-- Unreleased v0.1.16 DMG verification passed; SHA-256: `64cf3a287e82455048b876c89e8f14954ad3f27d9c5b015c3850f8cc56a12e3c`.
+- Unreleased v0.1.16 DMG verification passed; SHA-256: `b738c414df0d86beede2b2437046ed4ab14d4645ab0c869da64555ed0419b824`.
 - `hdiutil verify`: v0.1.15 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
 - Local and downloaded GitHub v0.1.15 DMG SHA-256 match: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.

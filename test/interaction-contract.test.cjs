@@ -64,6 +64,21 @@ test('the empty state teaches fast opening and AI handoff without leaving the wo
   assert.match(renderer, /querySelectorAll\('\.bookmarklet'\)/);
 });
 
+test('formatted replacement content is safely previewed, exported, restored, and clearable', () => {
+  const html = read('src/index.html');
+  const bridge = read('src/page-preload.cjs');
+  const renderer = read('src/renderer.js');
+  assert.match(html, /id="clearPage"/);
+  assert.match(html, /safe formatting such as/);
+  assert.match(bridge, /allowedContentTags/);
+  assert.match(bridge, /function applySafeContent/);
+  assert.match(bridge, /element\.innerHTML = original\.html/);
+  assert.match(bridge, /applySafeContent\(element, request\.text\)/);
+  assert.match(renderer, /state\.originalTexts\.set\(scopedKey\(message\.selector\), message\.html\)/);
+  assert.match(renderer, /querySelector\('#clearPage'\)\.addEventListener/);
+  assert.match(renderer, /page\.src = 'about:blank'/);
+});
+
 test('modified Inspector properties highlight their own reset controls', () => {
   const css = read('src/shell.css');
   const renderer = read('src/renderer.js');
