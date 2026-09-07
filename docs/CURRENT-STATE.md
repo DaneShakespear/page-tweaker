@@ -144,7 +144,8 @@ Later capture-package behavior:
 
 - `npm test`: 27 of 27 tests passing for v0.1.16.
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
-- v0.1.16 DMG verification passed; SHA-256: `305a590902c75ba19cc1c106e359efa2c4adfffab10dd1c6d275c74be0e8d94d`.
+- Local and downloaded GitHub v0.1.16 DMG SHA-256 match: `305a590902c75ba19cc1c106e359efa2c4adfffab10dd1c6d275c74be0e8d94d`.
+- Downloaded v0.1.16 blockmap SHA-256: `a1ecb3496114273bc3873e376f817b02eba695ce6d5798451d8fa6e11557d06b`.
 - `hdiutil verify`: v0.1.16 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
 - GitHub v0.1.16 is public with the DMG and blockmap assets.
