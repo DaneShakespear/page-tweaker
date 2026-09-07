@@ -13,6 +13,7 @@ test('reads CSS computed styles and keeps controls centred on the selected value
   assert.equal(utils.readableValue({ fontSize: '128px' }, 'font-size'), '128px');
   const bounds = utils.sliderBounds('font-size', '128px');
   assert.equal(bounds.value, 128);
+  assert.deepEqual(utils.sliderBounds('font-weight', '650'), { min: 100, max: 900, step: 100, value: 700 });
   assert.ok(bounds.max >= 256);
 });
 

@@ -24,11 +24,11 @@ PageTweaker puts the visual decision where it belongs: on the page itself. It is
 
 - Opens a local HTML artifact, public `http(s)` URL, app URL handler target, or URL sent from the Chrome bookmarklet in a dedicated desktop workspace.
 - Uses a persistent PageTweaker browser profile so sites can stay logged in after you sign in inside PageTweaker.
-- Lets you select visible elements and preview typography, spacing, and color adjustments immediately.
+- Lets you select visible elements and preview font family, size, weight, line height, spacing, and color adjustments immediately.
 - Lets login forms, links, buttons, and other interactive controls behave normally; hold Option while clicking an interactive control to select it for tweaking.
 - Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to its page URL and preview size.
 - Supports plain-text replacement when the words need to fit the layout.
-- Pins natural-language AI notes to elements and groups any number of freehand strokes into one explained markup item with nearby element locators.
+- Pins natural-language AI notes to elements and groups any number of freehand strokes into one explained markup item with nearby element locators. Choosing a different drawing color naturally starts a new markup item.
 - Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and page-specific annotated screenshots showing the real page beneath the feedback.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 

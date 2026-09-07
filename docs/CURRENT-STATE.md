@@ -40,8 +40,10 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Scoped selectors, text changes, notes, markup, and annotated screenshots by page URL and breakpoint.
 - Changed handoff schema to version 6. The ZIP organizes feedback into `pages` records and names annotated screenshots by page and breakpoint.
 - Grouped drawing strokes into explicit markup items. A user can draw any number of circles, arrows, or lines under one explanation, then choose **Finish markup and start another**.
+- Changing the markup color now automatically finishes the active markup item. The next stroke begins a new item in the selected color with a new explanation.
+- Added a live `font-weight` Inspector slider from 100 through 900, including breakpoint/page persistence, handoff evidence, and a property-specific reset that leaves other controls unchanged.
 - Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
-- Verification: 23 contract tests pass. Packaged smoke verifies two-page navigation/restoration, two strokes under one markup explanation, and the complete version 6 handoff ZIP.
+- Verification: 24 contract tests pass. Packaged smoke verifies two-page navigation/restoration, two strokes under one markup explanation, automatic color-based grouping, live font-weight editing and isolated reset, and the complete version 6 handoff ZIP.
 
 ## v0.1.14 changes
 

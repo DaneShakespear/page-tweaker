@@ -83,6 +83,12 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('[data-hex-for="color"]').value`), '#ff0000');
     await evaluate(`(() => { const input = document.querySelector('[data-hex-for="color"]'); input.value = '#00ff00'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).color")`).then((color) => color === 'rgb(0, 255, 0)'));
+    await evaluate(`(() => { const input = document.querySelector('[data-style="font-weight"]'); input.value = '400'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).fontWeight")`).then((weight) => weight === '400'));
+    await evaluate(`document.querySelector('[data-reset-style="font-weight"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only font-weight')`));
+    assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).fontWeight")`), '700');
+    assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#00ff00');
     await evaluate(`document.querySelector('[data-reset-style="font-size"]').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only font-size')`));
     assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#00ff00');
@@ -144,8 +150,13 @@ async function connect() {
     await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Markup 1 · 2 strokes')`));
     assert.equal(await evaluate(`document.querySelectorAll('#strokeList textarea').length`), 1);
     assert.equal(await evaluate(`document.querySelector('#strokeList textarea').value`), 'Move the marked block closer to the heading.');
-    await evaluate(`document.querySelector('#finishMarkup').click()`);
-    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('saved with 2 strokes')`));
+    await evaluate(`document.querySelector('[data-color="#64d7ff"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Color changed')`));
+    await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x + 220, y: box.y + 120, button: 'left', buttons: 1, clickCount: 1 });
+    await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 250, y: box.y + 160, button: 'left', buttons: 1 });
+    await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 250, y: box.y + 160, button: 'left', buttons: 0, clickCount: 1 });
+    await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Markup 2 · 1 stroke')`));
+    assert.equal(await evaluate(`document.querySelectorAll('#strokeList textarea').length`), 2);
     const markedPixels = await evaluate(`(() => { const context = document.querySelector('#markup').getContext('2d'); const scale = devicePixelRatio; return [...context.getImageData(80 * scale, 80 * scale, 100 * scale, 90 * scale).data].filter((value, index) => index % 4 === 3 && value > 0).length; })()`);
     assert.ok(markedPixels > 0);
     await evaluate(`document.querySelector('#page').executeJavaScript('scrollTo(0, 300)')`);

@@ -57,7 +57,7 @@ function rememberOriginal(element) {
   if (!originals.has(element)) originals.set(element, {
     inlineStyle: element.getAttribute('style'),
     text: element.innerText,
-    properties: Object.fromEntries(['font-family', 'font-size', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'].map((property) => [property, element.style.getPropertyValue(property)]))
+    properties: Object.fromEntries(['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'].map((property) => [property, element.style.getPropertyValue(property)]))
   });
   editedElements.add(element);
   return originals.get(element);
@@ -118,7 +118,7 @@ document.addEventListener('click', (event) => {
   element.setAttribute('data-page-tweaker-target', targetId);
   const box = element.getBoundingClientRect();
   const style = getComputedStyle(element);
-  const properties = ['font-family', 'font-size', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'];
+  const properties = ['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'];
   ipcRenderer.sendToHost('element-selected', {
     selector: locator(element),
     scopes: selectorScopes(element),
@@ -131,6 +131,7 @@ document.addEventListener('click', (event) => {
     style: {
       fontSize: style.fontSize,
       fontFamily: style.fontFamily,
+      fontWeight: style.fontWeight,
       lineHeight: style.lineHeight === 'normal' ? String(parseFloat(style.fontSize) * 1.2) : style.lineHeight,
       letterSpacing: style.letterSpacing === 'normal' ? '0' : style.letterSpacing,
       color: style.color,

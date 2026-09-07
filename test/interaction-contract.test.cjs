@@ -34,6 +34,19 @@ test('selected reset, markup explanation, help, and removal controls are wired',
   assert.match(renderer, /groupId: state\.currentMarkupGroupId/);
   assert.match(renderer, /function finishCurrentMarkup/);
   assert.match(renderer, /group\.strokes\.forEach/);
+  assert.match(renderer, /color !== state\.annotationColor/);
+  assert.match(renderer, /Color changed\. The previous markup item was saved/);
+});
+
+test('font weight is a live property with an isolated reset', () => {
+  const html = read('src/index.html');
+  const bridge = read('src/page-preload.cjs');
+  const utils = read('src/browser-utils.js');
+  assert.match(html, /data-style="font-weight"/);
+  assert.match(html, /data-reset-style="font-weight"/);
+  assert.match(bridge, /fontWeight: style\.fontWeight/);
+  assert.match(utils, /property === 'font-weight'/);
+  assert.match(utils, /'font-weight'.*String\(raw\)/);
 });
 
 test('navigation keeps feedback isolated by page URL and exports page records', () => {
