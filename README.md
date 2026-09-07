@@ -26,10 +26,10 @@ PageTweaker puts the visual decision where it belongs: on the page itself. It is
 - Uses a persistent PageTweaker browser profile so sites can stay logged in after you sign in inside PageTweaker.
 - Lets you select visible elements and preview typography, spacing, and color adjustments immediately.
 - Lets login forms, links, buttons, and other interactive controls behave normally; hold Option while clicking an interactive control to select it for tweaking.
-- Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to the size where it was created.
+- Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to its page URL and preview size.
 - Supports plain-text replacement when the words need to fit the layout.
-- Pins natural-language AI notes to elements and gives every freehand mark its own editable explanation and nearby element locator.
-- Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and annotated screenshots showing the real page beneath the feedback at each visited preview size.
+- Pins natural-language AI notes to elements and groups any number of freehand strokes into one explained markup item with nearby element locators.
+- Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and page-specific annotated screenshots showing the real page beneath the feedback.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
 ## Open From Chrome
@@ -50,11 +50,11 @@ Page controls work normally. Hold **Option (⌥)** while clicking a link, button
 
 1. **Open** a local report, page, public URL, or Chrome bookmarklet target.
 2. **Tune** the element until it looks right.
-3. **Explain** larger changes with a pinned note or markup.
+3. **Explain** larger changes with a pinned note or grouped markup. Draw as many strokes as the idea needs, then finish that item.
 4. **Create the handoff**. PageTweaker saves one ZIP in `Downloads/PageTweaker Handoffs`.
 5. Drag its icon directly into Codex, Claude, another AI chat, or copy the displayed full path.
 
-The AI receives the original page address, selectors, scope, previewed values, replacement text, pinned notes, breakpoint context, drawing coordinates, per-mark explanations, nearby element locators, and a plain-language brief. The brief explicitly treats those details as evidence of the desired outcome, not code or architecture to paste blindly. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
+The AI receives every visited page address, selectors, scope, previewed values, replacement text, pinned notes, breakpoint context, grouped drawing coordinates and explanations, nearby element locators, and a plain-language brief. The brief explicitly treats those details as evidence of the desired outcome, not code or architecture to paste blindly. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
 
 ## Install
 

@@ -4,6 +4,8 @@
 **Current release:** `v0.1.15`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.15>
 
+**Local development version:** `v0.1.16` (unreleased)
+
 ## Agent Startup
 
 Before continuing work, read this file and the root `AGENTS.md`. The latest unreleased work is focused on making authenticated pages and Chrome handoff less painful.
@@ -31,6 +33,15 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Added Help guidance for interactive controls, protected pages, and the password-manager boundary.
 - Added privacy-safe failed-request diagnostics that report only the failing origin and Electron network error, never passwords, request bodies, query strings, or tokens.
 - Verified a successful real login at `https://portal.kre8media.com/` inside packaged PageTweaker. The protected session path works without weakening web security.
+
+## Unreleased v0.1.16 changes
+
+- Made navigation page-aware. Normal links and application navigation create a separate feedback record for each URL; returning to a page restores only that page's edits at the active breakpoint.
+- Scoped selectors, text changes, notes, markup, and annotated screenshots by page URL and breakpoint.
+- Changed handoff schema to version 6. The ZIP organizes feedback into `pages` records and names annotated screenshots by page and breakpoint.
+- Grouped drawing strokes into explicit markup items. A user can draw any number of circles, arrows, or lines under one explanation, then choose **Finish markup and start another**.
+- Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
+- Verification: 23 contract tests pass. Packaged smoke verifies two-page navigation/restoration, two strokes under one markup explanation, and the complete version 6 handoff ZIP.
 
 ## v0.1.14 changes
 

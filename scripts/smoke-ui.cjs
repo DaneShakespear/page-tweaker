@@ -9,12 +9,13 @@ const { pathToFileURL } = require('node:url');
 const root = path.join(__dirname, '..');
 const binary = path.join(root, 'dist', 'mac-arm64', 'PageTweaker.app', 'Contents', 'MacOS', 'PageTweaker');
 const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
+const secondFixture = path.join(root, 'test', 'fixtures', 'navigation-second.html');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
 let app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const windowPosition = () => {
-  const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerName as String] as? String) == "PageTweaker", let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
+const windowPosition = (expectedPid) => {
+  const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerPID as String] as? Int32) == ${expectedPid}, let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
   const output = execFileSync('/usr/bin/swift', ['-e', script], { encoding: 'utf8' }).trim();
   return output || null;
 };
@@ -50,10 +51,10 @@ async function connect() {
     client = await connect();
     const { command, evaluate } = client;
     process.stdout.write('Smoke connected to packaged app.\n');
-    const initialWindow = await poll(() => windowPosition());
+    const initialWindow = await poll(() => windowPosition(app.pid));
     dragNativeWindow(initialWindow);
     await delay(350);
-    const movedWindow = windowPosition();
+    const movedWindow = windowPosition(app.pid);
     assert.notEqual(movedWindow, initialWindow, 'The draggable title bar did not move the native window.');
     process.stdout.write('Native window drag passed.\n');
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
@@ -98,6 +99,20 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('#status').dataset.captureError || ''`), '');
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
 
+    const secondUrl = pathToFileURL(secondFixture).href;
+    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#next-page').click(); true")`);
+    await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(secondUrl)}`));
+    assert.equal(await evaluate(`document.querySelector('#address').value`), secondUrl);
+    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
+    await poll(() => evaluate(`document.querySelector('#selection').textContent.includes('h1')`));
+    await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '31'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).fontSize")`).then((size) => size === '31px'));
+    await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#first-page').click(); true")`);
+    await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(pathToFileURL(fixture).href)}`));
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).fontSize")`).then((size) => size === '30px'));
+    assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).color")`), 'rgb(0, 255, 0)');
+    process.stdout.write('Multi-page navigation isolation and restoration passed.\n');
+
     await evaluate(`window.confirm = () => true; document.querySelector('#reload').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element') && document.querySelector('#selectorBar').hidden`));
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['22px', '22px']);
@@ -123,8 +138,14 @@ async function connect() {
     await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x + 100, y: box.y + 100, button: 'left', buttons: 1, clickCount: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 0, clickCount: 1 });
-    await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Mark 1')`));
+    await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x + 180, y: box.y + 110, button: 'left', buttons: 1, clickCount: 1 });
+    await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 210, y: box.y + 150, button: 'left', buttons: 1 });
+    await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 210, y: box.y + 150, button: 'left', buttons: 0, clickCount: 1 });
+    await poll(() => evaluate(`document.querySelector('#strokeList').textContent.includes('Markup 1 · 2 strokes')`));
+    assert.equal(await evaluate(`document.querySelectorAll('#strokeList textarea').length`), 1);
     assert.equal(await evaluate(`document.querySelector('#strokeList textarea').value`), 'Move the marked block closer to the heading.');
+    await evaluate(`document.querySelector('#finishMarkup').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('saved with 2 strokes')`));
     const markedPixels = await evaluate(`(() => { const context = document.querySelector('#markup').getContext('2d'); const scale = devicePixelRatio; return [...context.getImageData(80 * scale, 80 * scale, 100 * scale, 90 * scale).data].filter((value, index) => index % 4 === 3 && value > 0).length; })()`);
     assert.ok(markedPixels > 0);
     await evaluate(`document.querySelector('#page').executeJavaScript('scrollTo(0, 300)')`);
@@ -150,11 +171,13 @@ async function connect() {
     assert.match(archiveContents, /handoff\.json/);
     assert.match(archiveContents, /desktop-annotated\.png/);
     assert.match(archiveContents, /mobile-annotated\.png/);
-    const annotatedImage = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/desktop-annotated.png']);
+    const annotatedImage = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/page-1-desktop-annotated.png']);
     assert.ok(annotatedImage.length > 10000, 'The annotated image does not contain meaningful page context.');
     const handoffJson = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/handoff.json'], { encoding: 'utf8' });
     assert.match(handoffJson, /Move the marked block closer to the heading/);
     assert.match(handoffJson, /"breakpoint": "desktop"/);
+    assert.match(handoffJson, /"pages": \[/);
+    assert.match(handoffJson, /"strokes": \[/);
     const startHere = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/START-HERE.md'], { encoding: 'utf8' });
     assert.match(startHere, /Do not blindly paste selectors/);
     assert.equal(await evaluate(`document.querySelector('#handoffName').textContent.endsWith('.zip')`), true);

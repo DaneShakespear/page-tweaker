@@ -29,9 +29,23 @@ test('selected reset, markup explanation, help, and removal controls are wired',
   assert.match(html, /id="undoStroke"/);
   assert.match(html, /id="clearStrokes"/);
   assert.match(html, /id="markupExplanation"/);
+  assert.match(html, /id="finishMarkup"/);
   assert.match(html, /id="helpTab"/);
-  assert.match(renderer, /explanation: state\.markupExplanation\.trim\(\)/);
-  assert.match(renderer, /stroke\.explanation = explanation\.value/);
+  assert.match(renderer, /groupId: state\.currentMarkupGroupId/);
+  assert.match(renderer, /function finishCurrentMarkup/);
+  assert.match(renderer, /group\.strokes\.forEach/);
+});
+
+test('navigation keeps feedback isolated by page URL and exports page records', () => {
+  const renderer = read('src/renderer.js');
+  assert.match(renderer, /pageOrder: \[\]/);
+  assert.match(renderer, /function activateNavigatedPage/);
+  assert.match(renderer, /addEventListener\('did-navigate'/);
+  assert.match(renderer, /addEventListener\('did-navigate-in-page'/);
+  assert.match(renderer, /JSON\.stringify\(\[state\.source, state\.breakpoint, key\]\)/);
+  assert.match(renderer, /pageUrl: state\.source/);
+  assert.match(renderer, /version: 6/);
+  assert.match(renderer, /pages = state\.pageOrder\.map/);
 });
 
 test('responsive previews scope evidence and markup by breakpoint', () => {

@@ -54,12 +54,13 @@
       </section>
       <section id="annotationControls" role="tabpanel" aria-labelledby="markupTab" hidden>
         <h3>Markup</h3>
-        <p class="hint">Describe the next mark, then draw it. Each line keeps its own explanation and preview size.</p>
+        <p class="hint">Describe one markup item, then draw as many circles, arrows, or lines as it needs. Choose Finish markup before starting the next item.</p>
         <div class="swatches" aria-label="Markup color"><button data-color="#f25f5c" class="swatch active" title="Coral"></button><button data-color="#ffca56" class="swatch" title="Yellow"></button><button data-color="#64d7ff" class="swatch" title="Blue"></button><button data-color="#8be28b" class="swatch" title="Green"></button><button data-color="#ffffff" class="swatch" title="White"></button></div>
         <label>Line thickness <input id="annotationThickness" type="range" min="1" max="14" step="1" value="3"><output id="annotationThicknessValue">3 px</output></label>
-        <label>What will your next mark mean?<textarea id="markupExplanation" placeholder="Example: Move the circled section closer to the heading and align both edges."></textarea></label>
-        <p id="markupSaved" class="saved-state">This explanation will attach to the next line you draw.</p>
-        <div class="markup-actions"><button id="undoStroke">Undo last</button><button id="clearStrokes">Clear this preview size</button></div>
+        <label>What does this markup item mean?<textarea id="markupExplanation" placeholder="Example: Move the circled section closer to the heading and align both edges."></textarea></label>
+        <p id="markupSaved" class="saved-state">Draw one or more strokes for this markup item.</p>
+        <button id="finishMarkup" class="primary">Finish markup and start another</button>
+        <div class="markup-actions"><button id="undoStroke">Undo last stroke</button><button id="clearStrokes">Clear this preview size</button></div>
         <div id="strokeList"><p class="hint">No drawing strokes yet.</p></div>
       </section>
       <section id="helpPanel" role="tabpanel" aria-labelledby="helpTab" hidden>
