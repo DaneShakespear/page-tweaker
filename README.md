@@ -81,11 +81,9 @@ All changes are preview-only. PageTweaker never modifies the original local file
 
 ## Install on macOS
 
-The current public download is **v0.1.15 for Apple Silicon**. Download the DMG from [GitHub Releases](../../releases), drag PageTweaker to Applications, then Control-click the app and choose **Open** the first time.
+The current public download is **v0.1.16 for Apple Silicon**. Download the DMG from [GitHub Releases](../../releases), drag PageTweaker to Applications, then Control-click the app and choose **Open** the first time.
 
-The app is currently ad-hoc signed, not Apple Developer ID signed or notarized. macOS may block or warn about the download. Read [Installing PageTweaker](docs/INSTALLING.md) for the exact per-app installation path, safe troubleshooting, and build-from-source option. Do not disable Gatekeeper system-wide.
-
-The `main` branch contains the newer unreleased v0.1.16 work. A new public DMG will not be published until Developer ID signing, notarization, stapling, and fresh-download Gatekeeper verification are complete.
+The app is ad-hoc signed for bundle integrity. It is not Apple Developer ID signed or notarized, so macOS may warn about or block the download on first launch. Read the complete [Installing PageTweaker](docs/INSTALLING.md) guide for the safe per-app Gatekeeper exception, troubleshooting, and build-from-source option. Never disable Gatekeeper system-wide.
 
 ## Run from source
 
@@ -127,7 +125,5 @@ The repository does not yet grant an open-source license. Source is publicly vis
 
 ## Roadmap
 
-- Developer ID signing and Apple notarization
-- Fresh-download macOS acceptance testing
 - Optional authenticated Chrome capture without copying cookies or tokens
 - Additional markup and handoff review tools

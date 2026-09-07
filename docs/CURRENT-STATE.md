@@ -1,14 +1,12 @@
 # PageTweaker Current State
 
 **Last verified:** 2026-09-07  
-**Current release:** `v0.1.15`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.15>
-
-**Local development version:** `v0.1.16` (unreleased)
+**Current release:** `v0.1.16`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.16>
 
 ## Agent Startup
 
-Before continuing work, read this file and the root `AGENTS.md`. The latest unreleased work is focused on making authenticated pages and Chrome handoff less painful.
+Before continuing work, read this file and the root `AGENTS.md`.
 
 ## Product state
 
@@ -34,7 +32,7 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Added privacy-safe failed-request diagnostics that report only the failing origin and Electron network error, never passwords, request bodies, query strings, or tokens.
 - Verified a successful real login at `https://portal.kre8media.com/` inside packaged PageTweaker. The protected session path works without weakening web security.
 
-## Unreleased v0.1.16 changes
+## v0.1.16 changes
 
 - Made navigation page-aware. Normal links and application navigation create a separate feedback record for each URL; returning to a page restores only that page's edits at the active breakpoint.
 - Scoped selectors, text changes, notes, markup, and annotated screenshots by page URL and breakpoint.
@@ -144,13 +142,12 @@ Later capture-package behavior:
 
 ## Verification evidence
 
-- `npm test`: 27 of 27 tests passing for unreleased v0.1.16.
+- `npm test`: 27 of 27 tests passing for v0.1.16.
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
-- Unreleased v0.1.16 DMG verification passed; SHA-256: `305a590902c75ba19cc1c106e359efa2c4adfffab10dd1c6d275c74be0e8d94d`.
-- `hdiutil verify`: v0.1.15 DMG valid.
+- v0.1.16 DMG verification passed; SHA-256: `305a590902c75ba19cc1c106e359efa2c4adfffab10dd1c6d275c74be0e8d94d`.
+- `hdiutil verify`: v0.1.16 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
-- Local and downloaded GitHub v0.1.15 DMG SHA-256 match: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.
-- GitHub v0.1.15 is public with the DMG and blockmap assets.
+- GitHub v0.1.16 is public with the DMG and blockmap assets.
 
 ## Architecture that matters
 
@@ -164,7 +161,7 @@ Later capture-package behavior:
 
 ## Current limitations
 
-- The app is ad-hoc signed, not Developer ID signed or Apple notarized. On macOS 26.5.2, Gatekeeper can leave v0.1.15 stalled at `_dyld_start` even when the bundle passes local `codesign` verification; no local bypass is confirmed. Restart the Mac before retesting a per-app approval. Do not publish another release until it is Developer ID signed, notarized, and stapled, then independently assessed with `spctl --assess` from a fresh download.
+- The app is intentionally ad-hoc signed, not Developer ID signed or Apple notarized. macOS can warn about or block a downloaded build on first launch. Use only the documented per-app Gatekeeper exception for a trusted download; never disable macOS protections globally. Dane accepted this distribution tradeoff on 2026-09-07.
 - PageTweaker does not inherit Chrome/Safari cookies or authenticated browser sessions.
 - PageTweaker can now retain its own login cookies after a user signs in inside PageTweaker, but this is separate from Chrome's profile.
 - Electron does not provide Chrome or Safari password-manager extension UI inside the PageTweaker webview. Use the password manager's standalone app or menu to copy and paste credentials; PageTweaker must not become a credential vault.
@@ -172,11 +169,10 @@ Later capture-package behavior:
 - Preview changes exist only in the current session and export bundle. They do not modify source code.
 - Annotated screenshots capture the visible viewport at each visited breakpoint. Very long content outside that viewport remains represented through selectors, notes, drawing coordinates, and structured evidence rather than a stitched full-page image.
 - The repository does not yet grant an open-source license.
-- The README still uses a concept render; a real product screenshot walkthrough remains planned.
 
 ## Next-session starting point
 
-Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.15. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
+Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.16. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
 
 ## 2026-09-04 login diagnostic
 
