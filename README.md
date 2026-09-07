@@ -1,76 +1,95 @@
 # PageTweaker
 
-> Make the change you can see.
+> Turn visible page feedback into one implementation brief your AI can act on.
 
-<img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="PageTweaker app icon" width="160">
+<img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="PageTweaker app icon" width="150">
 
-PageTweaker is a focused macOS desktop app for the frustrating last mile of AI-generated HTML: the report, interface, or landing page is almost right, but getting it there requires too much back-and-forth.
+PageTweaker is a macOS feedback workspace for the moment when an AI-generated page is close, but words alone are slowing everything down.
 
-Open the page. Click what looks wrong. Tune the visible value. Mark up what needs a bigger change. Create one handoff file that gives an AI session or developer the exact implementation brief.
+Open the real page. Try the visual change yourself. Pin precise notes. Draw over the page and explain what the markup means. Then give your AI one ZIP containing the complete context.
 
-![Concept render of PageTweaker](assets/page-tweaker-concept.png)
+**PageTweaker is not another CSS editor.** It does not rewrite your project, prescribe implementation code, or replace your AI coding agent. It helps you decide and communicate what the finished page should look like so the agent can make the real change correctly.
 
-*Concept render. A real product screenshot walkthrough remains planned.*
+![PageTweaker product overview](assets/page-tweaker-concept.png)
 
-## Why it exists
+## The problem it solves
 
-“Make the header smaller” is not an implementation instruction. It is a guess that becomes a loop of edits, previews, and more guesses.
+Feedback such as “make this smaller,” “move that section,” or “use the same treatment as the other cards” forces an AI agent to guess what you saw and what you meant. Screenshots help, but they usually lose the exact element, page, breakpoint, tested values, and explanation.
 
-PageTweaker puts the visual decision where it belongs: on the page itself. It is not a full CSS editor or no-code site builder. It is a fast visual QA and AI-handoff layer for pages that are already close.
+PageTweaker keeps those pieces together:
+
+- the page and exact element you were looking at;
+- the desktop, tablet, or mobile view where the issue appears;
+- visual values you tried and approved;
+- replacement content, including safe inline formatting;
+- pinned notes attached to specific elements;
+- grouped drawing markup with a plain-language explanation;
+- annotated page screenshots and structured evidence for the receiving agent.
+
+The result is fewer blind revisions, less repeated prompting, and a clearer definition of done.
+
+## What it is and what it is not
+
+| PageTweaker is | PageTweaker is not |
+| --- | --- |
+| A visual feedback and decision tool | A source-code editor |
+| A safe place to test the outcome you want | A no-code site builder |
+| A structured handoff to an AI agent or developer | A generator that blindly exports CSS |
+| A page-aware, breakpoint-aware review workspace | A replacement for your browser or coding agent |
+
+Preview values and selectors are evidence. The handoff explicitly tells the receiving agent to inspect the real project and implement the intent through its existing components, design system, responsive rules, accessibility requirements, and conventions.
+
+## From page to AI brief
 
 ![PageTweaker workflow](docs/workflow.svg)
 
-## What it does
+1. **Open the page.** Drop a local HTML file or URL onto PageTweaker, type a domain such as `apple.com`, choose a file, or launch the current Chrome tab from the bookmarks bar.
+2. **Try the outcome.** Select an element and preview typography, spacing, colors, background, or replacement content without changing the source.
+3. **Explain the intent.** Pin a note to an exact element or draw as many strokes as one idea needs and give that markup one explanation.
+4. **Check responsive views.** Keep desktop, tablet, and mobile feedback separate. Navigate between pages and return with the Back button without mixing their changes.
+5. **Create the handoff.** Drag the resulting ZIP into Codex, Claude, another AI chat, or give it to a developer.
 
-- Opens a local HTML artifact, public `http(s)` URL, app URL handler target, or URL sent from the Chrome bookmarklet in a dedicated desktop workspace.
-- Uses a persistent PageTweaker browser profile so sites can stay logged in after you sign in inside PageTweaker.
-- Lets you select visible elements and preview font family, size, weight, line height, spacing, and color adjustments immediately.
-- Lets login forms, links, buttons, and other interactive controls behave normally; hold Option while clicking an interactive control to select it for tweaking.
-- Adds desktop, tablet, and mobile preview controls and keeps every edit, note, and drawing attached to its page URL and preview size.
-- Supports live replacement content, including safe inline formatting such as line breaks and emphasis, when the words need to fit the layout.
-- Pins natural-language AI notes to elements and groups any number of freehand strokes into one explained markup item with nearby element locators. Choosing a different drawing color naturally starts a new markup item.
-- Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and page-specific annotated screenshots showing the real page beneath the feedback.
-- Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
+### Start from almost anywhere
 
-The startup workspace shows every fast path in one place: drop a page on the app or window, paste a target in the address bar, choose an HTML file, or drag the Chrome shortcut to the bookmarks bar. It also previews the complete workflow from opening a page to dragging the resulting ZIP into an AI chat. The toolbar folder opens another file; the adjacent close control asks before clearing the loaded page and all current feedback.
+![PageTweaker startup workspace showing drop, paste, file, and Chrome options](assets/screenshots/start-screen.png)
 
-## Open From Chrome
+The startup screen shows every fast path. Drop onto the app icon or window, paste into the address bar, choose an HTML file, or install the Chrome shortcut once.
 
-PageTweaker includes a no-extension bookmarklet in the Help tab. Drag **Open in PageTweaker** to Chrome's bookmarks bar once, then click that bookmark on any page to send the current URL to PageTweaker. Clicking it inside PageTweaker copies the launcher code as a fallback for creating the bookmark manually.
+### Open the current Chrome page
 
-The bookmarklet launches the installed app through:
+<img src="assets/screenshots/chrome-shortcut.png" alt="Open in PageTweaker shortcut being dragged to the Chrome bookmarks bar" width="420">
 
-```js
-javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)
-```
+The no-extension bookmarklet sends only the current URL through PageTweaker’s registered app link. It does not copy Chrome cookies, local storage, password-manager data, or authentication tokens. Protected sites can use PageTweaker’s own persistent login session after you sign in inside the app.
 
-This sends only the URL. It does not copy Chrome cookies, localStorage, IndexedDB, password-manager state, or auth tokens. For protected pages, sign in once inside PageTweaker; its own persistent browser profile can keep that site session for later.
+### Hand one file back to AI
 
-Page controls work normally. Hold **Option (⌥)** while clicking a link, button, or form field when you want to select that control for tweaking instead. Chrome and Safari password-manager extensions do not run inside PageTweaker; use your password manager's standalone app or menu to copy and paste credentials.
+<img src="assets/screenshots/handoff-ready.png" alt="PageTweaker handoff file ready to drag into an AI chat" width="390">
 
-## How the handoff works
+The Handoff tab gives you a draggable file, a selectable full path, Copy Path, and Show in Finder. The ZIP contains:
 
-1. **Open** a local report, page, public URL, or Chrome bookmarklet target.
-2. **Tune** the element until it looks right.
-3. **Explain** larger changes with a pinned note or grouped markup. Draw as many strokes as the idea needs, then finish that item.
-4. **Create the handoff**. PageTweaker saves one ZIP in `Downloads/PageTweaker Handoffs`.
-5. Drag its icon directly into Codex, Claude, another AI chat, or copy the displayed full path.
+- `START-HERE.md`, which explains the user’s intent and tells the agent how to interpret the evidence;
+- `handoff.json`, containing page, breakpoint, selector, tested-value, text, note, and grouped-markup context;
+- annotated screenshots that show the real page beneath the feedback.
 
-The AI receives every visited page address, selectors, scope, previewed values, replacement text, pinned notes, breakpoint context, grouped drawing coordinates and explanations, nearby element locators, and a plain-language brief. The brief explicitly treats those details as evidence of the desired outcome, not code or architecture to paste blindly. The Handoff tab keeps the file icon, selectable full path, Copy Path button, and Show in Finder action together.
+## Inspect without losing normal page behavior
 
-## Install
+Links, buttons, forms, and login controls work normally. Hold **Option (⌥)** while clicking an interactive control when you want to select it for feedback instead.
 
-Download the Apple Silicon DMG from [Releases](../../releases), drag PageTweaker to Applications, then Control-click and choose **Open** the first time.
+Exact-element scope is the default. When a repeated style should change everywhere, the selector bar can deliberately widen the visual preview to a shared class or matching tag. Text replacement and pinned notes remain attached to the exact selected element.
 
-The top bar always shows the running version. Type a domain such as `apple.com`, paste a path or complete URL, then press Enter; you can also drop it anywhere or choose a local `.html` or Safari `.webloc` file. Bare domains open through HTTPS automatically. After following links inside the page, use the browser-style Back button to return while preserving each page's feedback. Loading a different starting page or reloading always asks before clearing the relevant preview edits, pins, and markup. For an app-icon target, open a Safari `.webloc` with PageTweaker or use `page-tweaker://open?url=` followed by an encoded URL.
+All changes are preview-only. PageTweaker never modifies the original local file, remote page, or source project.
 
-The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer PageTweaker without PageTweaker silently replacing your default browser.
+## Install on macOS
 
-When you select an element, PageTweaker defaults to changing only that exact element at the active desktop, tablet, or mobile preview. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Replacement text updates as you type, and color controls include synchronized hex fields for copying or pasting exact colors. Typography includes font weight, and the font-size, line-height, and letter-spacing sliders use practical ranges suited to the selected element. Pinned notes stay attached to the exact clicked element and preview size. Each Inspector reset button names the one property it restores and highlights while that property is changed. Markup moves with the page while it scrolls, and every grouped markup idea keeps its own explanation.
+The current public download is **v0.1.15 for Apple Silicon**. Download the DMG from [GitHub Releases](../../releases), drag PageTweaker to Applications, then Control-click the app and choose **Open** the first time.
 
-The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing PageTweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
+The app is currently ad-hoc signed, not Apple Developer ID signed or notarized. macOS may block or warn about the download. Read [Installing PageTweaker](docs/INSTALLING.md) for the exact per-app installation path, safe troubleshooting, and build-from-source option. Do not disable Gatekeeper system-wide.
+
+The `main` branch contains the newer unreleased v0.1.16 work. A new public DMG will not be published until Developer ID signing, notarization, stapling, and fresh-download Gatekeeper verification are complete.
 
 ## Run from source
+
+Requirements: macOS, Node.js 20 or newer, and npm.
 
 ```sh
 git clone https://github.com/DaneShakespear/page-tweaker.git
@@ -79,18 +98,16 @@ npm install
 npm start
 ```
 
-To open a file or URL from the terminal after `npm link`:
+Do not open `src/index.html` directly in a normal browser. Page selection, app links, native file operations, and handoff export require the Electron app runtime.
 
-```sh
-page-tweaker ./report.html
-page-tweaker https://example.com
-```
+## Privacy and security boundaries
 
-## Current boundaries
-
-PageTweaker v1 supports public pages, local HTML artifacts, and its own persistent web session for sites you log into inside PageTweaker. It does not reuse your Chrome profile, import cookies, log into sites on your behalf, modify the original source file, or send changes directly to an AI provider. Those limits are deliberate.
-
-The Chrome bookmarklet is a low-friction URL launcher, not an authenticated page capture tool. A browser extension or native bridge may be added later if PageTweaker needs to capture authenticated page context directly from Chrome without moving cookies or tokens.
+- PageTweaker does not upload your feedback to an AI provider.
+- It does not store passwords or import browser cookies and tokens.
+- Chrome and Safari password-manager extensions do not run inside its Electron preview.
+- The Chrome shortcut sends only the current URL.
+- Exported handoffs are ordinary local ZIP files under `Downloads/PageTweaker Handoffs`.
+- Preview changes remain local and do not alter the source page.
 
 ## Development
 
@@ -100,13 +117,17 @@ npm run package:mac
 npm run smoke:ui
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance and current licensing status.
+See [Contributing](CONTRIBUTING.md), [Security](SECURITY.md), and the current technical state in [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md).
+
+## Current boundaries
+
+PageTweaker supports local HTML artifacts, public pages, multi-page navigation, and sites you log into through its own persistent session. It does not inherit an existing Chrome or Safari session, capture a logged-in Chrome DOM, edit source code, deploy changes, or choose the final implementation architecture.
+
+The repository does not yet grant an open-source license. Source is publicly visible, but reuse rights have not been granted.
 
 ## Roadmap
 
-- Signed and notarized macOS release
-- Real product screenshot walkthrough
-- Manual verification and polish for the Chrome bookmarklet flow
-- Optional authenticated Chrome capture integration without copying browser cookies
-- More markup tools and export controls
-- Optional integrations that keep AI-provider credentials outside the app
+- Developer ID signing and Apple notarization
+- Fresh-download macOS acceptance testing
+- Optional authenticated Chrome capture without copying cookies or tokens
+- Additional markup and handoff review tools
