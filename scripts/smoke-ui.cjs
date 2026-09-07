@@ -12,7 +12,7 @@ const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
 const secondFixture = path.join(root, 'test', 'fixtures', 'navigation-second.html');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
-let app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
+let app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`], { stdio: 'ignore' });
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const windowPosition = (expectedPid) => {
   const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerPID as String] as? Int32) == ${expectedPid}, let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
@@ -57,6 +57,11 @@ async function connect() {
     const movedWindow = windowPosition(app.pid);
     assert.notEqual(movedWindow, initialWindow, 'The draggable title bar did not move the native window.');
     process.stdout.write('Native window drag passed.\n');
+    assert.equal(await evaluate(`document.querySelector('#empty').hidden`), false);
+    assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drop any page here/i);
+    assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drag ZIP into AI chat/);
+    assert.match(await evaluate(`document.querySelector('.empty-bookmarklet').getAttribute('href')`), /^javascript:location\.href='page-tweaker:\/\/open\?url='/);
+    await evaluate(`(() => { const address = document.querySelector('#address'); address.value = ${JSON.stringify(pathToFileURL(fixture).href)}; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').click(); true")`);
     assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
@@ -77,6 +82,10 @@ async function connect() {
     await evaluate(`[...document.querySelectorAll('[data-scope-key]')].find((button) => button.textContent.startsWith('All h1')).click()`);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('2 elements')`));
+    assert.equal(await evaluate(`document.querySelector('[data-reset-style="font-size"]').classList.contains('modified')`), true);
+    assert.ok(await evaluate(`Number(document.querySelector('[data-style="font-size"]').max)`) <= 40);
+    assert.equal(await evaluate(`Number(document.querySelector('[data-style="line-height"]').max)`), 2.5);
+    assert.equal(await evaluate(`Number(document.querySelector('[data-style="letter-spacing"]').max)`), 8);
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => getComputedStyle(element).fontSize)")`), ['30px', '30px']);
     await evaluate(`(() => { const input = document.querySelector('[data-style="color"]'); input.value = '#ff0000'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('color')`));
@@ -91,6 +100,8 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#00ff00');
     await evaluate(`document.querySelector('[data-reset-style="font-size"]').click()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only font-size')`));
+    assert.equal(await evaluate(`document.querySelector('[data-reset-style="font-size"]').classList.contains('modified')`), false);
+    assert.equal(await evaluate(`document.querySelector('[data-reset-style="color"]').classList.contains('modified')`), true);
     assert.equal(await evaluate(`document.querySelector('[data-style="color"]').value`), '#00ff00');
     assert.deepEqual(await evaluate(`document.querySelector('#page').executeJavaScript("[...document.querySelectorAll('h1')].map((element) => [getComputedStyle(element).fontSize, getComputedStyle(element).color])")`), [['22px', 'rgb(0, 255, 0)'], ['22px', 'rgb(0, 255, 0)']]);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);

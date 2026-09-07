@@ -49,6 +49,30 @@ test('font weight is a live property with an isolated reset', () => {
   assert.match(utils, /'font-weight'.*String\(raw\)/);
 });
 
+test('the empty state teaches fast opening and AI handoff without leaving the workspace', () => {
+  const html = read('src/index.html');
+  const css = read('src/shell.css');
+  const renderer = read('src/renderer.js');
+  assert.match(html, /DROP ANY PAGE HERE/);
+  assert.match(html, /id="emptyChooseFile"/);
+  assert.match(html, /Open from Chrome/);
+  assert.match(html, /Drag ZIP into AI chat/);
+  assert.match(html, /class="bookmarklet empty-bookmarklet"/);
+  assert.match(css, /\.empty-drop-mark/);
+  assert.match(css, /linear-gradient\(145deg,#1c232c/);
+  assert.match(renderer, /querySelector\('#emptyChooseFile'\)/);
+  assert.match(renderer, /querySelectorAll\('\.bookmarklet'\)/);
+});
+
+test('modified Inspector properties highlight their own reset controls', () => {
+  const css = read('src/shell.css');
+  const renderer = read('src/renderer.js');
+  assert.match(css, /\.reset-control\.modified/);
+  assert.match(renderer, /function markControlModified/);
+  assert.match(renderer, /Object\.hasOwn\(changes, property\)/);
+  assert.match(renderer, /button\.classList\.remove\('modified'\)/);
+});
+
 test('navigation keeps feedback isolated by page URL and exports page records', () => {
   const renderer = read('src/renderer.js');
   assert.match(renderer, /pageOrder: \[\]/);
@@ -171,7 +195,7 @@ test('help includes a draggable Chrome bookmarklet for opening the current tab',
   assert.match(html, /javascript:location\.href='page-tweaker:\/\/open\?url='\+encodeURIComponent\(location\.href\)/);
   assert.match(css, /\.bookmarklet\{/);
   assert.match(main, /url\.searchParams\.get\('url'\)/);
-  assert.match(renderer, /querySelector\('#bookmarklet'\)\.addEventListener\('click'/);
+  assert.match(renderer, /querySelectorAll\('\.bookmarklet'\)/);
   assert.match(renderer, /desktopBridge\.copyText\(code\)/);
 });
 

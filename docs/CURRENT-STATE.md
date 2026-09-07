@@ -1,6 +1,6 @@
 # PageTweaker Current State
 
-**Last verified:** 2026-09-04  
+**Last verified:** 2026-09-07  
 **Current release:** `v0.1.15`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.15>
 
@@ -42,8 +42,11 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Grouped drawing strokes into explicit markup items. A user can draw any number of circles, arrows, or lines under one explanation, then choose **Finish markup and start another**.
 - Changing the markup color now automatically finishes the active markup item. The next stroke begins a new item in the selected color with a new explanation.
 - Added a live `font-weight` Inspector slider from 100 through 900, including breakpoint/page persistence, handoff evidence, and a property-specific reset that leaves other controls unchanged.
+- Replaced the startup overlay with a concise dark onboarding workspace. It presents a large drop target, file chooser, address-bar path, draggable Chrome bookmarklet, and a three-step explanation of dragging the finished handoff ZIP into an AI chat.
+- Highlighted each property-specific Reset button only while that property differs from the selected element's original value.
+- Tightened font-size, line-height, and letter-spacing slider ranges around practical values while retaining unusual existing page values. Line height is now represented as a unitless ratio rather than computed pixels.
 - Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
-- Verification: 24 contract tests pass. Packaged smoke verifies two-page navigation/restoration, two strokes under one markup explanation, automatic color-based grouping, live font-weight editing and isolated reset, and the complete version 6 handoff ZIP.
+- Verification: 26 contract tests pass. Packaged smoke verifies the startup guidance and bookmarklet, practical slider ranges, modified-property reset highlighting, two-page navigation/restoration, grouped markup, live font-weight editing, and the complete version 6 handoff ZIP.
 
 ## v0.1.14 changes
 
@@ -135,8 +138,9 @@ Later capture-package behavior:
 
 ## Verification evidence
 
-- `npm test`: 22 of 22 tests passing.
+- `npm test`: 26 of 26 tests passing for unreleased v0.1.16.
 - Packaged Electron smoke: interactive-control pass-through, Option-click selection, bookmarklet copying and protocol launch, persistent preview storage across a complete app relaunch, native window drag, breakpoint persistence, property-specific reset, clean reload, markup, local/public/file loading, ZIP inspection, annotated screenshots, and AI handoff passed.
+- Unreleased v0.1.16 DMG verification passed; SHA-256: `64cf3a287e82455048b876c89e8f14954ad3f27d9c5b015c3850f8cc56a12e3c`.
 - `hdiutil verify`: v0.1.15 DMG valid.
 - Mounted-app `codesign --verify --deep --strict`: passed.
 - Local and downloaded GitHub v0.1.15 DMG SHA-256 match: `37c79b3d9548fe208738e6afc6a56812f6db5f868bcdcef4a4a3542d570c1e68`.

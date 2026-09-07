@@ -14,7 +14,10 @@ test('reads CSS computed styles and keeps controls centred on the selected value
   const bounds = utils.sliderBounds('font-size', '128px');
   assert.equal(bounds.value, 128);
   assert.deepEqual(utils.sliderBounds('font-weight', '650'), { min: 100, max: 900, step: 100, value: 700 });
-  assert.ok(bounds.max >= 256);
+  assert.equal(bounds.max, 128);
+  assert.deepEqual(utils.sliderBounds('font-size', '16px'), { min: 8, max: 32, step: 1, value: 16 });
+  assert.deepEqual(utils.sliderBounds('line-height', '1.2'), { min: 0.8, max: 2.5, step: 0.05, value: 1.2 });
+  assert.deepEqual(utils.sliderBounds('letter-spacing', '0'), { min: -3, max: 8, step: 0.1, value: 0 });
 });
 
 test('builds scripts that execute inside the selected page', () => {

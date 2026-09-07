@@ -17,10 +17,10 @@
   const numberFrom = (value, fallback) => Number.parseFloat(value) || fallback;
   const sliderBounds = (property, value) => {
     const numeric = numberFrom(value, property === 'line-height' ? 1.2 : 0);
-    if (property === 'font-size') return { min: 1, max: Math.max(160, Math.ceil(numeric * 2)), step: 1, value: numeric };
+    if (property === 'font-size') return { min: Math.min(numeric, Math.max(8, Math.floor(numeric * 0.5))), max: Math.max(numeric, Math.min(120, Math.max(32, Math.ceil(numeric * 1.5)))), step: 1, value: numeric };
     if (property === 'font-weight') return { min: 100, max: 900, step: 100, value: Math.min(900, Math.max(100, Math.round(numeric / 100) * 100)) };
-    if (property === 'line-height') return { min: 0.5, max: Math.max(4, Math.ceil(numeric * 2 * 10) / 10), step: 0.05, value: numeric };
-    if (property === 'letter-spacing') return { min: -8, max: Math.max(20, Math.ceil(numeric * 2)), step: 0.25, value: numeric };
+    if (property === 'line-height') return { min: Math.min(0.8, numeric), max: Math.max(2.5, numeric), step: 0.05, value: numeric };
+    if (property === 'letter-spacing') return { min: Math.min(-3, numeric), max: Math.max(8, numeric), step: 0.1, value: numeric };
     return { min: 0, max: Math.max(160, Math.ceil(numeric * 2)), step: 1, value: numeric };
   };
   const cssValue = (property, raw) => ['line-height', 'font-family', 'font-weight', 'color', 'background-color'].includes(property) ? String(raw) : `${raw}px`;

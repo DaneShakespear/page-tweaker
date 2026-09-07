@@ -32,6 +32,8 @@ PageTweaker puts the visual decision where it belongs: on the page itself. It is
 - Creates one draggable ZIP containing `handoff.json`, a `START-HERE.md` AI brief, and page-specific annotated screenshots showing the real page beneath the feedback.
 - Keeps the original file and page untouched. Every adjustment is preview-only until someone applies the exported handoff.
 
+The startup workspace shows every fast path in one place: drop a page on the app or window, paste a target in the address bar, choose an HTML file, or drag the Chrome shortcut to the bookmarks bar. It also previews the complete workflow from opening a page to dragging the resulting ZIP into an AI chat.
+
 ## Open From Chrome
 
 PageTweaker includes a no-extension bookmarklet in the Help tab. Drag **Open in PageTweaker** to Chrome's bookmarks bar once, then click that bookmark on any page to send the current URL to PageTweaker. Clicking it inside PageTweaker copies the launcher code as a fallback for creating the bookmark manually.
@@ -64,7 +66,7 @@ The top bar always shows the running version. Paste a path or URL and press Ente
 
 The installed app registers as an alternate handler for `http` and `https` links. Apps that expose an “Open with” or browser picker can offer PageTweaker without PageTweaker silently replacing your default browser.
 
-When you select an element, PageTweaker defaults to changing only that exact element at the active desktop, tablet, or mobile preview. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Replacement text updates as you type, and color controls include synchronized hex fields for copying or pasting exact colors. Pinned notes stay attached to the exact clicked element and preview size. Each Inspector reset button names the one property it restores. Markup lines move with the page while it scrolls, and each line keeps its own explanation.
+When you select an element, PageTweaker defaults to changing only that exact element at the active desktop, tablet, or mobile preview. The selector bar along the bottom lets you deliberately widen visual changes to every element sharing its CSS class or tag, such as all `h1` headings. Replacement text updates as you type, and color controls include synchronized hex fields for copying or pasting exact colors. Typography includes font weight, and the font-size, line-height, and letter-spacing sliders use practical ranges suited to the selected element. Pinned notes stay attached to the exact clicked element and preview size. Each Inspector reset button names the one property it restores and highlights while that property is changed. Markup moves with the page while it scrolls, and every grouped markup idea keeps its own explanation.
 
 The app is ad-hoc signed for bundle integrity, but it is not Developer ID signed or Apple notarized. Read the complete, safe setup and troubleshooting guide in [Installing PageTweaker](docs/INSTALLING.md). It explains the per-app Gatekeeper exception and why you should not disable macOS protections globally.
 

@@ -23,7 +23,20 @@
       <webview id="page" preload="" partition="persist:page-tweaker-public"></webview>
       <canvas id="markup"></canvas>
       <div id="dropHint" hidden>Drop a local HTML file, <code>file://</code> URL, or public URL to open it</div>
-      <div id="empty"><h1>Open a page to start tweaking.</h1><p>Paste or drop a local <code>file://</code> URL, a public URL, or choose an HTML file.</p></div>
+      <div id="empty">
+        <div class="empty-shell">
+          <div class="empty-drop-mark" aria-hidden="true">+</div>
+          <p class="empty-eyebrow">DROP ANY PAGE HERE</p>
+          <h1>Bring in a page. Show your AI what should change.</h1>
+          <p class="empty-intro">Drop an HTML file, web link, or URL anywhere in this window. PageTweaker lets you try the change, explain it, and hand one clear brief back to your AI.</p>
+          <div class="empty-options">
+            <article><span class="empty-option-icon">↘</span><div><strong>Drop or choose</strong><p>Drop onto this window or the PageTweaker app icon.</p><button id="emptyChooseFile">Choose a file</button></div></article>
+            <article><span class="empty-option-icon">⌘</span><div><strong>Paste above</strong><p>Paste or drop into the address bar, then press Enter.</p></div></article>
+            <article class="empty-chrome"><span class="empty-option-icon">☆</span><div><strong>Open from Chrome</strong><p>Drag this shortcut to Chrome’s bookmarks bar once.</p><a class="bookmarklet empty-bookmarklet" draggable="true" href="javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)"><img src="app-icon.png" alt=""><span><strong>Open in PageTweaker</strong><small>Drag to Chrome bookmarks</small></span><b aria-hidden="true">⠿</b></a></div></article>
+          </div>
+          <div class="empty-handoff"><span>1&nbsp; Open</span><i>→</i><span>2&nbsp; Tweak + explain</span><i>→</i><span>3&nbsp; Create handoff</span><i>→</i><span class="empty-ai">Drag ZIP into AI chat</span></div>
+        </div>
+      </div>
     </section>
     <aside>
       <div class="tabs" role="tablist" aria-label="PageTweaker tools">

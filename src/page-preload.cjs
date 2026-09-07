@@ -132,7 +132,7 @@ document.addEventListener('click', (event) => {
       fontSize: style.fontSize,
       fontFamily: style.fontFamily,
       fontWeight: style.fontWeight,
-      lineHeight: style.lineHeight === 'normal' ? String(parseFloat(style.fontSize) * 1.2) : style.lineHeight,
+      lineHeight: style.lineHeight === 'normal' ? '1.2' : String(parseFloat(style.lineHeight) / parseFloat(style.fontSize)),
       letterSpacing: style.letterSpacing === 'normal' ? '0' : style.letterSpacing,
       color: style.color,
       backgroundColor: style.backgroundColor,
