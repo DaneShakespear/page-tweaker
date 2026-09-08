@@ -1,22 +1,26 @@
 # PageTweaker
 
-> Turn visible page feedback into one implementation brief your AI can act on.
+## Stop describing “a little bigger” to AI. Show it what you actually want in seconds.
 
 <img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="PageTweaker app icon" width="150">
 
-PageTweaker is a macOS feedback workspace for the moment when an AI-generated page is close, but words alone are slowing everything down.
+When an AI generates a landing page or app UI, it is often 90% there. The difficult part is the last 10%: the header feels cramped, the text looks too small, a color is slightly wrong, or a card needs to move.
 
-Open the real page. Try the visual change yourself. Pin precise notes. Draw over the page and explain what the markup means. Then give your AI one ZIP containing the complete context.
+Describing those tweaks in text, such as “make it a little bigger… no, too big… try a lighter gray,” burns time and tokens. You often do not know the exact size, spacing, or color you want until you can see it on the real page.
 
-**PageTweaker is not another CSS editor.** It does not rewrite your project, prescribe implementation code, or replace your AI coding agent. It helps you decide and communicate what the finished page should look like so the agent can make the real change correctly.
+**PageTweaker bridges that gap.** It is a visual feedback workspace for trying the outcome, marking up what is wrong, and handing the evidence back to the AI that owns the code.
 
 ![PageTweaker product overview](assets/page-tweaker-concept.png)
 
-## The problem it solves
+## Open. Tweak and explain. Drag it back to AI.
 
-Feedback such as “make this smaller,” “move that section,” or “use the same treatment as the other cards” forces an AI agent to guess what you saw and what you meant. Screenshots help, but they usually lose the exact element, page, breakpoint, tested values, and explanation.
+1. **Open the page.** Drag any HTML file, local URL, or live page into PageTweaker, type an address, or use the one-click Chrome shortcut.
+2. **Visually QA and mark it up.** Select text, adjust its size or weight, try spacing and colors, circle what is broken, sketch where something should go, and pin a note explaining what you mean.
+3. **Create the handoff.** Export one ZIP and drag it directly into Codex, Claude, ChatGPT, or another AI chat.
 
-PageTweaker keeps those pieces together:
+The AI receives annotated screenshots, exact element locators, the values you tested, and notes attached to the relevant page and breakpoint. It gets concrete visual evidence instead of another round of guessing.
+
+PageTweaker keeps the full decision together:
 
 - the page and exact element you were looking at;
 - the desktop, tablet, or mobile view where the issue appears;
@@ -26,7 +30,7 @@ PageTweaker keeps those pieces together:
 - grouped drawing markup with a plain-language explanation;
 - annotated page screenshots and structured evidence for the receiving agent.
 
-The result is fewer blind revisions, less repeated prompting, and a clearer definition of done.
+The result is fewer blind revisions, less repeated prompting, and a much better chance of getting the final change right in one turn.
 
 ## What it is and what it is not
 
