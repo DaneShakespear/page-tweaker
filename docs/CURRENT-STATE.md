@@ -4,6 +4,8 @@
 **Current release:** `v0.1.16`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.16>
 
+**Local development version:** `v0.1.17` (unreleased)
+
 ## Agent Startup
 
 Before continuing work, read this file and the root `AGENTS.md`.
@@ -52,6 +54,13 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Added real startup, Chrome-shortcut, and handoff screenshots supplied from the packaged v0.1.16 app. Third-party Apple page screenshots were deliberately excluded from the public repository because they weakened the product positioning and added unnecessary third-party imagery.
 - Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
 - Verification: 27 contract tests pass. Packaged smoke verifies safe formatted replacement content, the confirmed clear-page workflow, startup guidance and bookmarklet, practical slider ranges, modified-property reset highlighting, two-page navigation/restoration, grouped markup, live font-weight editing, and the complete version 6 handoff ZIP.
+
+## Unreleased v0.1.17 changes
+
+- Split margin and padding into independent top, right, bottom, and left controls. Each side previews, persists, exports, highlights, and resets without changing the other sides.
+- Kept fixed breakpoint widths when the preview area is narrower, allowing the stage to scroll horizontally instead of shrinking wide pages to fit.
+- Explicitly enabled native window resizing, maximizing, and full-screen expansion so more of a wide desktop preview can be exposed when the display allows it.
+- Added the PageTweaker app icon beside the product name and version in the draggable header.
 
 ## v0.1.14 changes
 

@@ -3,7 +3,7 @@
   if (typeof module !== 'undefined') module.exports = api;
   root.PageTweakerUtils = api;
 }(globalThis, () => {
-  const cssToJs = { 'font-size': 'fontSize', 'font-family': 'fontFamily', 'font-weight': 'fontWeight', 'line-height': 'lineHeight', 'letter-spacing': 'letterSpacing', 'background-color': 'backgroundColor' };
+  const cssToJs = { 'font-size': 'fontSize', 'font-family': 'fontFamily', 'font-weight': 'fontWeight', 'line-height': 'lineHeight', 'letter-spacing': 'letterSpacing', 'background-color': 'backgroundColor', 'margin-top': 'marginTop', 'margin-right': 'marginRight', 'margin-bottom': 'marginBottom', 'margin-left': 'marginLeft', 'padding-top': 'paddingTop', 'padding-right': 'paddingRight', 'padding-bottom': 'paddingBottom', 'padding-left': 'paddingLeft' };
   const isHttpUrl = (value) => /^https?:\/\//i.test(value);
   const isFileUrl = (value) => /^file:\/\//i.test(value);
   const isHtmlPath = (value) => /\.html?(?:[?#].*)?$/i.test(value);
@@ -29,6 +29,7 @@
     if (property === 'font-weight') return { min: 100, max: 900, step: 100, value: Math.min(900, Math.max(100, Math.round(numeric / 100) * 100)) };
     if (property === 'line-height') return { min: Math.min(0.8, numeric), max: Math.max(2.5, numeric), step: 0.05, value: numeric };
     if (property === 'letter-spacing') return { min: Math.min(-3, numeric), max: Math.max(8, numeric), step: 0.1, value: numeric };
+    if (property.startsWith('margin-')) return { min: Math.min(-100, numeric), max: Math.max(160, Math.ceil(Math.abs(numeric) * 2)), step: 1, value: numeric };
     return { min: 0, max: Math.max(160, Math.ceil(numeric * 2)), step: 1, value: numeric };
   };
   const cssValue = (property, raw) => ['line-height', 'font-family', 'font-weight', 'color', 'background-color'].includes(property) ? String(raw) : `${raw}px`;

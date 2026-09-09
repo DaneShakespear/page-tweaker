@@ -58,7 +58,7 @@ function rememberOriginal(element) {
     inlineStyle: element.getAttribute('style'),
     text: element.innerText,
     html: element.innerHTML,
-    properties: Object.fromEntries(['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'].map((property) => [property, element.style.getPropertyValue(property)]))
+    properties: Object.fromEntries(['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left'].map((property) => [property, element.style.getPropertyValue(property)]))
   });
   editedElements.add(element);
   return originals.get(element);
@@ -130,7 +130,7 @@ document.addEventListener('click', (event) => {
   element.setAttribute('data-page-tweaker-target', targetId);
   const box = element.getBoundingClientRect();
   const style = getComputedStyle(element);
-  const properties = ['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin', 'padding'];
+  const properties = ['font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'color', 'background-color', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left'];
   ipcRenderer.sendToHost('element-selected', {
     selector: locator(element),
     scopes: selectorScopes(element),
@@ -149,8 +149,14 @@ document.addEventListener('click', (event) => {
       letterSpacing: style.letterSpacing === 'normal' ? '0' : style.letterSpacing,
       color: style.color,
       backgroundColor: style.backgroundColor,
-      margin: style.margin,
-      padding: style.padding
+      marginTop: style.marginTop,
+      marginRight: style.marginRight,
+      marginBottom: style.marginBottom,
+      marginLeft: style.marginLeft,
+      paddingTop: style.paddingTop,
+      paddingRight: style.paddingRight,
+      paddingBottom: style.paddingBottom,
+      paddingLeft: style.paddingLeft
     }
   });
 }, true);

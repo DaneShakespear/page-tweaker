@@ -180,7 +180,7 @@ test('PageTweaker branding, live text, and synchronized hex color fields are wir
   const html = read('src/index.html');
   const renderer = read('src/renderer.js');
   const manifest = JSON.parse(read('package.json'));
-  assert.match(html, /<strong>PageTweaker <small id="version">/);
+  assert.match(html, /class="app-brand"><img src="app-icon\.png"[^>]*><strong>PageTweaker <small id="version">/);
   assert.equal(manifest.build.productName, 'PageTweaker');
   assert.match(html, /data-hex-for="color"/);
   assert.match(html, /data-hex-for="background-color"/);
@@ -188,6 +188,23 @@ test('PageTweaker branding, live text, and synchronized hex color fields are wir
   assert.match(renderer, /function normalizeHex/);
   assert.match(renderer, /querySelector\('#text'\)\.addEventListener\('input'/);
   assert.match(renderer, /picker\.dispatchEvent\(new Event\('input'/);
+});
+
+test('spacing controls are independent and wide previews remain horizontally scrollable', () => {
+  const html = read('src/index.html');
+  const css = read('src/shell.css');
+  const bridge = read('src/page-preload.cjs');
+  const main = read('src/main.cjs');
+  for (const side of ['top', 'right', 'bottom', 'left']) {
+    assert.match(html, new RegExp(`data-style="margin-${side}"`));
+    assert.match(html, new RegExp(`data-style="padding-${side}"`));
+    assert.match(bridge, new RegExp(`margin${side[0].toUpperCase()}${side.slice(1)}: style\\.margin${side[0].toUpperCase()}${side.slice(1)}`));
+    assert.match(bridge, new RegExp(`padding${side[0].toUpperCase()}${side.slice(1)}: style\\.padding${side[0].toUpperCase()}${side.slice(1)}`));
+  }
+  assert.match(css, /#stage\{[^}]*overflow:auto/);
+  assert.match(css, /width:var\(--preview-width,1440px\)/);
+  assert.doesNotMatch(css, /width:min\(100%,var\(--preview-width/);
+  assert.match(main, /resizable: true, maximizable: true, fullscreenable: true/);
 });
 
 test('web pages keep a persistent login session and login controls are pass-through', () => {

@@ -72,6 +72,7 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
+    assert.ok(await evaluate(`document.querySelector('#stage').scrollWidth > document.querySelector('#stage').clientWidth`));
     assert.match(await evaluate(`document.querySelector('header strong').textContent`), /PageTweaker/);
     const choices = await evaluate(`[...document.querySelectorAll('[data-scope-key]')].map((button) => button.textContent)`);
     assert.equal(choices[0], 'This element');
@@ -83,6 +84,13 @@ async function connect() {
     await evaluate(`[...document.querySelectorAll('[data-scope-key]')].find((button) => button.textContent.startsWith('All h1')).click()`);
     await evaluate(`(() => { const input = document.querySelector('[data-style="font-size"]'); input.value = '30'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#status').textContent.includes('2 elements')`));
+    await evaluate(`(() => { const input = document.querySelector('[data-style="margin-top"]'); input.value = '18'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).marginTop")`).then((value) => value === '18px'));
+    await evaluate(`(() => { const input = document.querySelector('[data-style="padding-left"]'); input.value = '24'; input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await poll(() => evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).paddingLeft")`).then((value) => value === '24px'));
+    await evaluate(`document.querySelector('[data-reset-style="margin-top"]').click()`);
+    await poll(() => evaluate(`document.querySelector('#status').textContent.includes('Reset only margin-top')`));
+    assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("getComputedStyle(document.querySelector('h1')).paddingLeft")`), '24px');
     assert.equal(await evaluate(`document.querySelector('[data-reset-style="font-size"]').classList.contains('modified')`), true);
     assert.ok(await evaluate(`Number(document.querySelector('[data-style="font-size"]').max)`) <= 40);
     assert.equal(await evaluate(`Number(document.querySelector('[data-style="line-height"]').max)`), 2.5);
