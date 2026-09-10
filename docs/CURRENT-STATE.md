@@ -4,7 +4,7 @@
 **Current release:** `v0.1.16`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.16>
 
-**Local development version:** `v0.1.17` (unreleased)
+**Local development version:** `v0.2.0` (unreleased)
 
 ## Agent Startup
 
@@ -40,15 +40,15 @@ Current naming governance:
 2. **Legacy anchor:** retain `PageTweaker` in internal continuity references, migration notes, and technical identifiers until a separate go/no-go decision.
 3. **Repository and protocol names:** keep the repository (`page-tweaker`) and URL scheme (`page-tweaker://`) stable for now to avoid migration and install breakage.
 
-## v0.1.17 local changes
+## v0.2.0 local changes
 
 - Renamed the user-facing app, packaged bundle, product documentation, bookmarklet label, help surfaces, and handoff messaging to `AI PagePolish by PageTweaker`.
 - Kept the repository, npm package, application identifier, command, handoff archive prefix, persistent profile, and `page-tweaker://` URL scheme unchanged for compatibility.
 - Refocused public copy on the core promise: open any page, show AI what should change, and drag back one complete visual brief.
-- Added a release-transition note because public v0.1.16 still installs under the previous `PageTweaker` name; v0.1.17 has not been published.
+- Added a release-transition note because public v0.1.16 still installs under the previous `PageTweaker` name; v0.2.0 has not been published.
 - Verification on 2026-09-09: 28 contract tests passed; the packaged UI smoke passed the complete browser, editing, markup, breakpoint, protocol, persistence, and handoff workflow; the app's ad-hoc signature and DMG checksum verified.
-- Local v0.1.17 DMG SHA-256: `3cb6a3bc44d9f566461420da1fe665b4efd1e42696e2f86d01786bef0a0eda12`.
-- Local v0.1.17 blockmap SHA-256: `0a841ef5eff597013fb40aebd3498216390446b7b3f003778934626422b5af1c`.
+- Local v0.2.0 DMG SHA-256: `325ec2328a67ce1c63c2aa0b5c9541f16a820d9e029043373fa86005cc53e9a6`.
+- Local v0.2.0 blockmap SHA-256: `51f2da150eb5e3fbeac73070d713de3951e0603adfc03b5d1e144434653fef81`.
 - Increased the visual space between the startup drop icon and headline.
 - Added direct image input for PNG, JPEG, GIF, WebP, BMP, and SVG through file selection, Finder drop, app-icon opening, local paths, and macOS file associations. Clipboard images and screenshots are written to a temporary local PNG and opened through the same preview workflow.
 - Packaged verification confirms both image-file drop and native macOS clipboard-image loading, followed by successful rendering in the embedded preview. The complete UI smoke, strict ad-hoc signature check, and DMG verification pass.
@@ -82,7 +82,7 @@ Current naming governance:
 - Improved packaged smoke isolation so an already-running installed PageTweaker window cannot be mistaken for the test window.
 - Verification: 27 contract tests pass. Packaged smoke verifies safe formatted replacement content, the confirmed clear-page workflow, startup guidance and bookmarklet, practical slider ranges, modified-property reset highlighting, two-page navigation/restoration, grouped markup, live font-weight editing, and the complete version 6 handoff ZIP.
 
-## Unreleased v0.1.17 changes
+## Unreleased v0.2.0 changes
 
 - Split margin and padding into independent top, right, bottom, and left controls. Each side previews, persists, exports, highlights, and resets without changing the other sides.
 - Kept fixed breakpoint widths when the preview area is narrower, allowing the stage to scroll horizontally instead of shrinking wide pages to fit.

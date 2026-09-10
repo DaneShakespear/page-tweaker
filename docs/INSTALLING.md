@@ -4,7 +4,7 @@ AI PagePolish by PageTweaker currently ships as an ad-hoc signed Apple Silicon (
 
 ## Install from a release
 
-Version 0.1.16 and earlier use the `PageTweaker` app and file names. Version 0.1.17 and later use `AI PagePolish by PageTweaker`. The repository and `page-tweaker://` URL scheme remain unchanged.
+Version 0.1.16 and earlier use the `PageTweaker` app and file names. Version 0.2.0 and later use `AI PagePolish by PageTweaker`. The repository and `page-tweaker://` URL scheme remain unchanged.
 
 1. Download `AI PagePolish by PageTweaker-<version>-arm64.dmg` from Releases.
 2. Double-click the DMG and drag **AI PagePolish by PageTweaker** to **Applications**.
