@@ -6,6 +6,10 @@
 
 **AI PagePolish by PageTweaker is a visual feedback tool for AI-built websites.**
 
+### [Download for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.1.16/PageTweaker-0.1.16-arm64.dmg)
+
+Download the DMG, open it, and drag the app into Applications.
+
 Sometimes you know a page feels wrong, but you do not know the exact change until you see it.
 
 Open the page. Try the adjustment visually. Mark up what you mean. Then drag one complete brief back into your AI chat.
@@ -16,7 +20,7 @@ No more “make it a little bigger,” “not that big,” or “try a different
 
 ## Open it. Adjust it. Show AI.
 
-1. **Open any page.** Drag an HTML file, local page, or live website onto the app, its window, or its icon. You can also type an address or open the current Chrome page with the included shortcut.
+1. **Open any page.** Drag an HTML file, local page, or live website URL onto the app, its window, or its icon. You can also type an address or open the current Chrome page with the included shortcut.
 2. **Show what should change.** Adjust text, colors, margins, padding, and spacing. Switch between desktop, tablet, and mobile. Draw, circle, sketch, and add short explanations.
 3. **Drag it back to AI.** Create the handoff, then drag it directly into Codex, Claude, ChatGPT, or another AI chat.
 
@@ -63,7 +67,9 @@ The handoff shows AI the desired result. It does not prescribe how the code must
 
 ## Install on macOS
 
-The current public download is **v0.1.16 for Apple Silicon** and still installs under the previous **PageTweaker** name. The renamed **AI PagePolish by PageTweaker** build is being prepared as v0.1.17.
+### [Download v0.1.16 for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.1.16/PageTweaker-0.1.16-arm64.dmg)
+
+This release still installs under the previous **PageTweaker** name. The renamed **AI PagePolish by PageTweaker** build is being prepared as v0.1.17.
 
 AI PagePolish by PageTweaker is ad-hoc signed for bundle integrity. It is not Apple Developer ID signed or notarized, so macOS may show a first-launch warning. Follow the safe per-app steps in [Installing AI PagePolish by PageTweaker](docs/INSTALLING.md). Never disable Gatekeeper system-wide.
 
