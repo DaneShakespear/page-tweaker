@@ -12,9 +12,9 @@ Open the page. Try the adjustment visually. Mark up what you mean. Then drag one
 
 No more “make it a little bigger,” “not that big,” or “try a different gray.”
 
-**See it in 20 seconds.** No sound needed.
+**See it in 30 seconds.** No sound needed.
 
-https://github.com/user-attachments/assets/036bfd0e-2575-4c0e-8373-a6077cb61a58
+https://github.com/user-attachments/assets/271ebbdb-21de-4a71-93f6-79f5dec65384
 
 ## Open it. Adjust it. Show AI - In Seconds, Not Endless Iterations and Tokens
 

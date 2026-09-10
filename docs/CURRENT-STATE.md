@@ -259,4 +259,4 @@ Start by reading this file and `AGENTS.md`. Begin with packaged v0.2.0. Manually
 - Opening title is visible from encoded frame zero; matching poster updated.
 - Verified real v0.3.0 export includes 64px headline, replacement “Make room for better ideas.” and arrow explanation “Move the button closer to the text.” Original demo HTML unchanged.
 - Local H.264 1920×1080/30fps fast-start video decoded without errors; frame-zero and contact-sheet visual checks passed. Assets and editable production source updated.
-- README native attachment still points to the previous 20-second cut. Browser approval review denied GitHub origin access; replacing the native attachment awaits browser approval.
+- User approved GitHub browser access; the revised 30-second native attachment replaces the prior cut in the README. Attachment: https://github.com/user-attachments/assets/271ebbdb-21de-4a71-93f6-79f5dec65384.
