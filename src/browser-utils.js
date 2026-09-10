@@ -8,6 +8,7 @@
   const isFileUrl = (value) => /^file:\/\//i.test(value);
   const isHtmlPath = (value) => /\.html?(?:[?#].*)?$/i.test(value);
   const isImagePath = (value) => /\.(?:png|jpe?g|gif|webp|bmp|svg)(?:[?#].*)?$/i.test(value);
+  const isImageSource = (value) => isImagePath(value || '');
   const isBareWebAddress = (value) => {
     if (/\s/.test(value) || /^[./~]|^[a-z]:[\\/]/i.test(value)) return false;
     try {
@@ -38,5 +39,5 @@
   const styleScript = (targetId, changes) => `(() => { const el = document.querySelector(${JSON.stringify(targetSelector(targetId))}); if (!el) return false; for (const [property, value] of Object.entries(${JSON.stringify(changes)})) el.style.setProperty(property, value); return true; })()`;
   const textScript = (targetId, text) => `(() => { const el = document.querySelector(${JSON.stringify(targetSelector(targetId))}); if (!el) return false; el.innerText = ${JSON.stringify(text)}; return true; })()`;
   const restoreStyleScript = (targetId, inlineStyle) => `(() => { const el = document.querySelector(${JSON.stringify(targetSelector(targetId))}); if (!el) return false; ${inlineStyle === null ? 'el.removeAttribute("style");' : `el.setAttribute("style", ${JSON.stringify(inlineStyle)});`} return true; })()`;
-  return { normalizeSource, readableValue, sliderBounds, cssValue, styleScript, textScript, restoreStyleScript };
+  return { normalizeSource, isImageSource, readableValue, sliderBounds, cssValue, styleScript, textScript, restoreStyleScript };
 }));

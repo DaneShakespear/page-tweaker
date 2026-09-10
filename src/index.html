@@ -49,6 +49,12 @@
       </div>
       <section id="inspectPanel" role="tabpanel" aria-labelledby="inspectTab">
         <div class="interaction-tip"><kbd>⌥ Option</kbd><div><strong>Select page controls</strong><p>Links, buttons, and form fields work normally. Hold Option while clicking one to select and adjust it.</p></div></div>
+        <div id="imageNotes" class="image-notes" hidden>
+          <h2>Notes for AI</h2>
+          <p>Describe anything the AI should understand about this image as a whole. Use Markup when you want to point at a specific area.</p>
+          <label>Overall image note<textarea id="imageNote" placeholder="Example: Use this screenshot as the visual direction for the new page."></textarea></label>
+          <button id="addImageNote" class="primary">Add note for AI</button>
+        </div>
         <div id="selection"><h2>Select an element</h2><p>Click anything in the preview to adjust it.</p></div>
         <div id="controls" hidden>
           <div class="control-group"><div class="control-heading"><label>Font family</label><button class="reset-control" data-reset-style="font-family">Reset font family</button></div><select data-style="font-family"><option value="">Keep page font</option><option>Arial, sans-serif</option><option>Inter, sans-serif</option><option>Georgia, serif</option><option>"Helvetica Neue", sans-serif</option></select></div>

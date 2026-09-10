@@ -1,10 +1,10 @@
 # AI PagePolish by PageTweaker Current State
 
 **Last verified:** 2026-09-09  
-**Current release:** `v0.2.0`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.2.0>
+**Current release:** `v0.2.1`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.2.1>
 
-**Local development version:** `v0.2.0`
+**Local development version:** `v0.2.1`
 
 ## Agent Startup
 
@@ -39,6 +39,18 @@ Current naming governance:
 1. **Public brand:** `AI PagePolish by PageTweaker` is the active name in user-facing docs, product windows, and help surfaces.
 2. **Legacy anchor:** retain `PageTweaker` in internal continuity references, migration notes, and technical identifiers until a separate go/no-go decision.
 3. **Repository and protocol names:** keep the repository (`page-tweaker`) and URL scheme (`page-tweaker://`) stable for now to avoid migration and install breakage.
+
+## v0.2.1 local changes
+
+- Increased the startup gap between the blue drop-target eyebrow and the main headline to match the supplied visual markup.
+- Added an image-specific Inspect state. When an image is open, irrelevant element typography and spacing controls are replaced by an overall **Notes for AI** field.
+- Overall image notes are stored as page-level feedback and included in the handoff alongside markup.
+- Disabled element inspection and the browser's ambiguous zoom cursor for standalone images. A crosshair now appears only while Markup is active.
+- Added compact, numbered explanation callouts beside saved markup drawings so their meaning is visible in the preview and annotated screenshots.
+- Source evidence: `page-tweaker-handoff-2026-09-10T12-37-26-973Z.zip`.
+- Verification: 30 contract tests pass; packaged native smoke passes image input and image-mode notes; strict ad-hoc signature and DMG verification pass.
+- Local v0.2.1 DMG SHA-256: `569789318870e9b7fe587b38f30a96545536fb5c37f2644997bd8c4552f2612a`.
+- Local v0.2.1 blockmap SHA-256: `4314031e400569235ecdcf9192f1d3ea8c0d570a180a84a656c3cbd20729d251`.
 
 ## v0.2.0 local changes
 

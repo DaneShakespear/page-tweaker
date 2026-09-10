@@ -67,6 +67,28 @@ test('the empty state teaches fast opening and AI handoff without leaving the wo
   assert.match(renderer, /querySelectorAll\('\.bookmarklet'\)/);
 });
 
+test('image mode replaces irrelevant element controls with overall AI notes', () => {
+  const html = read('src/index.html');
+  const renderer = read('src/renderer.js');
+  const css = read('src/shell.css');
+  assert.match(html, /id="imageNotes"/);
+  assert.match(html, /id="imageNote"/);
+  assert.match(html, /id="addImageNote"/);
+  assert.match(renderer, /function imageMode\(\)/);
+  assert.match(renderer, /function configureInspectorForSource\(\)/);
+  assert.match(renderer, /tag: 'image'/);
+  assert.match(renderer, /set-inspector', state\.activeTab === 'inspect' && !imageMode\(\)/);
+  assert.match(renderer, /style\.setProperty\('cursor','default','important'\)/);
+  assert.match(css, /\.image-notes/);
+});
+
+test('markup explanations are drawn as visible preview callouts', () => {
+  const renderer = read('src/renderer.js');
+  assert.match(renderer, /ctx\.roundRect/);
+  assert.match(renderer, /item\.explanation\.trim\(\)/);
+  assert.match(renderer, /querySelector\('#strokeList'\)\.addEventListener\('input', drawMarkup\)/);
+});
+
 test('formatted replacement content is safely previewed, exported, restored, and clearable', () => {
   const html = read('src/index.html');
   const bridge = read('src/page-preload.cjs');

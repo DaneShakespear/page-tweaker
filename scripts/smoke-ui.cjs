@@ -246,6 +246,15 @@ async function connect() {
     await client.evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(imageUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(imageUrl)}`));
     assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('img')?.naturalWidth > 0")`), true);
+    assert.equal(await client.evaluate(`document.querySelector('#imageNotes').hidden`), false);
+    assert.equal(await client.evaluate(`document.querySelector('#controls').hidden`), true);
+    assert.equal(await client.evaluate(`document.querySelector('.interaction-tip').hidden`), true);
+    assert.equal(await client.evaluate(`document.querySelector('#markup').style.cursor`), 'default');
+    await client.evaluate(`(() => { const note = document.querySelector('#imageNote'); note.value = 'Use this image as the overall visual direction.'; document.querySelector('#addImageNote').click(); })()`);
+    assert.match(await client.evaluate(`document.querySelector('#notes').textContent`), /overall visual direction/i);
+    await client.evaluate(`document.querySelector('#markupTab').click()`);
+    assert.equal(await client.evaluate(`document.querySelector('#markup').style.cursor`), 'crosshair');
+    await client.evaluate(`document.querySelector('#inspectTab').click()`);
     execFileSync('/usr/bin/osascript', ['-e', `set the clipboard to (read (POSIX file ${JSON.stringify(imageFixture)}) as «class PNGf»)`]);
     const clipboardImageUrl = await client.evaluate(`window.pageTweaker.clipboardImage()`);
     assert.match(clipboardImageUrl, /^file:\/\/.*page-tweaker-clipboard-\d+\.png$/);

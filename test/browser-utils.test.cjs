@@ -12,6 +12,9 @@ test('accepts public URLs, file URLs, local HTML paths, and image paths', () => 
   assert.equal(utils.normalizeSource('report.html'), 'file://report.html');
   assert.equal(utils.normalizeSource('/Users/me/Desktop/screenshot.png'), 'file:///Users/me/Desktop/screenshot.png');
   assert.equal(utils.normalizeSource('design reference.svg'), 'file://design%20reference.svg');
+  assert.equal(utils.isImageSource('file:///Users/me/Desktop/screenshot.png'), true);
+  assert.equal(utils.isImageSource('https://example.com/mockup.jpg?size=large'), true);
+  assert.equal(utils.isImageSource('https://example.com/page'), false);
   assert.equal(utils.normalizeSource('not-a-page'), null);
 });
 
