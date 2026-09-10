@@ -1,10 +1,10 @@
 # AI PagePolish by PageTweaker Current State
 
 **Last verified:** 2026-09-09  
-**Current release:** `v0.1.16`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.16>
+**Current release:** `v0.2.0`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.2.0>
 
-**Local development version:** `v0.2.0` (unreleased)
+**Local development version:** `v0.2.0`
 
 ## Agent Startup
 
@@ -45,7 +45,7 @@ Current naming governance:
 - Renamed the user-facing app, packaged bundle, product documentation, bookmarklet label, help surfaces, and handoff messaging to `AI PagePolish by PageTweaker`.
 - Kept the repository, npm package, application identifier, command, handoff archive prefix, persistent profile, and `page-tweaker://` URL scheme unchanged for compatibility.
 - Refocused public copy on the core promise: open any page, show AI what should change, and drag back one complete visual brief.
-- Added a release-transition note because public v0.1.16 still installs under the previous `PageTweaker` name; v0.2.0 has not been published.
+- Documented the release transition from the previous `PageTweaker` name to `AI PagePolish by PageTweaker`.
 - Verification on 2026-09-09: 28 contract tests passed; the packaged UI smoke passed the complete browser, editing, markup, breakpoint, protocol, persistence, and handoff workflow; the app's ad-hoc signature and DMG checksum verified.
 - Local v0.2.0 DMG SHA-256: `325ec2328a67ce1c63c2aa0b5c9541f16a820d9e029043373fa86005cc53e9a6`.
 - Local v0.2.0 blockmap SHA-256: `51f2da150eb5e3fbeac73070d713de3951e0603adfc03b5d1e144434653fef81`.
@@ -212,7 +212,7 @@ Later capture-package behavior:
 
 ## Next-session starting point
 
-Start by reading this file and `AGENTS.md`. Begin with packaged v0.1.16. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
+Start by reading this file and `AGENTS.md`. Begin with packaged v0.2.0. Manually validate dragging the bookmarklet to Chrome's bookmarks bar on representative public and protected pages. If the bookmarklet is not enough, plan the Chrome extension only for richer authenticated capture. Before publishing another release, run `npm test`, `npm run package:mac`, and `npm run smoke:ui`.
 
 ## 2026-09-04 login diagnostic
 
