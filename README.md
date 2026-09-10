@@ -1,14 +1,10 @@
 # AI PagePolish by PageTweaker
 
-## Stop explaining. Show your AI.
+## Stop endless explaining. Show your AI Visually - Fast...
 
 <img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="AI PagePolish by PageTweaker app icon" width="140">
 
 **AI PagePolish by PageTweaker is a visual feedback tool for AI-built websites.**
-
-### [Download for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.3.0/AI-PagePolish-by-PageTweaker-0.3.0-arm64.dmg)
-
-Download the DMG, open it, and drag the app into Applications.
 
 Sometimes you know a page feels wrong, but you do not know the exact change until you see it.
 
@@ -20,7 +16,7 @@ No more “make it a little bigger,” “not that big,” or “try a different
 
 https://github.com/user-attachments/assets/036bfd0e-2575-4c0e-8373-a6077cb61a58
 
-## Open it. Adjust it. Show AI.
+## Open it. Adjust it. Show AI - In Seconds, Not Endless Iterations and Tokens
 
 1. **Open any page or image.** Drag an HTML file, screenshot, image, or live website URL onto the app, its window, or its icon. You can also paste a screenshot from your clipboard, type an address, or open the current Chrome page with the included shortcut.
 2. **Show what should change.** Adjust text, colors, margins, padding, and spacing. Switch between desktop, tablet, and mobile. Draw, circle, sketch, and add short explanations.
@@ -28,7 +24,7 @@ https://github.com/user-attachments/assets/036bfd0e-2575-4c0e-8373-a6077cb61a58
 
 Your original page is never changed.
 
-## Start from almost anywhere
+## Start from anywhere
 
 ![AI PagePolish by PageTweaker startup workspace showing its opening options](assets/screenshots/start-screen.png)
 
@@ -38,7 +34,7 @@ After that, one click opens the current Chrome page in the app. No browser exten
 
 <img src="assets/screenshots/chrome-shortcut.png" alt="Open in AI PagePolish by PageTweaker shortcut being dragged to the Chrome bookmarks bar" width="420">
 
-## Show exactly what you mean
+## Show exactly what you mean - Visually
 
 - Resize or rewrite text.
 - Change weight, color, spacing, margins, and padding.
@@ -53,7 +49,7 @@ The app gives you room to try the idea before asking AI to build it.
 
 Because sometimes you do not know what you want until you see it.
 
-## Give AI one complete brief
+## Give AI one complete brief. Drag and drop right back into your chat session.
 
 <img src="assets/screenshots/handoff-ready.png" alt="AI PagePolish by PageTweaker handoff ready to drag into an AI chat" width="390">
 
