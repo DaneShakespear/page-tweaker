@@ -42,7 +42,7 @@ Current naming governance:
 
 ## Marketing teaser — 2026-09-10
 
-- README publication: the approved MP4 and poster are stored in `assets/ai-pagepolish-teaser.mp4` and `assets/ai-pagepolish-teaser-poster.jpg`. A clickable poster and 20-second overview link replace the older concept graphic near the top of the README. Raw captures remain excluded from Git.
+- README publication: the approved MP4 and poster are stored in `assets/ai-pagepolish-teaser.mp4` and `assets/ai-pagepolish-teaser-poster.jpg`. A native GitHub video attachment replaces the older concept graphic near the top of the README, with inline playback rather than a download-only file link. Attachment: `https://github.com/user-attachments/assets/036bfd0e-2575-4c0e-8373-a6077cb61a58`. Raw captures remain excluded from Git.
 - Produced a local 20-second, 1920 × 1080, 30 fps silent webpage teaser from the real v0.3.0 app. The sequence shows a headline adjustment, saved arrow note, exported handoff, and an editorial transition into a generic AI composer.
 - Production source and storyboard: `marketing/teaser/`. Finished video, poster, player, web-assets ZIP, editable-source ZIP, and verification records: `out/teaser/` (local generated output, excluded from Git).
 - Verified actual preview values of 64px font size and 22px bottom margin, exported annotation evidence, unchanged 44px demo source, complete browser playback, error-free decoding, and fast-start MP4 metadata. Video is 976,310 bytes.

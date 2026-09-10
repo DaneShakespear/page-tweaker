@@ -16,9 +16,9 @@ Open the page. Try the adjustment visually. Mark up what you mean. Then drag one
 
 No more “make it a little bigger,” “not that big,” or “try a different gray.”
 
-[![Watch AI PagePolish in action: Stop explaining. Show your AI.](assets/ai-pagepolish-teaser-poster.jpg)](https://github.com/DaneShakespear/page-tweaker/blob/main/assets/ai-pagepolish-teaser.mp4)
+**See it in 20 seconds.** No sound needed.
 
-**[Watch the 20-second overview](https://github.com/DaneShakespear/page-tweaker/blob/main/assets/ai-pagepolish-teaser.mp4)** · No sound needed.
+https://github.com/user-attachments/assets/036bfd0e-2575-4c0e-8373-a6077cb61a58
 
 ## Open it. Adjust it. Show AI.
 
