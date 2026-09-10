@@ -19,10 +19,14 @@ assert atoms.index('moov')<atoms.index('mdat')
 probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration,size:stream=codec_name,width,height,r_frame_rate,pix_fmt','-of','json',str(video)]))
 s=probe['streams'][0]
 assert s['codec_name']=='h264' and s['width']==1920 and s['height']==1080
-assert s['r_frame_rate']=='30/1' and float(probe['format']['duration'])==20
+assert s['r_frame_rate']=='30/1' and float(probe['format']['duration'])==30
 assert 'font-size:44px' in (root/'marketing/teaser/demo.html').read_text()
 evidence=json.loads((out/'capture-verification.json').read_text())
 assert evidence['computed']=={'size':'64px','margin':'22px'}
+assert evidence['replacement']=='Make room for better ideas.'
+assert evidence['sourceUnchanged']
+assert evidence['handoff']['pages'][0]['previewTextEvidence'][0]['previewText']==evidence['replacement']
+assert evidence['handoff']['pages'][0]['markup'][0]['explanation']==evidence['note']
 evidence['captureSize']=list(Image.open(out/'captures/03-adjusted.png').size)
 (out/'capture-verification.json').write_text(json.dumps(evidence,indent=2))
 report={'video':probe,'fastStart':True,'sha256':hashlib.sha256(data).hexdigest(),'previewValues':evidence['computed'],'sourceStill44px':True,'annotation':'Move the button closer to the text.','renderedLocally':True}

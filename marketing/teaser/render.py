@@ -1,4 +1,4 @@
-"""Local, deterministic 20-second product teaser. Requires Pillow and ffmpeg.
+"""Local, deterministic 30-second product teaser. Requires Pillow and ffmpeg.
 
 Real app captures supply all product UI. Titles, cursor and generic AI composer
 are editorial graphics. File paths are masked before any frame is rendered.
@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'out/teaser'
 CAP = OUT / 'captures'
-W,H,FPS,DURATION = 1920,1080,30,20
+W,H,FPS,DURATION = 1920,1080,30,30
 BG = '#0a1016'
 WHITE = '#f4f7fa'
 MUTED = '#9baab7'
@@ -77,12 +77,12 @@ ICON=Image.open(ROOT/'src/app-icon.png').convert('RGBA')
 
 def intro(t):
     im=BASE.copy();header(im)
-    p=ease(t/.65)
+    p=1
     layer=Image.new('RGBA',(W,H))
     y=300+int((1-p)*45)
     text(layer,(140,y),'Stop explaining.',112,'#a8b7c2','Semibold')
     text(layer,(140,y+130),'Show your AI.',132,WHITE,'Bold')
-    d=ImageDraw.Draw(layer);d.rounded_rectangle((146,y+290,146+int(705*ease((t-.3)/.6)),y+298),radius=4,fill=CYAN)
+    d=ImageDraw.Draw(layer);d.rounded_rectangle((146,y+290,146+705,y+298),radius=4,fill=CYAN)
     text(layer,(146,y+342),'Open it. Adjust it. Show AI.',34,MUTED)
     icon=ICON.resize((300,300),Image.Resampling.LANCZOS)
     layer.alpha_composite(icon,(1455,340))
@@ -91,44 +91,55 @@ def intro(t):
     text(im,(146,933),'THE LAST 10% JUST GOT CLEARER.',20,MUTED,'Medium')
     return im
 
+def select(t):
+    im=BASE.copy();header(im,'OPEN IT. SELECT IT.')
+    text(im,(100,122),'Your page. The exact element.',66,WHITE,'Semibold')
+    pic=cap('01-page' if t<2.3 else '02-selected').crop((0,0,1840,920))
+    rounded_paste(im,pic,(120,235,1680,840),18)
+    p=ease((t-1.3)/1)
+    cursor(im,120+lerp(670,270,p)*1680/1840,235+lerp(620,300,p)*1680/1840,max(0,1-abs(t-2.3)/.35))
+    return im
+
 def edit(t):
-    im=BASE.copy();header(im,'OPEN IT. ADJUST IT.')
+    im=BASE.copy();header(im,'ADJUST IT.')
     text(im,(100,122),'See it. Adjust it.',66,WHITE,'Semibold')
-    if t<1.4:
-        name='01-page' if t<.75 else '02-selected'
-        frame=cap(name).crop((0,0,1840,920))
-        p=ease(t/.5); y=235+40*(1-p)
-        rounded_paste(im,frame,(120,y,1680,840),18)
-        if t>.5:cursor(im,120+270*1680/1840,y+300*1680/1840,max(0,1-(t-.6)/.5))
-    else:
-        k=min(20,max(0,int((t-1.7)/2.2*20)))
-        name=f'size-{k:02d}' if t<4.25 else '03-adjusted'
-        pic=cap(name)
-        # Tight editorial crops keep both the real page and the real control readable.
-        rounded_paste(im,pic.crop((60,200,740,701)),(100,258,1110,818),20)
-        text(im,(1295,328),'A little bigger.',36,WHITE,'Medium')
-        rounded_paste(im,pic.crop((1530,370,1820,445)),(1295,410,525,136),14)
-        text(im,(1295,601),'Exactly like that.',34,CYAN,'Medium')
-        text(im,(1295,657),'Preview the change\non the real page.',28,MUTED)
-        if t<4.25:
-            x=1295+lerp(175,365,k/20)
-            cursor(im,x,505)
+    k=min(20,max(0,int((t-.3)/2*20)))
+    pic=cap(f'size-{k:02d}' if t<2.5 else '03-adjusted')
+    rounded_paste(im,pic.crop((60,200,740,701)),(100,258,1110,818),20)
+    text(im,(1295,328),'A little bigger.',36,WHITE,'Medium')
+    rounded_paste(im,pic.crop((1530,370,1820,445)),(1295,410,525,136),14)
+    text(im,(1295,601),'Exactly like that.',34,CYAN,'Medium')
+    text(im,(1295,657),'Preview the change\non the real page.',28,MUTED)
+    if t<2.5:cursor(im,1295+lerp(175,365,k/20),505)
+    return im
+
+EVIDENCE=json.loads((OUT/'capture-verification.json').read_text())
+def field(im,pic,key):
+    r=EVIDENCE[key]; y=int(r['y'])
+    rounded_paste(im,pic.crop((1528,y-55,1832,y+80)),(1275,410,545,242),14)
+
+def replace(t):
+    im=BASE.copy();header(im,'SAY IT YOUR WAY.')
+    text(im,(100,122),'Change the words. See them live.',66,WHITE,'Semibold')
+    k=min(len(EVIDENCE['replacement']),max(0,int((t-.5)/3*len(EVIDENCE['replacement']))))
+    pic=cap(f'text-{k:02d}')
+    rounded_paste(im,pic.crop((60,200,740,701)),(100,258,1110,818),20)
+    field(im,pic,'textBox')
+    text(im,(1275,720),'Your wording. On the page.',30,CYAN,'Medium')
     return im
 
 def mark(t):
     im=BASE.copy();header(im,'DRAW IT. EXPLAIN IT.')
-    text(im,(100,122),'Point to what matters.',66,WHITE,'Semibold')
-    k=min(12,max(0,int((t-.4)/1.05*12)))
-    name=f'arrow-{k:02d}' if t<1.5 else '04-marked'
-    pic=cap(name)
-    # The annotation and note below are pixels from the app, not recreated labels.
-    rounded_paste(im,pic.crop((65,220,755,676)),(100,258,1200,794),20)
-    text(im,(1370,375),'Draw.',44,WHITE,'Semibold')
-    text(im,(1370,438),'Add context.',44,WHITE,'Semibold')
-    text(im,(1370,555),'Show what\nwords miss.',34,CYAN,'Medium')
-    if .4<t<1.5:
-        p=k/12
-        cursor(im,100+(lerp(336,311,p)-65)*1200/690,258+(lerp(582,510,p)-220)*794/456)
+    text(im,(100,122),'Point it out. Tell AI what you mean.',66,WHITE,'Semibold')
+    k=min(12,max(0,int((t-.3)/1.1*12)))
+    n=min(len(EVIDENCE['note']),max(0,int((t-1.7)/3*len(EVIDENCE['note']))))
+    pic=cap(f'arrow-{k:02d}' if t<1.5 else f'note-{n:02d}')
+    rounded_paste(im,pic.crop((65,220,755,721)),(100,258,1110,806),20)
+    field(im,pic,'noteBox')
+    text(im,(1275,720),'The arrow and note travel\nwith your visual brief.',30,CYAN,'Medium')
+    if .3<t<1.5:
+        a=EVIDENCE['arrow'];p=k/12
+        cursor(im,100+(lerp(a['start']['x'],a['end']['x'],p)-65)*1110/690,258+(lerp(a['start']['y'],a['end']['y'],p)-220)*806/501)
     return im
 
 def zipcard(im,box,alpha=1):
@@ -181,7 +192,7 @@ def closing(t):
     im.paste(layer,(0,int((1-p)*22)),layer)
     return im
 
-SCENES=[(0,3,intro),(3,9,edit),(9,13,mark),(13,17,handoff),(17,20,closing)]
+SCENES=[(0,2.5,intro),(2.5,8.5,select),(8.5,12,edit),(12,17,replace),(17,23,mark),(23,27,handoff),(27,30,closing)]
 def frame(t):
     for i,(start,end,fn) in enumerate(SCENES):
         if start<=t<end:
@@ -196,14 +207,14 @@ def main():
     import argparse
     parser=argparse.ArgumentParser();parser.add_argument('--proof',action='store_true');args=parser.parse_args()
     OUT.mkdir(parents=True,exist_ok=True)
-    times=[1.2,3.8,5.5,8.2,10.1,12.2,14.1,16.3,18.6]
+    times=[0,3.5,6.5,10.5,14,16.5,20,22.5,28.6]
     sheet=Image.new('RGB',(1440,864),BG)
     for i,t in enumerate(times):
         f=frame(t);f.save(OUT/f'proof-{t:.1f}.jpg',quality=94)
         tile=f.resize((480,270),Image.Resampling.LANCZOS)
         sheet.paste(tile,((i%3)*480,(i//3)*288));text(sheet,((i%3)*480+10,(i//3)*288+270),f'{t:.1f}s',14)
     sheet.save(OUT/'contact-sheet.jpg',quality=95)
-    frame(1.8).save(OUT/'poster.jpg',quality=95)
+    frame(0).save(OUT/'poster.jpg',quality=95)
     if args.proof:return
     dest=OUT/'ai-pagepolish-teaser.mp4'
     command=['ffmpeg','-y','-hide_banner','-loglevel','warning','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','pipe:0','-an','-c:v','libx264','-preset','medium','-crf','19','-pix_fmt','yuv420p','-movflags','+faststart','-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709',str(dest)]

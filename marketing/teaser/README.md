@@ -1,12 +1,12 @@
 # AI PagePolish product teaser
 
-The approved 20-second webpage concept is implemented as real packaged-app captures plus local editorial motion graphics. The sequence opens with “Stop explaining. Show your AI.”, demonstrates the actual headline adjustment and saved arrow note, shows a real exported handoff, and closes with the product name and macOS download CTA.
+The approved 30-second webpage concept is implemented as real packaged-app captures plus local editorial motion graphics. The sequence opens with “Stop explaining. Show your AI.”, holds the full webpage and Inspector reveal for six seconds, demonstrates the actual headline adjustment, types replacement wording and an arrow explanation, shows a real exported handoff, and closes with the product name and macOS download CTA.
 
 ## Deliverables
 
 Files are generated in `out/teaser/` (excluded from Git):
 
-- `ai-pagepolish-teaser.mp4`: muted 1920 × 1080 H.264 video, 30 fps, 20 seconds, fast-start metadata.
+- `ai-pagepolish-teaser.mp4`: muted 1920 × 1080 H.264 video, 30 fps, 30 seconds, fast-start metadata.
 - `poster.jpg`: matching poster image.
 - `preview.html`: local video player.
 - `editable-source.zip`: capture frames, authored demo page, renderer, storyboard, and reproduction notes.
@@ -40,4 +40,4 @@ Place the MP4 and poster beside your webpage, then use:
 
 For a silent looping hero, replace `controls` with `autoplay loop`; retain `muted playsinline`. Respect reduced-motion preferences before enabling autoplay.
 
-No website or release was changed by this production task.
+The opening title and poster are fully visible from frame zero. The repository README uses a native GitHub video attachment; published assets are also mirrored under `assets/`.

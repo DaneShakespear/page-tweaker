@@ -252,3 +252,11 @@ Start by reading this file and `AGENTS.md`. Begin with packaged v0.2.0. Manually
 - Before final confirmation, the reported failure appeared limited to the successful-login response/session path. Diagnostics were restricted to the origin and Electron network error and never captured credentials or request bodies.
 - Web security and portal session protection were left unchanged.
 - A subsequent user-entered valid login succeeded in packaged PageTweaker. The login hot issue is resolved; no compatibility workaround or security change was needed.
+
+## 2026-09-10 teaser pacing revision
+
+- Revised the product teaser to 30 seconds: six seconds for the full webpage, click, and Inspector reveal; real text replacement and markup explanation typed character by character.
+- Opening title is visible from encoded frame zero; matching poster updated.
+- Verified real v0.3.0 export includes 64px headline, replacement “Make room for better ideas.” and arrow explanation “Move the button closer to the text.” Original demo HTML unchanged.
+- Local H.264 1920×1080/30fps fast-start video decoded without errors; frame-zero and contact-sheet visual checks passed. Assets and editable production source updated.
+- README native attachment still points to the previous 20-second cut. Browser approval review denied GitHub origin access; replacing the native attachment awaits browser approval.

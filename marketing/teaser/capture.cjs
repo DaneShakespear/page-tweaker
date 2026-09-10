@@ -22,6 +22,7 @@ async function poll(fn){for(let i=0;i<150;i++){try{const v=await fn();if(v)retur
  const ev=async expression=>{const r=await cmd('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const page=code=>ev(`document.querySelector('#page').executeJavaScript(${JSON.stringify(code)})`);
  const input=(selector,value)=>ev(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+ const rect=selector=>ev(`(()=>{const b=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height}})()`);
  await cmd('Emulation.setDeviceMetricsOverride',{width:1840,height:1000,deviceScaleFactor:2,mobile:false});
  await sleep(500);
  const capture=async name=>{await sleep(65);const r=await cmd('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(out,'captures',name+'.png'),Buffer.from(r.data,'base64'));};
@@ -36,22 +37,36 @@ async function poll(fn){for(let i=0;i<150;i++){try{const v=await fn();if(v)retur
  await input('[data-style="margin-bottom"]',22);await capture('03-adjusted');
  const computed=await page("({size:getComputedStyle(document.querySelector('h1')).fontSize,margin:getComputedStyle(document.querySelector('h1')).marginBottom})");
  if(computed.size!=='64px'||computed.margin!=='22px')throw Error('Preview values wrong');
+ const replacement='Make room for better ideas.';
+ await ev(`document.querySelector('#text').scrollIntoView({block:'center'});document.querySelector('#text').focus();document.querySelector('#text').select()`);
+ await sleep(300);
+ const textBox=await rect('#text');
+ await capture('text-00');
+ for(let i=0;i<replacement.length;i++){await cmd('Input.insertText',{text:replacement[i]});await capture(`text-${String(i+1).padStart(2,'0')}`);}
+ await poll(()=>page("document.querySelector('h1').textContent").then(v=>v===replacement));
+ await capture('06-replaced');
  await ev(`document.querySelector('#markupTab').click();document.querySelector('[data-markup-tool="arrow"]').click()`);
- await input('#markupExplanation','Move the button closer to the text.');
+ await ev(`document.querySelector('aside').scrollTop=0`);
  const box=await ev(`(()=>{const b=document.querySelector('#markup').getBoundingClientRect();return {x:b.x,y:b.y}})()`);
  const button=await page("(()=>{const b=document.querySelector('button').getBoundingClientRect();return {x:b.x,y:b.y,width:b.width}})()");
  const sx=box.x+button.x+button.width+30,sy=box.y+button.y+28;
  await cmd('Input.dispatchMouseEvent',{type:'mousePressed',x:sx,y:sy,button:'left',buttons:1,clickCount:1});
  for(let i=0;i<=12;i++){await cmd('Input.dispatchMouseEvent',{type:'mouseMoved',x:sx-25*i/12,y:sy-72*i/12,button:'left',buttons:1});await capture(`arrow-${String(i).padStart(2,'0')}`);}
  await cmd('Input.dispatchMouseEvent',{type:'mouseReleased',x:sx-25,y:sy-72,button:'left',buttons:0,clickCount:1});
+ const note='Move the button closer to the text.';
+ await ev(`document.querySelector('#markupExplanation').focus()`);
+ const noteBox=await rect('#markupExplanation');
+ await capture('note-00');
+ for(let i=0;i<note.length;i++){await cmd('Input.insertText',{text:note[i]});await capture(`note-${String(i+1).padStart(2,'0')}`);}
+ await poll(()=>ev(`document.querySelector('#strokeList textarea').value === ${JSON.stringify(note)}`));
  await capture('04-marked');
  await ev(`document.querySelector('#export').click()`);await poll(()=>ev(`!document.querySelector('#handoffReady').hidden`));
  await capture('05-handoff');
  const handoff=await ev(`document.querySelector('#handoffPath').value`);
  fs.copyFileSync(handoff,path.join(out,'demo-handoff.zip'));
  const json=execFileSync('/usr/bin/unzip',['-p',handoff,'*/handoff.json'],{encoding:'utf8'});
- const evidence=JSON.parse(json);if(!json.includes('64px')||!json.includes('Move the button closer'))throw Error('Export evidence missing');
+ const evidence=JSON.parse(json);if(!json.includes('64px')||!json.includes(note)||!json.includes(replacement))throw Error('Export evidence missing');
  if(sourceHash()!==originalSourceHash)throw Error('Demo source changed during capture');
- fs.writeFileSync(path.join(out,'capture-verification.json'),JSON.stringify({version:'0.3.0',computed,handoff:evidence,captureSize:[3680,2000],sourceUnchanged:true,sourceHash:originalSourceHash},null,2));
+ fs.writeFileSync(path.join(out,'capture-verification.json'),JSON.stringify({version:'0.3.0',computed,replacement,note,textBox,noteBox,arrow:{start:{x:sx,y:sy},end:{x:sx-25,y:sy-72}},handoff:evidence,captureSize:[3680,2000],sourceUnchanged:true,sourceHash:originalSourceHash},null,2));
  console.log('Captured real app workflow; preview values and exported annotation verified.');ws.close();
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(async()=>{app.kill('SIGTERM');await sleep(500);fs.rmSync(profile,{recursive:true,force:true});});
