@@ -6,7 +6,7 @@
 
 **AI PagePolish by PageTweaker is a visual feedback tool for AI-built websites.**
 
-### [Download for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.2.1/AI-PagePolish-by-PageTweaker-0.2.1-arm64.dmg)
+### [Download for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.3.0/AI-PagePolish-by-PageTweaker-0.3.0-arm64.dmg)
 
 Download the DMG, open it, and drag the app into Applications.
 
@@ -68,7 +68,7 @@ The handoff shows AI the desired result. It does not prescribe how the code must
 
 ## Install on macOS
 
-### [Download v0.2.1 for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.2.1/AI-PagePolish-by-PageTweaker-0.2.1-arm64.dmg)
+### [Download v0.3.0 for macOS (Apple Silicon)](https://github.com/DaneShakespear/page-tweaker/releases/download/v0.3.0/AI-PagePolish-by-PageTweaker-0.3.0-arm64.dmg)
 
 AI PagePolish by PageTweaker is ad-hoc signed for bundle integrity. It is not Apple Developer ID signed or notarized, so macOS may show a first-launch warning. Follow the safe per-app steps in [Installing AI PagePolish by PageTweaker](docs/INSTALLING.md). Never disable Gatekeeper system-wide.
 

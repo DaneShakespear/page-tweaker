@@ -7,7 +7,7 @@
 </head>
 <body>
   <header>
-    <div class="app-brand"><img src="app-icon.png" alt=""><strong>AI PagePolish by PageTweaker <small id="version">v…</small></strong></div>
+    <div class="app-brand"><img src="app-icon.png" alt=""><strong>AI PagePolish <span class="brand-by">by PageTweaker</span> <small id="version">v…</small></strong></div>
     <div class="viewport-picker" role="group" aria-label="Preview size">
       <button class="viewport-button active" data-breakpoint="desktop" title="Desktop preview, 1440 pixels wide" aria-label="Desktop preview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg></button>
       <button class="viewport-button" data-breakpoint="tablet" title="Tablet preview, 834 pixels wide" aria-label="Tablet preview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M11 18h2"></path></svg></button>
@@ -29,8 +29,8 @@
         <div class="empty-shell">
           <div class="empty-drop-mark" aria-hidden="true">+</div>
           <p class="empty-eyebrow">DROP A PAGE OR IMAGE HERE</p>
-          <h1>Drop a page. Show your AI what should change.</h1>
-          <p class="empty-intro">Drop an HTML file, image, or live website URL in this window, the URL bar, or on the app icon. You can also paste a screenshot from your clipboard.<br>AI PagePolish by PageTweaker lets you try changes visually, explain and mark them up, then drop one clear brief into your AI chat with everything the agent needs.</p>
+          <h1>Stop explaining. Show your AI.</h1>
+          <p class="empty-intro">Open any page or image. Try the change, mark up what you mean, then drag one complete brief into your AI chat.</p>
           <div class="empty-options">
             <article><span class="empty-option-icon">↘</span><div><strong>Drop or choose</strong><p>Drop a page or image onto this window or the app icon.</p><button id="emptyChooseFile">Choose a file</button></div></article>
             <article><span class="empty-option-icon">⌘</span><div><strong>Paste</strong><p>Paste a screenshot here, or paste a URL into the address bar.</p></div></article>
@@ -76,7 +76,7 @@
             <div class="control-group"><div class="control-heading"><label>Bottom</label><button class="reset-control" data-reset-style="padding-bottom">Reset padding bottom</button></div><div class="control-value"><input data-style="padding-bottom" type="range"><output></output></div></div>
             <div class="control-group"><div class="control-heading"><label>Left</label><button class="reset-control" data-reset-style="padding-left">Reset padding left</button></div><div class="control-value"><input data-style="padding-left" type="range"><output></output></div></div>
           </fieldset>
-          <label>Replace content <small>(this element only; safe formatting such as &lt;br&gt;, &lt;strong&gt;, and &lt;em&gt; is supported)</small><textarea id="text"></textarea></label>
+          <label>Replace text <small>(this element only; type normally, or add simple tags such as &lt;br&gt;, &lt;strong&gt;, and &lt;em&gt;)</small><textarea id="text"></textarea></label>
           <p id="pinContext" class="hint"></p>
           <label>AI note<textarea id="note" placeholder="Explain the change this selected element needs"></textarea></label>
           <button id="pinNote">Pin note to selected element</button>
@@ -87,6 +87,13 @@
       <section id="annotationControls" role="tabpanel" aria-labelledby="markupTab" hidden>
         <h3>Markup</h3>
         <p class="hint">Describe one markup item, then draw as many circles, arrows, or lines as it needs. Choose Finish markup before starting the next item.</p>
+        <div class="markup-tools" role="group" aria-label="Markup tool">
+          <button class="active" data-markup-tool="freehand" title="Draw freehand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c4-8 6 2 10-7 2-4 4-3 6-6"></path></svg><span>Draw</span></button>
+          <button data-markup-tool="line" title="Draw a straight line"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5"></path></svg><span>Line</span></button>
+          <button data-markup-tool="arrow" title="Draw an arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M11 5h8v8"></path></svg><span>Arrow</span></button>
+          <button data-markup-tool="rectangle" title="Draw a rectangle or square"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1"></rect></svg><span>Box</span></button>
+          <button data-markup-tool="circle" title="Draw a circle or oval"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="8" ry="7"></ellipse></svg><span>Circle</span></button>
+        </div>
         <div class="swatches" aria-label="Markup color"><button data-color="#f25f5c" class="swatch active" title="Coral"></button><button data-color="#ffca56" class="swatch" title="Yellow"></button><button data-color="#64d7ff" class="swatch" title="Blue"></button><button data-color="#8be28b" class="swatch" title="Green"></button><button data-color="#ffffff" class="swatch" title="White"></button></div>
         <label>Line thickness <input id="annotationThickness" type="range" min="1" max="14" step="1" value="3"><output id="annotationThicknessValue">3 px</output></label>
         <label>What does this markup item mean?<textarea id="markupExplanation" placeholder="Example: Move the circled section closer to the heading and align both edges."></textarea></label>

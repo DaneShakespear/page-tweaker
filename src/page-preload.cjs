@@ -99,6 +99,12 @@ function describeInteractive(element) {
   return control ? { tag: control.tagName.toLowerCase(), label: (control.innerText || control.getAttribute('aria-label') || control.getAttribute('placeholder') || control.getAttribute('name') || '').trim().slice(0, 80) } : null;
 }
 
+function editableText(element) {
+  const copy = element.cloneNode(true);
+  copy.querySelectorAll('br').forEach((lineBreak) => lineBreak.replaceWith('\n'));
+  return (copy.textContent || '').trim().slice(0, 10000);
+}
+
 function positionSelected() {
   if (!selectedElement) return;
   const box = selectedElement.getBoundingClientRect();
@@ -137,6 +143,7 @@ document.addEventListener('click', (event) => {
     targetId,
     tag: element.tagName.toLowerCase(),
     text: (element.innerText || '').trim().slice(0, 240),
+    editableText: editableText(element),
     html: element.innerHTML,
     inlineStyle: element.getAttribute('style'),
     inlineProperties: Object.fromEntries(properties.map((property) => [property, element.style.getPropertyValue(property)])),

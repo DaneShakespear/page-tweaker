@@ -1,10 +1,10 @@
 # AI PagePolish by PageTweaker Current State
 
-**Last verified:** 2026-09-09  
-**Current release:** `v0.2.1`  
-**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.2.1>
+**Last verified:** 2026-09-10  
+**Current release:** `v0.3.0`  
+**Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.3.0>
 
-**Local development version:** `v0.2.1`
+**Local development version:** `v0.3.0`
 
 ## Agent Startup
 
@@ -51,6 +51,16 @@ Current naming governance:
 - Verification: 30 contract tests pass; packaged native smoke passes image input and image-mode notes; strict ad-hoc signature and DMG verification pass.
 - Local v0.2.1 DMG SHA-256: `569789318870e9b7fe587b38f30a96545536fb5c37f2644997bd8c4552f2612a`.
 - Local v0.2.1 blockmap SHA-256: `4314031e400569235ecdcf9192f1d3ea8c0d570a180a84a656c3cbd20729d251`.
+
+## v0.3.0 changes
+
+- Replaced the raw selected-element HTML shown in the Inspector with readable visible text. Users can edit any portion normally and may still type the supported simple formatting tags, including `<br>`, `<strong>`, and `<em>`.
+- Added freehand, straight-line, arrow, rectangle, and circle markup tools. Tool choice is preserved in the AI handoff alongside each mark's coordinates, color, thickness, and explanation.
+- Refined the title-bar hierarchy so `AI PagePolish` is primary and `by PageTweaker` is smaller and quieter.
+- Tightened the startup promise to “Stop explaining. Show your AI.” and doubled the space before that headline.
+- Verification: 31 contract tests pass; packaged native smoke passes readable-text replacement, safe typed formatting, markup tools and exported tool evidence, and the complete handoff workflow.
+- Local v0.3.0 DMG SHA-256: `45e81e54ce380b867c890e26b325932b1b74c215c92e71b4fc00984f40c91cb9`.
+- Local v0.3.0 blockmap SHA-256: `6d3219c02fd59e733c619fa0f87819323b8bd5b4efd0903cd373c1f6859ab032`.
 
 ## v0.2.0 local changes
 

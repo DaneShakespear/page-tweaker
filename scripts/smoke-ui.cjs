@@ -74,6 +74,8 @@ async function connect() {
     assert.equal(await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('#interactive-button').dataset.clicks")`), '1');
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
+    assert.equal(await evaluate(`document.querySelector('#text').value`), 'First heading');
+    assert.equal(await evaluate(`document.querySelector('#text').value.includes('<span>')`), false);
     assert.ok(await evaluate(`document.querySelector('#stage').scrollWidth > document.querySelector('#stage').clientWidth`));
     assert.match(await evaluate(`document.querySelector('header strong').textContent`), /AI PagePolish by PageTweaker/);
     const choices = await evaluate(`[...document.querySelectorAll('[data-scope-key]')].map((button) => button.textContent)`);
@@ -167,6 +169,8 @@ async function connect() {
     await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x + 100, y: box.y + 100, button: 'left', buttons: 1, clickCount: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 150, y: box.y + 140, button: 'left', buttons: 0, clickCount: 1 });
+    await evaluate(`document.querySelector('[data-markup-tool="arrow"]').click()`);
+    assert.equal(await evaluate(`document.querySelector('[data-markup-tool="arrow"]').classList.contains('active')`), true);
     await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: box.x + 180, y: box.y + 110, button: 'left', buttons: 1, clickCount: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: box.x + 210, y: box.y + 150, button: 'left', buttons: 1 });
     await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: box.x + 210, y: box.y + 150, button: 'left', buttons: 0, clickCount: 1 });
@@ -212,6 +216,7 @@ async function connect() {
     assert.match(handoffJson, /"breakpoint": "desktop"/);
     assert.match(handoffJson, /"pages": \[/);
     assert.match(handoffJson, /"strokes": \[/);
+    assert.match(handoffJson, /"tool": "arrow"/);
     const startHere = execFileSync('/usr/bin/unzip', ['-p', handoffPath, '*/START-HERE.md'], { encoding: 'utf8' });
     assert.match(startHere, /Do not blindly paste selectors/);
     assert.equal(await evaluate(`document.querySelector('#handoffName').textContent.endsWith('.zip')`), true);

@@ -54,6 +54,7 @@ test('the empty state teaches fast opening and AI handoff without leaving the wo
   const css = read('src/shell.css');
   const renderer = read('src/renderer.js');
   assert.match(html, /DROP A PAGE OR IMAGE HERE/);
+  assert.match(html, /Stop explaining\. Show your AI\./);
   assert.match(html, /paste a screenshot from your clipboard/i);
   assert.match(renderer, /desktopBridge\.clipboardImage/);
   assert.match(renderer, /desktopBridge\.pathForFile/);
@@ -94,12 +95,17 @@ test('formatted replacement content is safely previewed, exported, restored, and
   const bridge = read('src/page-preload.cjs');
   const renderer = read('src/renderer.js');
   assert.match(html, /id="clearPage"/);
-  assert.match(html, /safe formatting such as/);
+  assert.match(html, /Replace text/);
+  assert.match(html, /simple tags such as/);
+  assert.match(bridge, /function editableText/);
+  assert.match(bridge, /editableText: editableText\(element\)/);
   assert.match(bridge, /allowedContentTags/);
   assert.match(bridge, /function applySafeContent/);
   assert.match(bridge, /element\.innerHTML = original\.html/);
   assert.match(bridge, /applySafeContent\(element, request\.text\)/);
-  assert.match(renderer, /state\.originalTexts\.set\(scopedKey\(message\.selector\), message\.html\)/);
+  assert.match(renderer, /state\.originalTexts\.set\(scopedKey\(message\.selector\), message\.editableText\)/);
+  assert.match(renderer, /\?\? message\.editableText/);
+  assert.doesNotMatch(renderer, /\?\? message\.html/);
   assert.match(renderer, /querySelector\('#clearPage'\)\.addEventListener/);
   assert.match(renderer, /page\.src = 'about:blank'/);
 });
@@ -205,7 +211,7 @@ test('public branding and stable technical identifiers are wired', () => {
   const html = read('src/index.html');
   const renderer = read('src/renderer.js');
   const manifest = JSON.parse(read('package.json'));
-  assert.match(html, /class="app-brand"><img src="app-icon\.png"[^>]*><strong>AI PagePolish by PageTweaker <small id="version">/);
+  assert.match(html, /<strong>AI PagePolish <span class="brand-by">by PageTweaker<\/span> <small id="version">/);
   assert.equal(manifest.build.productName, 'AI PagePolish by PageTweaker');
   assert.equal(manifest.name, 'page-tweaker');
   assert.equal(manifest.repository.url, 'https://github.com/DaneShakespear/page-tweaker.git');
@@ -217,6 +223,18 @@ test('public branding and stable technical identifiers are wired', () => {
   assert.match(renderer, /function normalizeHex/);
   assert.match(renderer, /querySelector\('#text'\)\.addEventListener\('input'/);
   assert.match(renderer, /picker\.dispatchEvent\(new Event\('input'/);
+});
+
+test('markup supports freehand, line, arrow, rectangle, and circle tools', () => {
+  const html = read('src/index.html');
+  const renderer = read('src/renderer.js');
+  for (const tool of ['freehand', 'line', 'arrow', 'rectangle', 'circle']) assert.match(html, new RegExp(`data-markup-tool="${tool}"`));
+  assert.match(renderer, /annotationTool: 'freehand'/);
+  assert.match(renderer, /function drawStroke/);
+  assert.match(renderer, /mark\.tool === 'rectangle'/);
+  assert.match(renderer, /mark\.tool === 'circle'/);
+  assert.match(renderer, /mark\.tool === 'arrow'/);
+  assert.match(renderer, /tool: stroke\.tool \|\| 'freehand'/);
 });
 
 test('spacing controls are independent and wide previews remain horizontally scrollable', () => {
