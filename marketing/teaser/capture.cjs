@@ -1,0 +1,57 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
+const {spawn,execFileSync}=require('node:child_process');
+const {pathToFileURL}=require('node:url');
+const {createHash}=require('node:crypto');
+const sourceHash=()=>createHash('sha256').update(fs.readFileSync(path.join(__dirname,'demo.html'))).digest('hex');
+const originalSourceHash=sourceHash();
+const root=path.resolve(__dirname,'../..'), out=path.join(root,'out/teaser');
+fs.mkdirSync(path.join(out,'captures'),{recursive:true});
+const profile=fs.mkdtempSync(path.join(os.tmpdir(),'pagepolish-film-'));
+const binary=path.join(root,'dist/mac-arm64/AI PagePolish by PageTweaker.app/Contents/MacOS/AI PagePolish by PageTweaker');
+const app=spawn(binary,['--remote-debugging-port=9346',`--user-data-dir=${profile}`],{stdio:['ignore','pipe','pipe']});
+app.stdout.on('data',d=>process.stdout.write(d));app.stderr.on('data',d=>process.stderr.write(d));app.on('exit',(code,signal)=>console.log('Capture app exited',code,signal));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function poll(fn){for(let i=0;i<150;i++){try{const v=await fn();if(v)return v;}catch{}await sleep(120);}throw Error('Capture state timeout');}
+(async()=>{
+ const target=await poll(async()=> (await(await fetch('http://127.0.0.1:9346/json/list')).json()).find(t=>t.type==='page'&&t.url.includes('index.html')));
+ const ws=new WebSocket(target.webSocketDebuggerUrl);await new Promise(r=>ws.addEventListener('open',r,{once:true}));let id=0;const pending=new Map();
+ ws.addEventListener('message',e=>{const m=JSON.parse(e.data),p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}});
+ const cmd=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});ws.send(JSON.stringify({id:n,method,params}));});
+ const ev=async expression=>{const r=await cmd('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+ const page=code=>ev(`document.querySelector('#page').executeJavaScript(${JSON.stringify(code)})`);
+ const input=(selector,value)=>ev(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+ await cmd('Emulation.setDeviceMetricsOverride',{width:1840,height:1000,deviceScaleFactor:2,mobile:false});
+ await sleep(500);
+ const capture=async name=>{await sleep(65);const r=await cmd('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(out,'captures',name+'.png'),Buffer.from(r.data,'base64'));};
+ await capture('00-start');
+ const url=pathToFileURL(path.join(__dirname,'demo.html')).href;
+ await ev(`(()=>{const e=document.querySelector('#address');e.value=${JSON.stringify(url)};e.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));})()`);
+ await poll(()=>ev(`document.querySelector('#status').textContent.includes('Click an element')`));
+ await capture('01-page');
+ await page("document.querySelector('h1').click();true");await poll(()=>ev(`!document.querySelector('#selectorBar').hidden`));
+ await capture('02-selected');
+ for(let i=0;i<=20;i++){await input('[data-style="font-size"]',44+i);await capture(`size-${String(i).padStart(2,'0')}`);}
+ await input('[data-style="margin-bottom"]',22);await capture('03-adjusted');
+ const computed=await page("({size:getComputedStyle(document.querySelector('h1')).fontSize,margin:getComputedStyle(document.querySelector('h1')).marginBottom})");
+ if(computed.size!=='64px'||computed.margin!=='22px')throw Error('Preview values wrong');
+ await ev(`document.querySelector('#markupTab').click();document.querySelector('[data-markup-tool="arrow"]').click()`);
+ await input('#markupExplanation','Move the button closer to the text.');
+ const box=await ev(`(()=>{const b=document.querySelector('#markup').getBoundingClientRect();return {x:b.x,y:b.y}})()`);
+ const button=await page("(()=>{const b=document.querySelector('button').getBoundingClientRect();return {x:b.x,y:b.y,width:b.width}})()");
+ const sx=box.x+button.x+button.width+30,sy=box.y+button.y+28;
+ await cmd('Input.dispatchMouseEvent',{type:'mousePressed',x:sx,y:sy,button:'left',buttons:1,clickCount:1});
+ for(let i=0;i<=12;i++){await cmd('Input.dispatchMouseEvent',{type:'mouseMoved',x:sx-25*i/12,y:sy-72*i/12,button:'left',buttons:1});await capture(`arrow-${String(i).padStart(2,'0')}`);}
+ await cmd('Input.dispatchMouseEvent',{type:'mouseReleased',x:sx-25,y:sy-72,button:'left',buttons:0,clickCount:1});
+ await capture('04-marked');
+ await ev(`document.querySelector('#export').click()`);await poll(()=>ev(`!document.querySelector('#handoffReady').hidden`));
+ await capture('05-handoff');
+ const handoff=await ev(`document.querySelector('#handoffPath').value`);
+ fs.copyFileSync(handoff,path.join(out,'demo-handoff.zip'));
+ const json=execFileSync('/usr/bin/unzip',['-p',handoff,'*/handoff.json'],{encoding:'utf8'});
+ const evidence=JSON.parse(json);if(!json.includes('64px')||!json.includes('Move the button closer'))throw Error('Export evidence missing');
+ if(sourceHash()!==originalSourceHash)throw Error('Demo source changed during capture');
+ fs.writeFileSync(path.join(out,'capture-verification.json'),JSON.stringify({version:'0.3.0',computed,handoff:evidence,captureSize:[3680,2000],sourceUnchanged:true,sourceHash:originalSourceHash},null,2));
+ console.log('Captured real app workflow; preview values and exported annotation verified.');ws.close();
+})().catch(e=>{console.error(e);process.exitCode=1}).finally(async()=>{app.kill('SIGTERM');await sleep(500);fs.rmSync(profile,{recursive:true,force:true});});

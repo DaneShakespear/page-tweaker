@@ -40,6 +40,13 @@ Current naming governance:
 2. **Legacy anchor:** retain `PageTweaker` in internal continuity references, migration notes, and technical identifiers until a separate go/no-go decision.
 3. **Repository and protocol names:** keep the repository (`page-tweaker`) and URL scheme (`page-tweaker://`) stable for now to avoid migration and install breakage.
 
+## Marketing teaser — 2026-09-10
+
+- Produced a local 20-second, 1920 × 1080, 30 fps silent webpage teaser from the real v0.3.0 app. The sequence shows a headline adjustment, saved arrow note, exported handoff, and an editorial transition into a generic AI composer.
+- Production source and storyboard: `marketing/teaser/`. Finished video, poster, player, web-assets ZIP, editable-source ZIP, and verification records: `out/teaser/` (local generated output, excluded from Git).
+- Verified actual preview values of 64px font size and 22px bottom margin, exported annotation evidence, unchanged 44px demo source, complete browser playback, error-free decoding, and fast-start MP4 metadata. Video is 976,310 bytes.
+- Rendered entirely locally. Cloud upload was rejected before transmission because raw captures contain local paths. Final video masks those paths; raw capture files remain local. No website or release was changed.
+
 ## v0.2.1 local changes
 
 - Increased the startup gap between the blue drop-target eyebrow and the main headline to match the supplied visual markup.
