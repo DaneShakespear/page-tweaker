@@ -1,7 +1,7 @@
 {
   "name": "page-tweaker",
   "version": "0.1.17",
-  "description": "Fast visual QA and AI handoff for HTML artifacts and public web pages.",
+  "description": "Open any page, show AI what should change, and drag back one complete brief.",
   "author": "Dane Shakespear",
   "repository": {
     "type": "git",

@@ -61,6 +61,8 @@ Text replacement and pinned notes remain exact-element actions even when a broad
 - Kept fixed breakpoint widths when the preview area is narrower, allowing the stage to scroll horizontally instead of shrinking wide pages to fit.
 - Explicitly enabled native window resizing, maximizing, and full-screen expansion so more of a wide desktop preview can be exposed when the display allows it.
 - Added the PageTweaker app icon beside the product name and version in the draggable header.
+- Reduced the public README to one plain-language promise, one three-step workflow, the core visual-feedback capabilities, the draggable AI handoff, and essential installation/privacy boundaries. Developer detail is collapsed below the main product story.
+- Added `.agents/product-marketing.md` as the durable positioning source: PageTweaker is a visual feedback tool for AI-built websites; the core promise is “Stop explaining. Show your AI.”
 
 ## v0.1.14 changes
 
