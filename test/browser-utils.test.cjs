@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const utils = require('../src/browser-utils.js');
 
-test('accepts public URLs, file URLs, and local HTML paths', () => {
+test('accepts public URLs, file URLs, local HTML paths, and image paths', () => {
   assert.equal(utils.normalizeSource('https://example.com/report'), 'https://example.com/report');
   assert.equal(utils.normalizeSource('apple.com'), 'https://apple.com');
   assert.equal(utils.normalizeSource('www.apple.com/mac'), 'https://www.apple.com/mac');
@@ -10,6 +10,8 @@ test('accepts public URLs, file URLs, and local HTML paths', () => {
   assert.equal(utils.normalizeSource('file:///Users/me/report.html'), 'file:///Users/me/report.html');
   assert.equal(utils.normalizeSource('/Users/me/report.html'), 'file:///Users/me/report.html');
   assert.equal(utils.normalizeSource('report.html'), 'file://report.html');
+  assert.equal(utils.normalizeSource('/Users/me/Desktop/screenshot.png'), 'file:///Users/me/Desktop/screenshot.png');
+  assert.equal(utils.normalizeSource('design reference.svg'), 'file://design%20reference.svg');
   assert.equal(utils.normalizeSource('not-a-page'), null);
 });
 

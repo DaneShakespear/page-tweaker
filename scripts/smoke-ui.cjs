@@ -11,6 +11,7 @@ const productName = 'AI PagePolish by PageTweaker';
 const binary = path.join(root, 'dist', 'mac-arm64', `${productName}.app`, 'Contents', 'MacOS', productName);
 const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
 const secondFixture = path.join(root, 'test', 'fixtures', 'navigation-second.html');
+const imageFixture = path.join(root, 'src', 'app-icon.png');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
 let app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`], { stdio: 'ignore' });
@@ -59,7 +60,7 @@ async function connect() {
     assert.notEqual(movedWindow, initialWindow, 'The draggable title bar did not move the native window.');
     process.stdout.write('Native window drag passed.\n');
     assert.equal(await evaluate(`document.querySelector('#empty').hidden`), false);
-    assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drop any page here/i);
+    assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drop a page or image here/i);
     assert.match(await evaluate(`document.querySelector('#empty').textContent`), /Drag ZIP into AI chat/);
     assert.match(await evaluate(`document.querySelector('.empty-bookmarklet').getAttribute('href')`), /^javascript:location\.href='page-tweaker:\/\/open\?url='/);
     assert.equal(await evaluate(`document.querySelector('#back').disabled`), true);
@@ -241,7 +242,18 @@ async function connect() {
     await client.evaluate(`window.confirm = () => true; document.querySelector('#clearPage').click()`);
     await poll(() => client.evaluate(`document.querySelector('#empty').hidden === false && document.querySelector('#address').value === ''`));
     assert.equal(await client.evaluate(`document.querySelector('#page').getURL()`), 'about:blank');
-    process.stdout.write('Packaged UI smoke passed: safe formatted content, clear-page flow, interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
+    const imageUrl = pathToFileURL(imageFixture).href;
+    await client.evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(imageUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
+    await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(imageUrl)}`));
+    assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('img')?.naturalWidth > 0")`), true);
+    execFileSync('/usr/bin/osascript', ['-e', `set the clipboard to (read (POSIX file ${JSON.stringify(imageFixture)}) as «class PNGf»)`]);
+    const clipboardImageUrl = await client.evaluate(`window.pageTweaker.clipboardImage()`);
+    assert.match(clipboardImageUrl, /^file:\/\/.*page-tweaker-clipboard-\d+\.png$/);
+    await client.evaluate(`(() => { const address = document.querySelector('#address'); address.value = ${JSON.stringify(clipboardImageUrl)}; address.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); })()`);
+    await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(clipboardImageUrl)}`));
+    assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('img')?.naturalWidth > 0")`), true);
+    process.stdout.write('Image file drop and clipboard screenshot loading passed.\n');
+    process.stdout.write('Packaged UI smoke passed: safe formatted content, clear-page flow, image input, interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
   } finally {
     client?.socket.close();
     app.kill('SIGTERM');

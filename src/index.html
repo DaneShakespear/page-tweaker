@@ -15,8 +15,8 @@
     </div>
     <button id="back" class="icon" title="Go back to the previous page" aria-label="Go back to the previous page" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
     <button id="reload" class="icon" title="Reload this page and start with a clean session" aria-label="Reload this page and start with a clean session">↻</button>
-    <input id="address" aria-label="HTML file path, file URL, or public URL" placeholder="Type apple.com, or paste a URL or local HTML path, then press Enter">
-    <button id="file" class="icon" title="Choose a local HTML file or Safari web link" aria-label="Choose a file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path></svg></button>
+    <input id="address" aria-label="Web address, HTML file path, or image path" placeholder="Type apple.com, paste a URL, or open an HTML or image file">
+    <button id="file" class="icon" title="Choose an HTML file, image, or Safari web link" aria-label="Choose a file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path></svg></button>
     <button id="clearPage" class="icon" title="Close this page and clear all feedback" aria-label="Close this page and clear all feedback"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button>
     <button class="primary" id="export" title="Create a complete handoff file for your AI session">Create handoff</button>
   </header>
@@ -24,16 +24,16 @@
     <section id="stage">
       <webview id="page" preload="" partition="persist:page-tweaker-public"></webview>
       <canvas id="markup"></canvas>
-      <div id="dropHint" hidden>Drop a local HTML file, <code>file://</code> URL, or public URL to open it</div>
+      <div id="dropHint" hidden>Drop an HTML file, image, <code>file://</code> URL, or live website URL to open it</div>
       <div id="empty">
         <div class="empty-shell">
           <div class="empty-drop-mark" aria-hidden="true">+</div>
-          <p class="empty-eyebrow">DROP ANY PAGE HERE</p>
+          <p class="empty-eyebrow">DROP A PAGE OR IMAGE HERE</p>
           <h1>Drop a page. Show your AI what should change.</h1>
-          <p class="empty-intro">Drop an HTML file, web link, or URL in this window, the URL bar, or on the app icon.<br>AI PagePolish by PageTweaker lets you try changes visually, explain and mark them up, then drop one clear brief into your AI chat with everything the agent needs.</p>
+          <p class="empty-intro">Drop an HTML file, image, or live website URL in this window, the URL bar, or on the app icon. You can also paste a screenshot from your clipboard.<br>AI PagePolish by PageTweaker lets you try changes visually, explain and mark them up, then drop one clear brief into your AI chat with everything the agent needs.</p>
           <div class="empty-options">
-            <article><span class="empty-option-icon">↘</span><div><strong>Drop or choose</strong><p>Drop onto this window or the AI PagePolish by PageTweaker app icon.</p><button id="emptyChooseFile">Choose a file</button></div></article>
-            <article><span class="empty-option-icon">⌘</span><div><strong>Paste above</strong><p>Paste or drop into the address bar, then press Enter.</p></div></article>
+            <article><span class="empty-option-icon">↘</span><div><strong>Drop or choose</strong><p>Drop a page or image onto this window or the app icon.</p><button id="emptyChooseFile">Choose a file</button></div></article>
+            <article><span class="empty-option-icon">⌘</span><div><strong>Paste</strong><p>Paste a screenshot here, or paste a URL into the address bar.</p></div></article>
             <article class="empty-chrome"><span class="empty-option-icon">☆</span><div><strong>Open from Chrome</strong><p>Drag this shortcut to Chrome’s bookmarks bar once.</p><a class="bookmarklet empty-bookmarklet" draggable="true" href="javascript:location.href='page-tweaker://open?url='+encodeURIComponent(location.href)"><img src="app-icon.png" alt=""><span><strong>Open in AI PagePolish by PageTweaker</strong><small>Drag to Chrome bookmarks</small></span><b aria-hidden="true">⠿</b></a></div></article>
           </div>
           <div class="empty-handoff"><span>1&nbsp; Open</span><i>→</i><span>2&nbsp; Tweak + explain</span><i>→</i><span>3&nbsp; Create handoff</span><i>→</i><span class="empty-ai">Drag ZIP into AI chat</span></div>
@@ -92,7 +92,7 @@
       <section id="helpPanel" role="tabpanel" aria-labelledby="helpTab" hidden>
         <div class="help-hero"><img src="app-icon.png" alt=""><div><h2>Show an AI what you want changed.</h2><p>Try visual changes on a safe preview, add feedback, then give your AI session one file that explains everything.</p></div></div>
         <div class="help-steps">
-          <article><span>1</span><div><strong>Open a page</strong><p>Drag a URL, artifact URL, HTML file, or Safari web link onto the app icon or anywhere in the window. You can also use Open With, paste a URL, or choose a file.</p></div></article>
+          <article><span>1</span><div><strong>Open a page or image</strong><p>Drag a live website URL, HTML file, image, or Safari web link onto the app icon or anywhere in the window. You can also paste a screenshot from your clipboard, use Open With, type a URL, or choose a file.</p></div></article>
           <article><span>2</span><div><strong>Try your feedback</strong><p>Choose desktop, tablet, or mobile. Click an element and try sizes, spacing, colors, or replacement text without changing the real page.</p></div></article>
           <article><span>3</span><div><strong>Explain what you want</strong><p>Pin a note to an element or draw a mark with its own explanation. AI PagePolish by PageTweaker remembers which preview size each item belongs to.</p></div></article>
           <article><span>4</span><div><strong>Give the brief to your AI</strong><p>A handoff is simply one file containing all your feedback and preview choices. Click Create handoff, then drag that file into your AI chat so the agent can make the real changes correctly.</p></div></article>

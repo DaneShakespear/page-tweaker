@@ -20,7 +20,7 @@ No more “make it a little bigger,” “not that big,” or “try a different
 
 ## Open it. Adjust it. Show AI.
 
-1. **Open any page.** Drag an HTML file, local page, or live website URL onto the app, its window, or its icon. You can also type an address or open the current Chrome page with the included shortcut.
+1. **Open any page or image.** Drag an HTML file, screenshot, image, or live website URL onto the app, its window, or its icon. You can also paste a screenshot from your clipboard, type an address, or open the current Chrome page with the included shortcut.
 2. **Show what should change.** Adjust text, colors, margins, padding, and spacing. Switch between desktop, tablet, and mobile. Draw, circle, sketch, and add short explanations.
 3. **Drag it back to AI.** Create the handoff, then drag it directly into Codex, Claude, ChatGPT, or another AI chat.
 
@@ -30,7 +30,7 @@ Your original page is never changed.
 
 ![AI PagePolish by PageTweaker startup workspace showing its opening options](assets/screenshots/start-screen.png)
 
-Drop a page into the app. Paste an address. Choose an HTML file. Or drag the **Open in AI PagePolish by PageTweaker** shortcut from the app onto Chrome’s bookmarks bar once.
+Drop a page or image into the app. Paste a screenshot. Paste an address. Choose a file. Or drag the **Open in AI PagePolish by PageTweaker** shortcut from the app onto Chrome’s bookmarks bar once.
 
 After that, one click opens the current Chrome page in the app. No browser extension is required.
 
@@ -45,6 +45,7 @@ After that, one click opens the current Chrome page in the app. No browser exten
 - Circle problems, sketch ideas, and group several marks under one explanation.
 - Pin a note directly to the element it describes.
 - Move through multiple pages without mixing their feedback.
+- Mark up screenshots and other image files with the same drawing and handoff tools.
 
 The app gives you room to try the idea before asking AI to build it.
 

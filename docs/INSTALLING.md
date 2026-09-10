@@ -32,7 +32,7 @@ Chrome and Safari password-manager extensions do not run inside AI PagePolish by
 
 ## Open links from other apps
 
-When AI PagePolish by PageTweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links as well as HTML and Safari `.webloc` files. Apps with an **Open with** or browser-selection menu can then list AI PagePolish by PageTweaker. AI PagePolish by PageTweaker does not make itself the default browser automatically.
+When AI PagePolish by PageTweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links, HTML and Safari `.webloc` files, and common PNG, JPEG, GIF, WebP, BMP, and SVG images. Apps with an **Open with** or browser-selection menu can then list AI PagePolish by PageTweaker. AI PagePolish by PageTweaker does not make itself the default browser automatically.
 
 If macOS still blocks a known-good download, inspect the file first, then remove only that file's quarantine flag:
 

@@ -1,6 +1,8 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 contextBridge.exposeInMainWorld('pageTweaker', {
   chooseSource: () => ipcRenderer.invoke('choose-source'),
+  clipboardImage: () => ipcRenderer.invoke('clipboard-image'),
+  pathForFile: (file) => webUtils.getPathForFile(file),
   version: () => ipcRenderer.invoke('app-version'),
   exportBundle: (bundle) => ipcRenderer.invoke('export-bundle', bundle),
   startDrag: (target) => ipcRenderer.send('start-drag', target),

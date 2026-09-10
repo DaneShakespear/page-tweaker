@@ -53,7 +53,10 @@ test('the empty state teaches fast opening and AI handoff without leaving the wo
   const html = read('src/index.html');
   const css = read('src/shell.css');
   const renderer = read('src/renderer.js');
-  assert.match(html, /DROP ANY PAGE HERE/);
+  assert.match(html, /DROP A PAGE OR IMAGE HERE/);
+  assert.match(html, /paste a screenshot from your clipboard/i);
+  assert.match(renderer, /desktopBridge\.clipboardImage/);
+  assert.match(renderer, /desktopBridge\.pathForFile/);
   assert.match(html, /id="emptyChooseFile"/);
   assert.match(html, /Open from Chrome/);
   assert.match(html, /Drag ZIP into AI chat/);

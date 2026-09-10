@@ -30,9 +30,16 @@
         "ext": [
           "html",
           "htm",
-          "webloc"
+          "webloc",
+          "png",
+          "jpg",
+          "jpeg",
+          "gif",
+          "webp",
+          "bmp",
+          "svg"
         ],
-        "name": "HTML artifact or web link",
+        "name": "Web page or image",
         "role": "Editor"
       }
     ],

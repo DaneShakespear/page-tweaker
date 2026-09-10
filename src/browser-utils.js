@@ -7,6 +7,7 @@
   const isHttpUrl = (value) => /^https?:\/\//i.test(value);
   const isFileUrl = (value) => /^file:\/\//i.test(value);
   const isHtmlPath = (value) => /\.html?(?:[?#].*)?$/i.test(value);
+  const isImagePath = (value) => /\.(?:png|jpe?g|gif|webp|bmp|svg)(?:[?#].*)?$/i.test(value);
   const isBareWebAddress = (value) => {
     if (/\s/.test(value) || /^[./~]|^[a-z]:[\\/]/i.test(value)) return false;
     try {
@@ -19,7 +20,7 @@
     if (!value) return null;
     if (isHttpUrl(value) || isFileUrl(value)) return value;
     if (isBareWebAddress(value) && !(isHtmlPath(value) && !value.includes('/'))) return `https://${value}`;
-    return isHtmlPath(value) ? `file://${encodeURI(value)}` : null;
+    return isHtmlPath(value) || isImagePath(value) ? `file://${encodeURI(value)}` : null;
   };
   const readableValue = (style, property) => style[cssToJs[property] || property];
   const numberFrom = (value, fallback) => Number.parseFloat(value) || fallback;

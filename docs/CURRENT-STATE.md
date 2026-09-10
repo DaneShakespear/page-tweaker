@@ -16,7 +16,7 @@ AI PagePolish by PageTweaker is a working public macOS Electron application for 
 
 The current interaction model is:
 
-1. Open or drop a local HTML artifact, `file://` URL, Safari `.webloc`, public URL, app URL handler target, or Chrome bookmarklet target.
+1. Open or drop a local HTML artifact, image, `file://` URL, Safari `.webloc`, public URL, app URL handler target, or Chrome bookmarklet target. Clipboard screenshots can be pasted directly into the workspace.
 2. Choose desktop, tablet, or mobile, then click an exact DOM element. Exact-element scope is always the default.
 3. Optionally widen visual changes through the bottom selector bar to a repeated CSS class or all matching tags, such as all `h1` elements.
 4. Preview typography, spacing, text color, background, and text changes immediately.
@@ -47,8 +47,11 @@ Current naming governance:
 - Refocused public copy on the core promise: open any page, show AI what should change, and drag back one complete visual brief.
 - Added a release-transition note because public v0.1.16 still installs under the previous `PageTweaker` name; v0.1.17 has not been published.
 - Verification on 2026-09-09: 28 contract tests passed; the packaged UI smoke passed the complete browser, editing, markup, breakpoint, protocol, persistence, and handoff workflow; the app's ad-hoc signature and DMG checksum verified.
-- Local v0.1.17 DMG SHA-256: `c482efc60d12569bc774fc66c0531ec5997ba8df85071b573552a20560430f55`.
-- Local v0.1.17 blockmap SHA-256: `eb6eef1292d1ee30b3b04cb43eba40691fa3d268e12d416a8d11cb6dbc28dc97`.
+- Local v0.1.17 DMG SHA-256: `3cb6a3bc44d9f566461420da1fe665b4efd1e42696e2f86d01786bef0a0eda12`.
+- Local v0.1.17 blockmap SHA-256: `0a841ef5eff597013fb40aebd3498216390446b7b3f003778934626422b5af1c`.
+- Increased the visual space between the startup drop icon and headline.
+- Added direct image input for PNG, JPEG, GIF, WebP, BMP, and SVG through file selection, Finder drop, app-icon opening, local paths, and macOS file associations. Clipboard images and screenshots are written to a temporary local PNG and opened through the same preview workflow.
+- Packaged verification confirms both image-file drop and native macOS clipboard-image loading, followed by successful rendering in the embedded preview. The complete UI smoke, strict ad-hoc signature check, and DMG verification pass.
 
 ## v0.1.15 changes
 
