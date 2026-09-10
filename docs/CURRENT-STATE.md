@@ -1,6 +1,6 @@
-# PageTweaker Current State
+# AI PagePolish by PageTweaker Current State
 
-**Last verified:** 2026-09-07  
+**Last verified:** 2026-09-09  
 **Current release:** `v0.1.16`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.1.16>
 
@@ -12,7 +12,7 @@ Before continuing work, read this file and the root `AGENTS.md`.
 
 ## Product state
 
-PageTweaker is a working public macOS Electron application for previewing visual changes to local HTML artifacts and public web pages. The original artifact remains untouched. The user can select an element, test visual adjustments, attach explanation, and export a portable implementation handoff.
+AI PagePolish by PageTweaker is a working public macOS Electron application for previewing visual changes to local HTML artifacts and public web pages. The original artifact remains untouched. The user can select an element, test visual adjustments, attach explanation, and export a portable implementation handoff.
 
 The current interaction model is:
 
@@ -25,6 +25,30 @@ The current interaction model is:
 7. Create one AI handoff ZIP, then drag its in-app file icon into an AI chat or copy the selectable full path.
 
 Text replacement and pinned notes remain exact-element actions even when a broader visual selector is active. This prevents one heading's content from being copied across every matching heading.
+
+## Naming decision and rebrand lock
+
+External naming verification:
+
+- Exact match `AI PagePolish` has not surfaced as an established GitHub repository name in indexed discovery results.
+- The phrase `PagePolish` is already used by existing products, including RedKernel/Atlassian's `PagePolish` Confluence app and startup concept pages.
+- Naming lock: ship public-facing material as `AI PagePolish by PageTweaker` (including app UI and release docs).
+
+Current naming governance:
+
+1. **Public brand:** `AI PagePolish by PageTweaker` is the active name in user-facing docs, product windows, and help surfaces.
+2. **Legacy anchor:** retain `PageTweaker` in internal continuity references, migration notes, and technical identifiers until a separate go/no-go decision.
+3. **Repository and protocol names:** keep the repository (`page-tweaker`) and URL scheme (`page-tweaker://`) stable for now to avoid migration and install breakage.
+
+## v0.1.17 local changes
+
+- Renamed the user-facing app, packaged bundle, product documentation, bookmarklet label, help surfaces, and handoff messaging to `AI PagePolish by PageTweaker`.
+- Kept the repository, npm package, application identifier, command, handoff archive prefix, persistent profile, and `page-tweaker://` URL scheme unchanged for compatibility.
+- Refocused public copy on the core promise: open any page, show AI what should change, and drag back one complete visual brief.
+- Added a release-transition note because public v0.1.16 still installs under the previous `PageTweaker` name; v0.1.17 has not been published.
+- Verification on 2026-09-09: 28 contract tests passed; the packaged UI smoke passed the complete browser, editing, markup, breakpoint, protocol, persistence, and handoff workflow; the app's ad-hoc signature and DMG checksum verified.
+- Local v0.1.17 DMG SHA-256: `c482efc60d12569bc774fc66c0531ec5997ba8df85071b573552a20560430f55`.
+- Local v0.1.17 blockmap SHA-256: `eb6eef1292d1ee30b3b04cb43eba40691fa3d268e12d416a8d11cb6dbc28dc97`.
 
 ## v0.1.15 changes
 

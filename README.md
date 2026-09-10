@@ -1,36 +1,36 @@
-# PageTweaker
+# AI PagePolish by PageTweaker
 
 ## Stop explaining. Show your AI.
 
-<img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="PageTweaker app icon" width="140">
+<img src="assets/pagetweaker-app-icon-transparent-v3.png" alt="AI PagePolish by PageTweaker app icon" width="140">
 
-**PageTweaker is a visual feedback tool for AI-built websites.**
+**AI PagePolish by PageTweaker is a visual feedback tool for AI-built websites.**
 
 Sometimes you know a page feels wrong, but you do not know the exact change until you see it.
 
-PageTweaker lets you open the page, try the adjustment visually, mark up what you mean, and drag one complete brief back into your AI chat.
+Open the page. Try the adjustment visually. Mark up what you mean. Then drag one complete brief back into your AI chat.
 
 No more “make it a little bigger,” “not that big,” or “try a different gray.”
 
-![PageTweaker product overview](assets/page-tweaker-concept.png)
+![AI PagePolish by PageTweaker product overview](assets/page-tweaker-concept.png)
 
 ## Open it. Adjust it. Show AI.
 
-1. **Open any page.** Drag an HTML file, local page, or live website onto PageTweaker, its window, or the app icon. You can also type an address or open the current Chrome page with the included shortcut.
+1. **Open any page.** Drag an HTML file, local page, or live website onto the app, its window, or its icon. You can also type an address or open the current Chrome page with the included shortcut.
 2. **Show what should change.** Adjust text, colors, margins, padding, and spacing. Switch between desktop, tablet, and mobile. Draw, circle, sketch, and add short explanations.
-3. **Drag it back to AI.** Create the handoff, then drag it directly from PageTweaker into Codex, Claude, ChatGPT, or another AI chat.
+3. **Drag it back to AI.** Create the handoff, then drag it directly into Codex, Claude, ChatGPT, or another AI chat.
 
 Your original page is never changed.
 
 ## Start from almost anywhere
 
-![PageTweaker startup workspace showing its opening options](assets/screenshots/start-screen.png)
+![AI PagePolish by PageTweaker startup workspace showing its opening options](assets/screenshots/start-screen.png)
 
-Drop a page into the app. Paste an address. Choose an HTML file. Or drag the **Open in PageTweaker** shortcut from the app onto Chrome’s bookmarks bar once.
+Drop a page into the app. Paste an address. Choose an HTML file. Or drag the **Open in AI PagePolish by PageTweaker** shortcut from the app onto Chrome’s bookmarks bar once.
 
-After that, one click opens the current Chrome page in PageTweaker. No browser extension is required.
+After that, one click opens the current Chrome page in the app. No browser extension is required.
 
-<img src="assets/screenshots/chrome-shortcut.png" alt="Open in PageTweaker shortcut being dragged to the Chrome bookmarks bar" width="420">
+<img src="assets/screenshots/chrome-shortcut.png" alt="Open in AI PagePolish by PageTweaker shortcut being dragged to the Chrome bookmarks bar" width="420">
 
 ## Show exactly what you mean
 
@@ -42,13 +42,13 @@ After that, one click opens the current Chrome page in PageTweaker. No browser e
 - Pin a note directly to the element it describes.
 - Move through multiple pages without mixing their feedback.
 
-PageTweaker gives you room to try the idea before asking AI to build it.
+The app gives you room to try the idea before asking AI to build it.
 
 Because sometimes you do not know what you want until you see it.
 
 ## Give AI one complete brief
 
-<img src="assets/screenshots/handoff-ready.png" alt="PageTweaker handoff ready to drag into an AI chat" width="390">
+<img src="assets/screenshots/handoff-ready.png" alt="AI PagePolish by PageTweaker handoff ready to drag into an AI chat" width="390">
 
 The handoff includes:
 
@@ -63,13 +63,13 @@ The handoff shows AI the desired result. It does not prescribe how the code must
 
 ## Install on macOS
 
-The current public download is **v0.1.16 for Apple Silicon**. Download the DMG from [GitHub Releases](../../releases) and drag PageTweaker to Applications.
+The current public download is **v0.1.16 for Apple Silicon** and still installs under the previous **PageTweaker** name. The renamed **AI PagePolish by PageTweaker** build is being prepared as v0.1.17.
 
-PageTweaker is ad-hoc signed for bundle integrity. It is not Apple Developer ID signed or notarized, so macOS may show a first-launch warning. Follow the safe per-app steps in [Installing PageTweaker](docs/INSTALLING.md). Never disable Gatekeeper system-wide.
+AI PagePolish by PageTweaker is ad-hoc signed for bundle integrity. It is not Apple Developer ID signed or notarized, so macOS may show a first-launch warning. Follow the safe per-app steps in [Installing AI PagePolish by PageTweaker](docs/INSTALLING.md). Never disable Gatekeeper system-wide.
 
-## What PageTweaker does not do
+## What it does not do
 
-PageTweaker does not edit your source files, deploy your website, store passwords, or copy browser cookies and login tokens. It keeps its own website session when you sign in inside the app, and all preview feedback stays local until you create a handoff ZIP.
+The app does not edit your source files, deploy your website, store passwords, or copy browser cookies and login tokens. It keeps its own website session when you sign in inside the app, and all preview feedback stays local until you create a handoff ZIP.
 
 <details>
 <summary><strong>Run from source and contribute</strong></summary>

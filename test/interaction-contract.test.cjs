@@ -176,12 +176,16 @@ test('AI handoff is a draggable archive with a selectable and copyable path', ()
   assert.match(main, /START-HERE\.md/);
 });
 
-test('PageTweaker branding, live text, and synchronized hex color fields are wired', () => {
+test('public branding and stable technical identifiers are wired', () => {
   const html = read('src/index.html');
   const renderer = read('src/renderer.js');
   const manifest = JSON.parse(read('package.json'));
-  assert.match(html, /class="app-brand"><img src="app-icon\.png"[^>]*><strong>PageTweaker <small id="version">/);
-  assert.equal(manifest.build.productName, 'PageTweaker');
+  assert.match(html, /class="app-brand"><img src="app-icon\.png"[^>]*><strong>AI PagePolish by PageTweaker <small id="version">/);
+  assert.equal(manifest.build.productName, 'AI PagePolish by PageTweaker');
+  assert.equal(manifest.name, 'page-tweaker');
+  assert.equal(manifest.repository.url, 'https://github.com/DaneShakespear/page-tweaker.git');
+  assert.ok(manifest.build.protocols[0].schemes.includes('page-tweaker'));
+  assert.match(html, /page-tweaker:\/\/open\?url=/);
   assert.match(html, /data-hex-for="color"/);
   assert.match(html, /data-hex-for="background-color"/);
   assert.doesNotMatch(html, /id="applyText"/);

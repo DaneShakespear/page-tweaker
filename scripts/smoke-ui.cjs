@@ -7,7 +7,8 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
 const root = path.join(__dirname, '..');
-const binary = path.join(root, 'dist', 'mac-arm64', 'PageTweaker.app', 'Contents', 'MacOS', 'PageTweaker');
+const productName = 'AI PagePolish by PageTweaker';
+const binary = path.join(root, 'dist', 'mac-arm64', `${productName}.app`, 'Contents', 'MacOS', productName);
 const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
 const secondFixture = path.join(root, 'test', 'fixtures', 'navigation-second.html');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
@@ -73,7 +74,7 @@ async function connect() {
     await evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('h1').click(); true")`);
     await poll(() => evaluate(`!document.querySelector('#selectorBar').hidden`));
     assert.ok(await evaluate(`document.querySelector('#stage').scrollWidth > document.querySelector('#stage').clientWidth`));
-    assert.match(await evaluate(`document.querySelector('header strong').textContent`), /PageTweaker/);
+    assert.match(await evaluate(`document.querySelector('header strong').textContent`), /AI PagePolish by PageTweaker/);
     const choices = await evaluate(`[...document.querySelectorAll('[data-scope-key]')].map((button) => button.textContent)`);
     assert.equal(choices[0], 'This element');
     assert.ok(choices.some((label) => label.startsWith('All h1')));

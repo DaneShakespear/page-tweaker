@@ -1,11 +1,11 @@
 # Product Marketing Context
 
-**Document version:** v1
+**Document version:** v2
 **Last updated:** 2026-09-09
 
 ## Product Overview
 
-**One-liner:** PageTweaker is a visual feedback tool for AI-built websites.
+**One-liner:** AI PagePolish by PageTweaker is a visual feedback tool for AI-built websites.
 
 **What it does:** Open any HTML file, local page, or live website. Try visual adjustments, draw and explain feedback, then drag one complete handoff into an AI chat.
 
@@ -70,7 +70,14 @@
 
 ## Product Boundaries
 
-PageTweaker does not edit source files, deploy websites, dictate implementation code, copy browser credentials, or replace the AI coding agent. It captures what the user wants so the agent can make the real change appropriately.
+AI PagePolish by PageTweaker does not edit source files, deploy websites, dictate implementation code, copy browser credentials, or replace the AI coding agent. It captures what the user wants so the agent can make the real change appropriately.
+
+## Naming status
+
+- External verification did not find a strong direct GitHub repository collision for `AI PagePolish`.
+- `PagePolish` is already an active product family name (for example, RedKernel’s Confluence offering), so we should keep a transition anchor.
+- Locked public brand: `AI PagePolish by PageTweaker`.
+- Keep `PageTweaker` as legacy/contextual anchor in migration notes, repository references, and technical identifiers until a separate long-term rename decision.
 
 ## Goals
 
@@ -80,4 +87,5 @@ PageTweaker does not edit source files, deploy websites, dictate implementation 
 
 ## Changelog
 
+- v2 (2026-09-09) — Locked the public brand as `AI PagePolish by PageTweaker`, while retaining `PageTweaker` only for legacy and technical continuity.
 - v1 (2026-09-09) — Established the approved visual-feedback category, “Stop explaining. Show your AI.” promise, customer language, three-step workflow, differentiation, and product boundaries.

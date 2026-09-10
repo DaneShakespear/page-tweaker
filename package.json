@@ -19,7 +19,7 @@
   },
   "build": {
     "appId": "com.kre8works.pagetweaker",
-    "productName": "PageTweaker",
+    "productName": "AI PagePolish by PageTweaker",
     "afterPack": "scripts/after-pack.cjs",
     "files": [
       "src/**",
@@ -38,7 +38,7 @@
     ],
     "protocols": [
       {
-        "name": "PageTweaker URL handler",
+        "name": "AI PagePolish by PageTweaker URL handler",
         "schemes": [
           "page-tweaker",
           "http",

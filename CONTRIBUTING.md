@@ -1,6 +1,6 @@
 # Contributing
 
-PageTweaker is intentionally narrow: it makes visual review and AI handoff faster. Contributions should make that loop clearer, faster, or more reliable.
+AI PagePolish by PageTweaker is intentionally narrow: it makes visual review and AI handoff faster. Contributions should make that loop clearer, faster, or more reliable.
 
 ## Local checks
 

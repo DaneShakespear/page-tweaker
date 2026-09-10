@@ -1,8 +1,8 @@
-# PageTweaker Project Compass
+# AI PagePolish by PageTweaker Project Compass
 
 ## What this is
 
-PageTweaker is a public macOS Electron app for visual QA of local HTML artifacts and public web pages. It supports preview-only element edits, pinned notes, drawing markup, and portable AI/developer handoff bundles. It never modifies the opened source artifact.
+AI PagePolish by PageTweaker is a public macOS Electron app for visual QA of local HTML artifacts and public web pages. It supports preview-only element edits, pinned notes, drawing markup, and portable AI/developer handoff bundles. It never modifies the opened source artifact.
 
 ## Authority
 
