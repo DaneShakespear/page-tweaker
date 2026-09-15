@@ -8,7 +8,10 @@ Version 0.1.16 and earlier use the `PageTweaker` app and file names. Version 0.2
 
 1. Download `AI PagePolish by PageTweaker-<version>-arm64.dmg` from Releases.
 2. Double-click the DMG and drag **AI PagePolish by PageTweaker** to **Applications**.
-3. On first launch, Control-click the app and choose **Open**, then choose **Open** in the confirmation dialog.
+3. Wait for copying to finish, eject the disk image, and open the app from **Applications**.
+4. If macOS blocks it and you trust the download, dismiss the alert, open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway** for this app. Authenticate and confirm **Open** when prompted.
+
+The DMG includes visible installation steps and an offline **Install Help.txt**. **Open Anyway** appears after a blocked launch and remains available for about an hour. If needed, try opening the installed app again. See [Apple's first-launch guidance](https://support.apple.com/en-us/102445). A managed Mac may require administrator help. Do not override an alert that says the app will damage your computer.
 
 This grants an exception for this app only. Do not disable Gatekeeper system-wide.
 
@@ -33,14 +36,6 @@ Chrome and Safari password-manager extensions do not run inside AI PagePolish by
 ## Open links from other apps
 
 When AI PagePolish by PageTweaker is installed in Applications, macOS registers it as a handler for public `http` and `https` links, HTML and Safari `.webloc` files, and common PNG, JPEG, GIF, WebP, BMP, and SVG images. Apps with an **Open with** or browser-selection menu can then list AI PagePolish by PageTweaker. AI PagePolish by PageTweaker does not make itself the default browser automatically.
-
-If macOS still blocks a known-good download, inspect the file first, then remove only that file's quarantine flag:
-
-```sh
-xattr -dr com.apple.quarantine "/Applications/AI PagePolish by PageTweaker.app"
-```
-
-Use that command only for a release you obtained from this repository and have chosen to trust.
 
 ## Run from source
 
@@ -72,6 +67,8 @@ npm run package:mac
 ```
 
 The result is written to `dist/`. The repository's packaging hook applies an ad-hoc signature. A locally built DMG is not Developer ID signed or notarized unless you separately configure an Apple Developer ID Application certificate and notarization credentials.
+
+The Finder layout is configured under `build.dmg` in `package.json`. Its checked-in background is generated with `npm run dmg:background` on macOS from `scripts/dmg-background.swift`. Keep its 760 × 740 canvas and reserved icon positions aligned with the DMG configuration. The extra space below the instructions accommodates Finder tabs and status bars. The offline help file is packaged alongside the app, outside the signed bundle.
 
 ## Troubleshooting
 

@@ -10,6 +10,16 @@
 
 Before continuing work, read this file and the root `AGENTS.md`.
 
+## Local installer improvement — 2026-09-15
+
+- Added branded DMG artwork with a drag-to-Applications arrow, installation steps, and visible System Settings → Privacy & Security → Open Anyway guidance.
+- Added offline `Install Help.txt` with first-launch instructions, official links, and a Chrome bookmarklet introduction. No automatic security changes or quarantine-removal launcher is included.
+- The 760 × 740 canvas reserves space for Finder tabs and status bars. Native inspection caught and corrected clipping; the final mounted window shows the complete instructions and correctly positioned icons.
+- Verification: 31 contract tests, full packaged-app smoke, final DMG integrity, mounted-app strict ad-hoc signature, native Finder visual check, and opening offline help in TextEdit all pass.
+- Local artifact: `dist/AI PagePolish by PageTweaker-0.3.0-arm64.dmg`. SHA-256: `8fa8b4057a883aedf460e2e64f018a62adf151e7350c97adc6e10eb5419fecfb`.
+- Public v0.3.0 was not replaced. The app remains ad-hoc signed and not Apple notarized. A clean downloaded/quarantined first-launch flow was not exercised; instructions were checked against current Apple documentation.
+- Temporary native Computer Use timeout recovered through fresh inventory and app acquisition; recorded as closed `OHI-20260915-codex-native-ui-timeout`.
+
 ## Product state
 
 AI PagePolish by PageTweaker is a working public macOS Electron application for previewing visual changes to local HTML artifacts and public web pages. The original artifact remains untouched. The user can select an element, test visual adjustments, attach explanation, and export a portable implementation handoff.

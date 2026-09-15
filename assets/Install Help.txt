@@ -1,0 +1,41 @@
+AI PagePolish by PageTweaker
+INSTALL & FIRST-LAUNCH HELP
+
+1. Drag AI PagePolish by PageTweaker into Applications.
+   Wait for the copy to finish. If replacing an older copy, quit it first.
+2. Eject the disk image in Finder.
+3. Open AI PagePolish by PageTweaker from your Applications folder.
+
+IF macOS BLOCKS THE FIRST LAUNCH
+
+This app is ad-hoc signed, but it is not signed with an Apple Developer ID
+or notarized by Apple. macOS cannot verify its developer or check that
+this release is free of malware.
+
+If you obtained the app from the project's releases and choose to trust it:
+
+1. Try opening the installed app once, then dismiss the blocked-app alert.
+2. Open Apple menu > System Settings > Privacy & Security.
+3. Scroll to Security and click Open Anyway for AI PagePolish by PageTweaker.
+4. Authenticate if requested and confirm Open when prompted.
+
+Open Anyway is available for about an hour after the blocked attempt.
+If it is missing, try opening the installed app again, then return to settings.
+If your Mac is managed by an organization, its administrator may need to help.
+Do not override an alert that says the app will damage your computer.
+No Terminal command or system-wide security change is required by this guide.
+
+Apple's first-launch guidance:
+https://support.apple.com/en-us/102445
+
+Official releases:
+https://github.com/DaneShakespear/page-tweaker/releases
+
+ONCE THE APP OPENS
+
+Drop a local HTML file or image into the app, or enter a public website URL.
+For Chrome, open How it works and drag the app's bookmarklet to Chrome's
+bookmarks bar. Click that bookmark from the page you want to open.
+
+Full installation guide:
+https://github.com/DaneShakespear/page-tweaker/blob/main/docs/INSTALLING.md

@@ -15,6 +15,7 @@
     "start": "electron .",
     "test": "node --test",
     "package:mac": "electron-builder --mac dmg",
+    "dmg:background": "swift scripts/dmg-background.swift",
     "smoke:ui": "node scripts/smoke-ui.cjs"
   },
   "build": {
@@ -53,6 +54,17 @@
         ]
       }
     ],
+    "dmg": {
+      "background": "assets/dmg-background.png",
+      "window": { "width": 760, "height": 740 },
+      "iconSize": 80,
+      "iconTextSize": 13,
+      "contents": [
+        { "x": 190, "y": 215, "type": "file" },
+        { "x": 570, "y": 215, "type": "link", "path": "/Applications" },
+        { "x": 650, "y": 60, "type": "file", "path": "assets/Install Help.txt" }
+      ]
+    },
     "mac": {
       "category": "public.app-category.developer-tools",
       "icon": "assets/PageTweaker.icns",
