@@ -55,6 +55,8 @@ async function connect() {
     client = await connect();
     const { command, evaluate } = client;
     process.stdout.write('Smoke connected to packaged app.\n');
+    const expectedVersion = `v${JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version}`;
+    assert.equal(await poll(() => evaluate(`document.querySelector('#version').textContent === ${JSON.stringify(expectedVersion)}`)), true);
     const initialWindow = await poll(() => windowPosition(app.pid));
     dragNativeWindow(initialWindow);
     await delay(350);

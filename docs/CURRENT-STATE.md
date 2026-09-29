@@ -1,17 +1,17 @@
 # AI PagePolish by PageTweaker Current State
 
-**Last verified:** 2026-09-10  
+**Last verified:** 2026-09-29
 **Current release:** `v0.3.0`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.3.0>
 
-**Local development version:** `v0.3.0`
+**Local development version:** `v0.4.0-dev.0`
 
 ## Unreleased image iteration workflow — 2026-09-29
 
 - Standalone local images now open an Image workspace for rough change and exact-protection boxes. Boxes can be moved, resized, nudged with arrow keys, or removed. A configurable blend width defines where returned pixels transition into the original.
 - The image handoff ZIP includes the full-resolution original PNG, an alpha edit mask, a labeled preview, structured regions, existing image notes/markup when present, and destination-AI instructions. The instructions can also be copied directly from the Handoff tab.
 - The user can bring a same-dimension AI rendering back into PageTweaker. The app merges the changed region locally, keeps protected and unmarked pixels from the original, offers original/merged comparison, and saves a PNG. Different-size results are rejected with an explanation; users must inspect the join for shifted content or poor blending.
-- This is an unreleased local change. The public `v0.3.0` release was not replaced. Verification: 33 contract tests and the final packaged UI smoke pass. The smoke checks exported original/mask/preview files, prompt content, mask alpha, exact protected and unmarked pixels after merge, and saved PNG output.
+- This is an unreleased local `v0.4.0-dev.0` build. The public `v0.3.0` release was not replaced. Verification: 33 contract tests and the final packaged UI smoke pass. The smoke checks exported original/mask/preview files, prompt content, mask alpha, exact protected and unmarked pixels after merge, and saved PNG output. The local DMG passes `hdiutil verify`; the packaged app passes strict ad-hoc signature verification. DMG SHA-256: `bfd57942cfb5ed219ec0e77cf35d9d88958772dda80c01a7cd3797e928a042c0`.
 
 ## Agent Startup
 
