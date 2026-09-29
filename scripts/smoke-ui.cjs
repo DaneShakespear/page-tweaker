@@ -8,13 +8,15 @@ const { pathToFileURL } = require('node:url');
 
 const root = path.join(__dirname, '..');
 const productName = 'AI PagePolish by PageTweaker';
-const binary = path.join(root, 'dist', 'mac-arm64', `${productName}.app`, 'Contents', 'MacOS', productName);
+const dev = process.env.PAGE_TWEAKER_SMOKE_DEV === '1';
+const binary = dev ? path.join(root, 'node_modules', 'electron', 'dist', 'Electron.app', 'Contents', 'MacOS', 'Electron') : path.join(root, 'dist', 'mac-arm64', `${productName}.app`, 'Contents', 'MacOS', productName);
+const launch = (args) => spawn(binary, dev ? [root, ...args] : args, { stdio: 'ignore' });
 const fixture = path.join(root, 'test', 'fixtures', 'selector-scope.html');
 const secondFixture = path.join(root, 'test', 'fixtures', 'navigation-second.html');
 const imageFixture = path.join(root, 'src', 'app-icon.png');
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'page-tweaker-smoke-'));
 const port = 9338;
-let app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`], { stdio: 'ignore' });
+let app = launch([`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`]);
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const windowPosition = (expectedPid) => {
   const script = `import CoreGraphics\nimport Foundation\nlet windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as! [[String: Any]]\nfor window in windows {\n  if (window[kCGWindowOwnerPID as String] as? Int32) == ${expectedPid}, let bounds = window[kCGWindowBounds as String] as? [String: Any], let x = bounds["X"], let y = bounds["Y"] { print("\\(x),\\(y)"); break }\n}`;
@@ -230,7 +232,7 @@ async function connect() {
     await evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(fileUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(fileUrl)}`));
     const protocolTarget = 'https://example.com/?from=bookmarklet';
-    const launcher = spawn(binary, [`--user-data-dir=${profile}`, `page-tweaker://open?url=${encodeURIComponent(protocolTarget)}`], { stdio: 'ignore' });
+    const launcher = launch([`--user-data-dir=${profile}`, `page-tweaker://open?url=${encodeURIComponent(protocolTarget)}`]);
     await poll(() => evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(protocolTarget)}`));
     launcher.kill('SIGTERM');
 
@@ -240,7 +242,7 @@ async function connect() {
     client.socket.close();
     app.kill('SIGTERM');
     await new Promise((resolve) => app.once('exit', resolve));
-    app = spawn(binary, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture], { stdio: 'ignore' });
+    app = launch([`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, fixture]);
     client = await connect();
     await poll(() => client.evaluate(`document.querySelector('#status').textContent.includes('Click an element')`));
     assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("localStorage.getItem('pageTweakerPersistentSmoke')")`), 'retained');
@@ -251,6 +253,8 @@ async function connect() {
     await client.evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(imageUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(imageUrl)}`));
     assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('img')?.naturalWidth > 0")`), true);
+    await poll(() => client.evaluate(`document.querySelector('#iterationDisplay').style.width !== ''`));
+    assert.equal(await client.evaluate(`document.querySelector('#iterationDisplay').getBoundingClientRect().width > document.querySelector('#iterationDisplay').naturalWidth`), true);
     assert.equal(await client.evaluate(`document.querySelector('#imageNotes').hidden`), false);
     assert.equal(await client.evaluate(`document.querySelector('#controls').hidden`), true);
     assert.equal(await client.evaluate(`document.querySelector('.interaction-tip').hidden`), true);
@@ -267,6 +271,59 @@ async function connect() {
     await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(clipboardImageUrl)}`));
     assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('img')?.naturalWidth > 0")`), true);
     process.stdout.write('Image file drop and clipboard screenshot loading passed.\n');
+    await client.evaluate(`(() => { document.querySelector('#markupTab').click(); const note = document.querySelector('#markupExplanation'); note.value = 'Keep the small icon visible.'; note.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    const markupStart = await client.evaluate(`(() => { const stage = document.querySelector('#stage').getBoundingClientRect(); return { x: stage.left + 80, y: stage.top + 80 }; })()`);
+    await client.command('Input.dispatchMouseEvent', { type: 'mouseMoved', ...markupStart });
+    await client.command('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...markupStart });
+    await client.command('Input.dispatchMouseEvent', { type: 'mouseMoved', button: 'left', buttons: 1, x: markupStart.x + 50, y: markupStart.y + 50 });
+    await client.command('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, x: markupStart.x + 50, y: markupStart.y + 50 });
+    await poll(() => client.evaluate(`state.strokes.length > 0`));
+    await poll(() => client.evaluate(`document.querySelector('#iterationDisplay').naturalWidth > 0`));
+    assert.equal(await client.evaluate(`getComputedStyle(document.querySelector('#protectLabelRow')).display`), 'none');
+    await client.evaluate(`(() => { document.querySelector('#imageTab').click(); const text = document.querySelector('#editInstruction'); text.value = 'Change the center to red.'; text.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    const regionBox = await client.evaluate(`(() => { const box = document.querySelector('#regionCanvas').getBoundingClientRect(); return { left: box.left, top: box.top, width: box.width, height: box.height }; })()`);
+    const drawRegion = async (x1, y1, x2, y2) => {
+      const first = { x: regionBox.left + regionBox.width * x1, y: regionBox.top + regionBox.height * y1 };
+      const last = { x: regionBox.left + regionBox.width * x2, y: regionBox.top + regionBox.height * y2 };
+      await client.command('Input.dispatchMouseEvent', { type: 'mouseMoved', ...first });
+      await client.command('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...first });
+      await client.command('Input.dispatchMouseEvent', { type: 'mouseMoved', button: 'left', buttons: 1, ...last });
+      await client.command('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, ...last });
+    };
+    await drawRegion(.2, .2, .8, .8);
+    await client.evaluate(`(() => { const kind = document.querySelector('#regionKind'); kind.value = 'protect'; kind.dispatchEvent(new Event('change', { bubbles: true })); document.querySelector('#protectLabel').value = 'Logo'; })()`);
+    await drawRegion(.4, .4, .5, .5);
+    assert.match(await client.evaluate(`document.querySelector('#regionList').textContent`), /Keep exactly: Logo/);
+    await client.evaluate(`document.querySelector('#export').click()`);
+    try { await poll(() => client.evaluate(`!document.querySelector('#handoffReady').hidden`)); }
+    catch (error) { throw new Error(`Image handoff did not finish: ${await client.evaluate(`document.querySelector('#status').textContent`)}`, { cause: error }); }
+    const imageHandoff = await client.evaluate(`document.querySelector('#handoffPath').value`);
+    const imageArchive = execFileSync('/usr/bin/unzip', ['-Z1', imageHandoff], { encoding: 'utf8' });
+    assert.match(imageArchive, /original\.png/); assert.match(imageArchive, /edit-mask\.png/); assert.match(imageArchive, /marked-preview\.png/);
+    assert.match(imageArchive, /page-1-desktop-annotated\.png/);
+    const maskPath = path.join(profile, 'edit-mask.png');
+    fs.writeFileSync(maskPath, execFileSync('/usr/bin/unzip', ['-p', imageHandoff, '*/edit-mask.png']));
+    const maskPixels = await client.evaluate(`(async () => { const image = new Image(); image.src = await window.pageTweaker.readImage(${JSON.stringify(maskPath)}); await image.decode(); const canvas = document.createElement('canvas'); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; const context = canvas.getContext('2d'); context.drawImage(image, 0, 0); const alpha = (x, y) => context.getImageData(Math.floor(x * canvas.width), Math.floor(y * canvas.height), 1, 1).data[3]; return { outside: alpha(.1, .1), change: alpha(.3, .3), protected: alpha(.45, .45) }; })()`);
+    assert.deepEqual(maskPixels, { outside: 255, change: 0, protected: 255 });
+    const imagePrompt = execFileSync('/usr/bin/unzip', ['-p', imageHandoff, '*/START-HERE.md'], { encoding: 'utf8' });
+    assert.match(imagePrompt, /Change the center to red/); assert.match(imagePrompt, /Logo/); assert.match(imagePrompt, /PageTweaker will merge/);
+    const imageJson = execFileSync('/usr/bin/unzip', ['-p', imageHandoff, '*/handoff.json'], { encoding: 'utf8' });
+    assert.match(imageJson, /Keep the small icon visible/);
+    await client.evaluate(`document.querySelector('#imageTab').click()`);
+    const candidateData = await client.evaluate(`(() => { const image = document.querySelector('#iterationDisplay'); const canvas = document.createElement('canvas'); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; const context = canvas.getContext('2d'); context.fillStyle = '#ff0000'; context.fillRect(0, 0, canvas.width, canvas.height); return canvas.toDataURL('image/png'); })()`);
+    const candidatePath = path.join(profile, 'returned-image.png');
+    fs.writeFileSync(candidatePath, Buffer.from(candidateData.split(',')[1], 'base64'));
+    await client.evaluate(`imageWorkspace.loadCandidate(${JSON.stringify(candidatePath)})`);
+    await poll(() => client.evaluate(`!document.querySelector('#saveResult').disabled`));
+    const pixelResult = await client.evaluate(`(async () => { const original = new Image(); original.src = await window.pageTweaker.readImage(${JSON.stringify(clipboardImageUrl)}); await original.decode(); const merged = document.querySelector('#iterationDisplay'); await merged.decode(); const sample = (image, x, y) => { const canvas = document.createElement('canvas'); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; const context = canvas.getContext('2d'); context.drawImage(image, 0, 0); return [...context.getImageData(Math.floor(x * canvas.width), Math.floor(y * canvas.height), 1, 1).data]; }; return { outside: [sample(original, .1, .1), sample(merged, .1, .1)], protected: [sample(original, .45, .45), sample(merged, .45, .45)], changed: sample(merged, .3, .3) }; })()`);
+    assert.deepEqual(pixelResult.outside[1], pixelResult.outside[0]);
+    assert.deepEqual(pixelResult.protected[1], pixelResult.protected[0]);
+    assert.deepEqual(pixelResult.changed, [255, 0, 0, 255]);
+    await client.evaluate(`document.querySelector('#saveResult').click()`);
+    await poll(() => client.evaluate(`document.querySelector('#candidateStatus').textContent.includes('Merged PNG saved:')`));
+    const savedImage = (await client.evaluate(`document.querySelector('#candidateStatus').textContent`)).replace('Merged PNG saved: ', '');
+    assert.equal(fs.existsSync(savedImage), true);
+    process.stdout.write('Image iteration handoff, protected-pixel merge, and saved PNG passed.\n');
     process.stdout.write('Packaged UI smoke passed: safe formatted content, clear-page flow, image input, interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
   } finally {
     client?.socket.close();

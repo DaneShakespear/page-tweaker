@@ -24,6 +24,7 @@
     <section id="stage">
       <webview id="page" preload="" partition="persist:page-tweaker-public"></webview>
       <canvas id="markup"></canvas>
+      <div id="imageWorkspace" hidden><img id="iterationDisplay" alt="Image iteration preview"><canvas id="regionCanvas" tabindex="0" aria-label="Draw and adjust image change or protection boxes"></canvas></div>
       <div id="dropHint" hidden>Drop an HTML file, image, <code>file://</code> URL, or live website URL to open it</div>
       <div id="empty">
         <div class="empty-shell">
@@ -43,8 +44,9 @@
     <aside>
       <div class="tabs" role="tablist" aria-label="AI PagePolish by PageTweaker tools">
         <button id="inspectTab" class="tab active" role="tab" aria-selected="true" aria-controls="inspectPanel" tabindex="0">Inspect</button>
+        <button id="imageTab" class="tab" role="tab" aria-selected="false" aria-controls="imagePanel" tabindex="-1" hidden>Image</button>
         <button id="markupTab" class="tab" role="tab" aria-selected="false" aria-controls="annotationControls" tabindex="-1">Markup</button>
-        <button id="helpTab" class="tab" role="tab" aria-selected="false" aria-controls="helpPanel" tabindex="-1">How it works</button>
+        <button id="helpTab" class="tab" role="tab" aria-selected="false" aria-controls="helpPanel" tabindex="-1">Help</button>
         <button id="handoffTab" class="tab" role="tab" aria-selected="false" aria-controls="handoffPanel" tabindex="-1">Handoff</button>
       </div>
       <section id="inspectPanel" role="tabpanel" aria-labelledby="inspectTab">
@@ -83,6 +85,24 @@
           <button id="reset">Reset active selector to original</button>
         </div>
         <div id="notes"></div>
+      </section>
+      <section id="imagePanel" role="tabpanel" aria-labelledby="imageTab" hidden>
+        <h3>Image iteration</h3>
+        <p class="hint">Draw a loose box around what may change. Everything beyond the blend edge keeps the original pixels. Add a protection box for a logo or other exact detail.</p>
+        <label>What should change?<textarea id="editInstruction" placeholder="Example: Make the chair fabric deep blue while keeping its shape."></textarea></label>
+        <label>Next box<select id="regionKind"><option value="change">Area to change</option><option value="protect">Keep exactly</option></select></label>
+        <label id="protectLabelRow" hidden>Protected detail name<input id="protectLabel" placeholder="Example: Logo"></label>
+        <label>Blend width <input id="blendWidth" type="range" min="0" max="60" step="1" value="12"><output id="blendWidthValue">12 px</output></label>
+        <p class="hint">Drag to add a box. Drag an existing box to move it; drag a corner to resize it. Select a box and use arrow keys for fine adjustments.</p>
+        <div class="markup-actions"><button id="undoRegion">Undo last box</button><button id="removeRegion">Remove selected box</button></div>
+        <div id="regionList"></div>
+        <div class="image-return">
+          <h3>Bring back the AI rendering</h3>
+          <p class="hint">Choose the image returned by the AI, or drop it on the image above. PageTweaker blends the changed area locally and restores protected pixels from the original.</p>
+          <button id="chooseCandidate">Choose returned image</button>
+          <p id="candidateStatus" class="hint"></p>
+          <div class="markup-actions"><button id="toggleResult" disabled>Show original</button><button id="saveResult" class="primary" disabled>Save merged PNG</button></div>
+        </div>
       </section>
       <section id="annotationControls" role="tabpanel" aria-labelledby="markupTab" hidden>
         <h3>Markup</h3>
@@ -124,7 +144,7 @@
         </div>
         <div id="handoffReady" hidden>
           <h2>Ready for your AI session</h2>
-          <p>Drag this file into your AI chat. It contains the full brief, selectors, preview values, pinned notes, markup explanation, drawing data, and a visual markup overlay when available.</p>
+          <p id="handoffDescription">Drag this file into your AI chat. It contains the full brief, selectors, preview values, pinned notes, markup explanation, drawing data, and a visual markup overlay when available.</p>
           <div id="handoffFile" class="handoff-file" draggable="true" tabindex="0" aria-label="Drag handoff file into an AI chat">
             <img src="app-icon.png" alt="">
             <strong id="handoffName">AI PagePolish by PageTweaker handoff</strong>
@@ -132,12 +152,13 @@
           </div>
           <label>Full file path<textarea id="handoffPath" readonly spellcheck="false"></textarea></label>
           <div class="handoff-actions"><button id="copyHandoffPath">Copy path</button><button id="showHandoff">Show in Finder</button></div>
+          <button id="copyHandoffPrompt" hidden>Copy image editing instructions</button>
         </div>
       </section>
     </aside>
   </main>
   <section id="selectorBar" hidden><span id="selectorPath"></span><div id="scopeChoices"></div><strong id="scopeSummary"></strong></section>
   <footer id="status">Preview-only changes. Your source is never modified.</footer>
-  <script src="browser-utils.js"></script><script src="renderer.js"></script>
+  <script src="browser-utils.js"></script><script src="image-iteration.js"></script><script src="image-workspace.js"></script><script src="renderer.js"></script>
 </body>
 </html>
