@@ -28,6 +28,8 @@ footer{padding:7px 18px;color:#8f9aaa;border-top:1px solid #2b313c;font-size:12p
 #imagePanel input:not([type=range]){background:#202630;border:1px solid #3b4655;border-radius:6px;color:#fff;padding:7px}.image-return{margin-top:22px;padding-top:16px;border-top:1px solid #313945}.region-item{padding:9px;margin:8px 0;border:1px solid #3b4655;border-radius:7px;background:#202630;text-align:left}.region-item.active{border-color:#64d7ff}.region-item strong{display:block}.region-item small{display:block;margin-top:3px;color:#a9b4c2}.region-item button{margin-top:6px}
 #protectLabelRow[hidden]{display:none}
 #changeInstructionRow[hidden],#imagePromptHelp[hidden]{display:none}
+#resizeCandidate[hidden]{display:none}
+#pasteCandidate,#resizeCandidate{width:100%;margin:0 0 9px}
 .candidate-drop,.prompt-drag{padding:14px;border:1px dashed #6e8fa2;border-radius:8px;background:#1d2b34;color:#e4f5ff;text-align:center;cursor:pointer;margin:10px 0}
 .candidate-drop.drag-over,.candidate-drop:focus-visible,.prompt-drag:focus-visible{border-color:#64d7ff;background:#183a49;outline:2px solid #64d7ff;outline-offset:2px}
 .prompt-drag{cursor:grab}

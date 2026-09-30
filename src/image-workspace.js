@@ -5,11 +5,13 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   const context = overlay.getContext('2d');
   const regionList = document.querySelector('#regionList');
   const candidateStatus = document.querySelector('#candidateStatus');
+  const resizeCandidateButton = document.querySelector('#resizeCandidate');
   const resultButton = document.querySelector('#toggleResult');
   const saveButton = document.querySelector('#saveResult');
   let original = null;
   let originalPng = '';
   let candidate = null;
+  let pendingCandidate = null;
   let merged = null;
   let regions = [];
   let selected = -1;
@@ -25,8 +27,9 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   const protectLabel = () => document.querySelector('#protectLabel').value.trim();
 
   function reset() {
-    original = null; originalPng = ''; candidate = null; merged = null; regions = []; selected = -1; pointer = null; showingMerged = false;
+    original = null; originalPng = ''; candidate = null; pendingCandidate = null; merged = null; regions = []; selected = -1; pointer = null; showingMerged = false;
     display.removeAttribute('src'); candidateStatus.textContent = ''; regionList.replaceChildren(); resultButton.disabled = true; saveButton.disabled = true;
+    resizeCandidateButton.hidden = true;
     document.querySelector('#editInstruction').value = ''; changeInstruction.value = ''; document.querySelector('#regionKind').value = 'change'; document.querySelector('#protectLabel').value = '';
     document.querySelector('#blendWidth').value = '12'; document.querySelector('#blendWidthValue').value = '12 px'; document.querySelector('#protectLabelRow').hidden = true; document.querySelector('#changeInstructionRow').hidden = true;
     draw();
@@ -88,7 +91,7 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
       }
       ctx.fillStyle = region.kind === 'change' ? 'rgba(100,215,255,.16)' : 'rgba(255,202,86,.16)'; ctx.fillRect(x, y, w, h);
       ctx.strokeStyle = color; ctx.lineWidth = index === selected && handles ? 3 : 2; ctx.strokeRect(x, y, w, h);
-      const label = `${region.kind === 'change' ? `CHANGE ${index + 1}` : 'KEEP EXACTLY'} ${region.kind === 'change' ? (region.instruction || '').slice(0, 34) : region.label || ''}`.trim();
+      const label = `${region.kind === 'change' ? `CHANGE ${index + 1}` : 'KEEP EXACTLY'} ${region.kind === 'change' ? (region.instruction || '').trim().slice(0, 34) : region.label || ''}`.trim();
       ctx.font = `${Math.max(12, 13 * scale)}px sans-serif`;
       const labelWidth = Math.min(ctx.measureText(label).width + 12, Math.max(w, 90));
       ctx.fillStyle = '#111318'; ctx.fillRect(x, Math.max(0, y - 22), labelWidth, 21);
@@ -111,7 +114,8 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
 
   function renderList() {
     regionList.replaceChildren();
-    changeInstruction.value = selected >= 0 && regions[selected]?.kind === 'change' ? regions[selected].instruction || '' : '';
+    const selectedInstruction = selected >= 0 && regions[selected]?.kind === 'change' ? regions[selected].instruction || '' : '';
+    if (changeInstruction.value !== selectedInstruction) changeInstruction.value = selectedInstruction;
     document.querySelector('#changeInstructionRow').hidden = selected < 0 || regions[selected]?.kind !== 'change';
     if (selected >= 0 && regions[selected]?.kind === 'protect') document.querySelector('#protectLabel').value = regions[selected].label;
     document.querySelector('#protectLabelRow').hidden = currentKind() !== 'protect' && regions[selected]?.kind !== 'protect';
@@ -193,7 +197,7 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   overlay.addEventListener('pointerup', finishPointer);
   overlay.addEventListener('pointercancel', finishPointer);
   document.querySelector('#protectLabel').addEventListener('input', (event) => { if (selected < 0 || regions[selected].kind !== 'protect') return; regions[selected].label = event.target.value.trim(); renderList(); draw(); onEdit(); });
-  changeInstruction.addEventListener('input', (event) => { if (selected < 0 || regions[selected].kind !== 'change') return; regions[selected].instruction = event.target.value.trim(); renderList(); draw(); onEdit(); });
+  changeInstruction.addEventListener('input', (event) => { if (selected < 0 || regions[selected].kind !== 'change') return; regions[selected].instruction = event.target.value; renderList(); draw(); onEdit(); });
   document.querySelector('#editInstruction').addEventListener('input', onEdit);
 
   overlay.addEventListener('keydown', (event) => {
@@ -212,13 +216,39 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
 
   async function loadCandidate(source) {
     if (!original) return setStatus('Open a local source image first.');
+    candidate = null; pendingCandidate = null; merged = null; showingMerged = false;
+    resultButton.disabled = true; saveButton.disabled = true; resizeCandidateButton.hidden = true; display.src = originalPng;
     try {
       const image = await decode(await desktopBridge.readImage(source));
-      if (image.width !== original.width || image.height !== original.height) throw new Error(`Returned image is ${image.width} × ${image.height}; the original is ${original.width} × ${original.height}. Ask the AI for the original dimensions before merging.`);
+      if (image.width !== original.width || image.height !== original.height) {
+        const sameShape = Math.abs(image.width / image.height - original.width / original.height) <= original.width / original.height * .01;
+        pendingCandidate = sameShape ? image : null;
+        resizeCandidateButton.hidden = !sameShape;
+        const message = `The returned file decodes to ${image.width} × ${image.height} pixels; the original is ${original.width} × ${original.height}. The AI's stated size may differ from the file it exported. ${sameShape ? 'You can resize a copy here and merge it, but inspect alignment and the blend edge.' : 'Ask the AI for an export with the exact original width and height; this different shape cannot be merged safely.'}`;
+        candidateStatus.textContent = message; setStatus(message); return;
+      }
       candidate = image; compose();
     } catch (error) { candidateStatus.textContent = error.message; setStatus(error.message); }
   }
+  resizeCandidateButton.addEventListener('click', () => {
+    if (!original || !pendingCandidate) return;
+    const sourceSize = `${pendingCandidate.width} × ${pendingCandidate.height}`;
+    const resized = document.createElement('canvas'); resized.width = original.width; resized.height = original.height;
+    const ctx = resized.getContext('2d', { willReadFrequently: true }); ctx.imageSmoothingQuality = 'high'; ctx.drawImage(pendingCandidate, 0, 0, resized.width, resized.height);
+    candidate = resized; pendingCandidate = null; resizeCandidateButton.hidden = true; compose();
+    candidateStatus.textContent = `Resized a copy from ${sourceSize} to ${original.width} × ${original.height} and merged locally. Protected pixels came from the original. Inspect object alignment and the blend edge before saving.`;
+  });
   const candidateDrop = document.querySelector('#candidateDrop');
+  document.querySelector('#pasteCandidate').addEventListener('click', async () => {
+    try {
+      const source = await desktopBridge.clipboardImage();
+      if (!source) {
+        const message = 'The clipboard has no image pixels. Copy the rendered image itself, or download it and use the drop target.';
+        candidateStatus.textContent = message; setStatus(message); return;
+      }
+      await loadCandidate(source);
+    } catch (error) { candidateStatus.textContent = `Could not paste the copied image: ${error.message}`; setStatus(candidateStatus.textContent); }
+  });
   candidateDrop.addEventListener('click', async () => { const source = await desktopBridge.chooseImage(); if (source) loadCandidate(source); });
   candidateDrop.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); candidateDrop.click(); } });
   candidateDrop.addEventListener('dragenter', (event) => { event.preventDefault(); event.stopPropagation(); candidateDrop.classList.add('drag-over'); });
@@ -264,17 +294,17 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   function makeHandoff() {
     if (!original) throw new Error('Open a local image before creating an image iteration handoff.');
     if (!changeRegions().length) throw new Error('Draw at least one area to change.');
-    const missing = regions.findIndex((region) => region.kind === 'change' && !region.instruction);
+    const missing = regions.findIndex((region) => region.kind === 'change' && !region.instruction.trim());
     if (missing >= 0) throw new Error(`Select change box ${missing + 1} and describe what should change there.`);
     const labels = regions.filter((region) => region.kind === 'protect').map((region) => region.label || 'the marked protected detail');
-    const changes = regions.map((region, index) => region.kind === 'change' ? `- Change box ${index + 1}: ${region.instruction}` : '').filter(Boolean).join('\n');
-    const prompt = `# Image iteration instructions\n\nEdit the attached original.png. ${instruction() ? `Overall direction: ${instruction()}\n\n` : ''}Requested changes by numbered box:\n${changes}\n\nUse marked-preview.png to locate each numbered box. edit-mask.png is transparent wherever editing is allowed, including the blend margin, and opaque where the source should be preserved. Check your image tool’s mask convention and convert the mask if needed. The boxes are rough guidance, not object contours. Do not reproduce the colored boxes or labels in the output.\n\nMake each requested change only in its corresponding box. Use the ${blendWidth()}-pixel blend margin for a natural transition of edges, texture, lighting, and shadows. Preserve the composition and content elsewhere. Keep these specifically marked details unchanged: ${labels.length ? labels.join('; ') : 'none separately marked; all unmarked areas should remain unchanged'}. Keep the output at exactly ${original.width} × ${original.height} pixels, with no crop, shift, or rescaling.\n\nA mask guides the image model but does not guarantee exact pixel preservation. If the user wants exact restoration, they can optionally bring the edited image back into PageTweaker to merge it locally with the original. Return the edited image at the original dimensions. If your tool cannot use a mask, use the preview and these instructions, and state that the model’s output may change areas outside the marked region. The user should inspect the blend edge after any local merge.`;
+    const changes = regions.map((region, index) => region.kind === 'change' ? `- Change box ${index + 1}: ${region.instruction.trim()}` : '').filter(Boolean).join('\n');
+    const prompt = `# Image iteration instructions\n\nEdit the attached original.png. ${instruction() ? `Overall direction: ${instruction()}\n\n` : ''}Requested changes by numbered box:\n${changes}\n\nUse marked-preview.png to locate each numbered box. edit-mask.png is transparent wherever editing is allowed, including the blend margin, and opaque where the source should be preserved. Check your image tool’s mask convention and convert the mask if needed. The boxes are rough guidance, not object contours. Do not reproduce the colored boxes or labels in the output.\n\nMake each requested change only in its corresponding box. Use the ${blendWidth()}-pixel blend margin for a natural transition of edges, texture, lighting, and shadows. Preserve the composition and content elsewhere. Keep these specifically marked details unchanged: ${labels.length ? labels.join('; ') : 'none separately marked; all unmarked areas should remain unchanged'}. Keep the output at exactly ${original.width} × ${original.height} pixels, with no crop, shift, or rescaling.\n\nBefore returning the result, check the actual exported image file's pixel dimensions. The file itself must be exactly ${original.width} pixels wide and ${original.height} pixels high. A preview size or a statement in the chat does not count. If your image tool cannot export those exact dimensions, say so and return its native-size file rather than claiming an exact-size result.\n\nA mask guides the image model but does not guarantee exact pixel preservation. If the user wants exact restoration, they can optionally bring the edited image back into PageTweaker to merge it locally with the original. PageTweaker can offer an optional resize for a same-shape file with different dimensions, but that may misalign details and requires visual inspection. If your tool cannot use a mask, use the preview and these instructions, and state that the model’s output may change areas outside the marked region. The user should inspect the blend edge after any local merge.`;
     return {
       prompt,
-      meta: { original: 'original.png', editMask: 'edit-mask.png', markedPreview: 'marked-preview.png', width: original.width, height: original.height, blendPixels: blendWidth(), overallDirection: instruction(), regions: regions.map((region) => ({ ...region })) },
+      meta: { original: 'original.png', editMask: 'edit-mask.png', markedPreview: 'marked-preview.png', width: original.width, height: original.height, blendPixels: blendWidth(), overallDirection: instruction(), regions: regions.map((region) => ({ ...region, instruction: region.instruction.trim() })) },
       assets: { 'original.png': originalPng, 'edit-mask.png': makeMask(), 'marked-preview.png': makePreview() }
     };
   }
 
-  return { reset, loadSource, loadCandidate, setActive, resize, hasWork: () => Boolean(regions.length || instruction()), makeHandoff, hasChange: () => changeRegions().length > 0, readyForHandoff: () => changeRegions().length > 0 && changeRegions().every((region) => Boolean(region.instruction)) };
+  return { reset, loadSource, loadCandidate, setActive, resize, hasWork: () => Boolean(regions.length || instruction()), makeHandoff, hasChange: () => changeRegions().length > 0, readyForHandoff: () => changeRegions().length > 0 && changeRegions().every((region) => Boolean(region.instruction.trim())) };
 }

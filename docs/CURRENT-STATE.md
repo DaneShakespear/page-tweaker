@@ -4,7 +4,15 @@
 **Current release:** `v0.3.0`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.3.0>
 
-**Local development version:** `v0.4.0-dev.1`
+**Local development version:** `v0.4.0-dev.2`
+
+## Image iteration typing, clipboard, and return-size repair — 2026-09-30
+
+- Fixed per-box change text losing spaces: box text now retains the raw value while typing and trims only when validating or exporting.
+- `START-HERE.md` now instructs the destination AI to check the actual exported file's pixel width and height against the original, and to disclose when its image tool cannot produce an exact-size file. Chat claims and preview dimensions are not treated as proof.
+- The returned-image area has a Paste copied image button. Image clipboard paste on the Image tab also routes to the returned-image merge instead of replacing the source image; text fields continue to receive normal text paste.
+- A returned file with different dimensions is identified by its decoded pixel size. For the same aspect ratio within 1%, PageTweaker offers an explicit resize-copy-and-merge action with an alignment warning. Different-shape files remain blocked from merging.
+- Local `v0.4.0-dev.2` verification: 33 contract tests and packaged UI smoke pass, including a typed space, exported dimension wording, file drop, clipboard button and paste-event routing, optional resize, protected-pixel merge, and saved PNG. DMG integrity and strict packaged-app signature pass. DMG SHA-256: `a6b4d040c8ae335eb3ebd4bd01f4b0f2a85ed3fcc6648ebf810e6fff6410a4ca`. Public `v0.3.0` is unchanged.
 
 ## Image iteration usability update — 2026-09-30
 
