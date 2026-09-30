@@ -89,17 +89,18 @@
       <section id="imagePanel" role="tabpanel" aria-labelledby="imageTab" hidden>
         <h3>Image iteration</h3>
         <p class="hint">Draw a loose box around what may change. Everything beyond the blend edge keeps the original pixels. Add a protection box for a logo or other exact detail.</p>
-        <label>What should change?<textarea id="editInstruction" placeholder="Example: Make the chair fabric deep blue while keeping its shape."></textarea></label>
+        <label>Overall direction (optional)<textarea id="editInstruction" placeholder="Example: Keep the same lighting and camera angle across all edits."></textarea></label>
         <label>Next box<select id="regionKind"><option value="change">Area to change</option><option value="protect">Keep exactly</option></select></label>
+        <label id="changeInstructionRow" hidden>Change for selected box<textarea id="changeInstruction" placeholder="Example: Make this chair fabric deep blue while keeping its shape."></textarea></label>
         <label id="protectLabelRow" hidden>Protected detail name<input id="protectLabel" placeholder="Example: Logo"></label>
         <label>Blend width <input id="blendWidth" type="range" min="0" max="60" step="1" value="12"><output id="blendWidthValue">12 px</output></label>
         <p class="hint">Drag to add a box. Drag an existing box to move it; drag a corner to resize it. Select a box and use arrow keys for fine adjustments.</p>
         <div class="markup-actions"><button id="undoRegion">Undo last box</button><button id="removeRegion">Remove selected box</button></div>
         <div id="regionList"></div>
         <div class="image-return">
-          <h3>Bring back the AI rendering</h3>
-          <p class="hint">Choose the image returned by the AI, or drop it on the image above. PageTweaker blends the changed area locally and restores protected pixels from the original.</p>
-          <button id="chooseCandidate">Choose returned image</button>
+          <h3>Optional: bring back the AI rendering</h3>
+          <p class="hint">If the AI result already looks right, you can stop there. Bring it back only when you want PageTweaker to blend the changed areas with the original and restore protected pixels exactly. The returned image must have the original dimensions.</p>
+          <div id="candidateDrop" class="candidate-drop" role="button" tabindex="0" aria-label="Drop returned image here or choose a file">Drop the returned image here, or click to choose it</div>
           <p id="candidateStatus" class="hint"></p>
           <div class="markup-actions"><button id="toggleResult" disabled>Show original</button><button id="saveResult" class="primary" disabled>Save merged PNG</button></div>
         </div>
@@ -139,7 +140,7 @@
       <section id="handoffPanel" role="tabpanel" aria-labelledby="handoffTab" hidden>
         <div id="handoffEmpty">
           <h2>Your AI handoff</h2>
-          <p>Create a handoff after making your changes. AI PagePolish by PageTweaker packages everything your AI session needs to understand what you changed and what should happen next.</p>
+          <p id="handoffEmptyDescription">Create a handoff after making your changes. AI PagePolish by PageTweaker packages everything your AI session needs to understand what you changed and what should happen next.</p>
           <button id="createHandoff" class="primary">Create handoff file</button>
         </div>
         <div id="handoffReady" hidden>
@@ -152,7 +153,12 @@
           </div>
           <label>Full file path<textarea id="handoffPath" readonly spellcheck="false"></textarea></label>
           <div class="handoff-actions"><button id="copyHandoffPath">Copy path</button><button id="showHandoff">Show in Finder</button></div>
-          <button id="copyHandoffPrompt" hidden>Copy image editing instructions</button>
+          <div id="imagePromptHelp" hidden>
+            <h3>Image editing instructions</h3>
+            <p class="hint">These tell the AI what to change in each box and what to keep. They are inside <strong>START-HERE.md</strong> in the ZIP. Some AI chats do not read files inside ZIPs, and many need a message in the chat box. Paste or drag these instructions alongside the ZIP when needed. If the AI reads the ZIP and follows it, sending them separately is optional.</p>
+            <div id="dragHandoffPrompt" class="prompt-drag" draggable="true" tabindex="0" aria-label="Drag image editing instructions as text into an AI chat">Drag instructions into an AI chat</div>
+            <button id="copyHandoffPrompt">Copy image editing instructions</button>
+          </div>
         </div>
       </section>
     </aside>

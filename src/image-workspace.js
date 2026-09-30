@@ -1,4 +1,4 @@
-function createImageWorkspace(desktopBridge, setStatus) {
+function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   const workspace = document.querySelector('#imageWorkspace');
   const display = document.querySelector('#iterationDisplay');
   const overlay = document.querySelector('#regionCanvas');
@@ -20,14 +20,15 @@ function createImageWorkspace(desktopBridge, setStatus) {
   const changeRegions = () => regions.filter((region) => region.kind === 'change');
   const blendWidth = () => Number(document.querySelector('#blendWidth').value);
   const instruction = () => document.querySelector('#editInstruction').value.trim();
+  const changeInstruction = document.querySelector('#changeInstruction');
   const currentKind = () => document.querySelector('#regionKind').value;
   const protectLabel = () => document.querySelector('#protectLabel').value.trim();
 
   function reset() {
     original = null; originalPng = ''; candidate = null; merged = null; regions = []; selected = -1; pointer = null; showingMerged = false;
     display.removeAttribute('src'); candidateStatus.textContent = ''; regionList.replaceChildren(); resultButton.disabled = true; saveButton.disabled = true;
-    document.querySelector('#editInstruction').value = ''; document.querySelector('#regionKind').value = 'change'; document.querySelector('#protectLabel').value = '';
-    document.querySelector('#blendWidth').value = '12'; document.querySelector('#blendWidthValue').value = '12 px'; document.querySelector('#protectLabelRow').hidden = true;
+    document.querySelector('#editInstruction').value = ''; changeInstruction.value = ''; document.querySelector('#regionKind').value = 'change'; document.querySelector('#protectLabel').value = '';
+    document.querySelector('#blendWidth').value = '12'; document.querySelector('#blendWidthValue').value = '12 px'; document.querySelector('#protectLabelRow').hidden = true; document.querySelector('#changeInstructionRow').hidden = true;
     draw();
   }
 
@@ -87,7 +88,7 @@ function createImageWorkspace(desktopBridge, setStatus) {
       }
       ctx.fillStyle = region.kind === 'change' ? 'rgba(100,215,255,.16)' : 'rgba(255,202,86,.16)'; ctx.fillRect(x, y, w, h);
       ctx.strokeStyle = color; ctx.lineWidth = index === selected && handles ? 3 : 2; ctx.strokeRect(x, y, w, h);
-      const label = `${region.kind === 'change' ? 'CHANGE' : 'KEEP EXACTLY'} ${region.label || ''}`.trim();
+      const label = `${region.kind === 'change' ? `CHANGE ${index + 1}` : 'KEEP EXACTLY'} ${region.kind === 'change' ? (region.instruction || '').slice(0, 34) : region.label || ''}`.trim();
       ctx.font = `${Math.max(12, 13 * scale)}px sans-serif`;
       const labelWidth = Math.min(ctx.measureText(label).width + 12, Math.max(w, 90));
       ctx.fillStyle = '#111318'; ctx.fillRect(x, Math.max(0, y - 22), labelWidth, 21);
@@ -110,12 +111,14 @@ function createImageWorkspace(desktopBridge, setStatus) {
 
   function renderList() {
     regionList.replaceChildren();
+    changeInstruction.value = selected >= 0 && regions[selected]?.kind === 'change' ? regions[selected].instruction || '' : '';
+    document.querySelector('#changeInstructionRow').hidden = selected < 0 || regions[selected]?.kind !== 'change';
     if (selected >= 0 && regions[selected]?.kind === 'protect') document.querySelector('#protectLabel').value = regions[selected].label;
     document.querySelector('#protectLabelRow').hidden = currentKind() !== 'protect' && regions[selected]?.kind !== 'protect';
     regions.forEach((region, index) => {
       const item = document.createElement('div'); item.className = `region-item${selected === index ? ' active' : ''}`;
-      const title = document.createElement('strong'); title.textContent = `${index + 1}. ${region.kind === 'change' ? 'Change' : 'Keep exactly'}${region.label ? `: ${region.label}` : ''}`;
-      const detail = document.createElement('small'); detail.textContent = 'Click to select, then drag or use arrow keys.';
+      const title = document.createElement('strong'); title.textContent = `${index + 1}. ${region.kind === 'change' ? 'Change' : 'Keep exactly'}${region.kind === 'change' ? `: ${region.instruction || 'Describe this change'}` : region.label ? `: ${region.label}` : ''}`;
+      const detail = document.createElement('small'); detail.textContent = region.kind === 'change' ? 'Click to edit this box’s instructions. Drag or use arrow keys to adjust.' : 'Click to select, then drag or use arrow keys.';
       item.append(title, detail); item.addEventListener('click', () => { selected = index; renderList(); draw(); overlay.focus(); });
       regionList.append(item);
     });
@@ -151,7 +154,7 @@ function createImageWorkspace(desktopBridge, setStatus) {
       if (index >= 0) mode = 'move';
     }
     if (index < 0) {
-      regions.push({ kind: currentKind(), label: currentKind() === 'protect' ? protectLabel() : '', x: p.x, y: p.y, width: 0, height: 0 });
+      regions.push({ kind: currentKind(), label: currentKind() === 'protect' ? protectLabel() : '', instruction: '', x: p.x, y: p.y, width: 0, height: 0 });
       index = regions.length - 1; mode = 'new';
     }
     selected = index; pointer = { mode, start: p, initial: { ...regions[index] }, index };
@@ -182,14 +185,16 @@ function createImageWorkspace(desktopBridge, setStatus) {
     if (!pointer) return;
     const region = regions[pointer.index];
     if (region.width * original.width < 4 || region.height * original.height < 4) { regions.splice(pointer.index, 1); selected = -1; }
-    pointer = null; renderList(); draw();
+    pointer = null; renderList(); draw(); onEdit();
     if (candidate && changeRegions().length) compose();
     const protect = regions.filter((item) => item.kind === 'protect');
     if (changeRegions().some((change) => protect.some((item) => ImageIteration.overlaps(change, item)))) setStatus('A protected box overlaps a change box. The protected pixels win; inspect the boundary for a visible seam.');
   }
   overlay.addEventListener('pointerup', finishPointer);
   overlay.addEventListener('pointercancel', finishPointer);
-  document.querySelector('#protectLabel').addEventListener('input', (event) => { if (selected < 0 || regions[selected].kind !== 'protect') return; regions[selected].label = event.target.value.trim(); renderList(); draw(); });
+  document.querySelector('#protectLabel').addEventListener('input', (event) => { if (selected < 0 || regions[selected].kind !== 'protect') return; regions[selected].label = event.target.value.trim(); renderList(); draw(); onEdit(); });
+  changeInstruction.addEventListener('input', (event) => { if (selected < 0 || regions[selected].kind !== 'change') return; regions[selected].instruction = event.target.value.trim(); renderList(); draw(); onEdit(); });
+  document.querySelector('#editInstruction').addEventListener('input', onEdit);
 
   overlay.addEventListener('keydown', (event) => {
     if (selected < 0 || !original || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
@@ -197,13 +202,13 @@ function createImageWorkspace(desktopBridge, setStatus) {
     const dx = (event.key === 'ArrowLeft' ? -amount : event.key === 'ArrowRight' ? amount : 0) / original.width;
     const dy = (event.key === 'ArrowUp' ? -amount : event.key === 'ArrowDown' ? amount : 0) / original.height;
     region.x = ImageIteration.clamp(region.x + dx, 0, 1 - region.width); region.y = ImageIteration.clamp(region.y + dy, 0, 1 - region.height);
-    invalidate(); draw(); if (candidate) compose();
+    invalidate(); draw(); if (candidate) compose(); onEdit();
   });
 
   document.querySelector('#regionKind').addEventListener('change', () => { selected = -1; renderList(); draw(); });
-  document.querySelector('#blendWidth').addEventListener('input', (event) => { document.querySelector('#blendWidthValue').value = `${event.target.value} px`; invalidate(); draw(); if (candidate) compose(); });
-  document.querySelector('#undoRegion').addEventListener('click', () => { if (!regions.length) return; regions.pop(); selected = -1; invalidate(); renderList(); draw(); if (candidate && changeRegions().length) compose(); });
-  document.querySelector('#removeRegion').addEventListener('click', () => { if (selected < 0) return; regions.splice(selected, 1); selected = -1; invalidate(); renderList(); draw(); if (candidate && changeRegions().length) compose(); });
+  document.querySelector('#blendWidth').addEventListener('input', (event) => { document.querySelector('#blendWidthValue').value = `${event.target.value} px`; invalidate(); draw(); if (candidate) compose(); onEdit(); });
+  document.querySelector('#undoRegion').addEventListener('click', () => { if (!regions.length) return; regions.pop(); selected = -1; invalidate(); renderList(); draw(); if (candidate && changeRegions().length) compose(); onEdit(); });
+  document.querySelector('#removeRegion').addEventListener('click', () => { if (selected < 0) return; regions.splice(selected, 1); selected = -1; invalidate(); renderList(); draw(); if (candidate && changeRegions().length) compose(); onEdit(); });
 
   async function loadCandidate(source) {
     if (!original) return setStatus('Open a local source image first.');
@@ -213,7 +218,13 @@ function createImageWorkspace(desktopBridge, setStatus) {
       candidate = image; compose();
     } catch (error) { candidateStatus.textContent = error.message; setStatus(error.message); }
   }
-  document.querySelector('#chooseCandidate').addEventListener('click', async () => { const source = await desktopBridge.chooseImage(); if (source) loadCandidate(source); });
+  const candidateDrop = document.querySelector('#candidateDrop');
+  candidateDrop.addEventListener('click', async () => { const source = await desktopBridge.chooseImage(); if (source) loadCandidate(source); });
+  candidateDrop.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); candidateDrop.click(); } });
+  candidateDrop.addEventListener('dragenter', (event) => { event.preventDefault(); event.stopPropagation(); candidateDrop.classList.add('drag-over'); });
+  candidateDrop.addEventListener('dragover', (event) => { event.preventDefault(); event.stopPropagation(); candidateDrop.classList.add('drag-over'); });
+  candidateDrop.addEventListener('dragleave', () => candidateDrop.classList.remove('drag-over'));
+  candidateDrop.addEventListener('drop', (event) => { event.preventDefault(); event.stopPropagation(); candidateDrop.classList.remove('drag-over'); const file = event.dataTransfer.files[0]; if (file) loadCandidate(desktopBridge.pathForFile(file)); });
   workspace.addEventListener('dragenter', (event) => { event.preventDefault(); event.stopPropagation(); document.querySelector('#dropHint').hidden = true; });
   workspace.addEventListener('dragover', (event) => { event.preventDefault(); event.stopPropagation(); });
   workspace.addEventListener('drop', (event) => { event.preventDefault(); event.stopPropagation(); document.querySelector('#dropHint').hidden = true; const file = event.dataTransfer.files[0]; if (file) loadCandidate(desktopBridge.pathForFile(file)); });
@@ -253,15 +264,17 @@ function createImageWorkspace(desktopBridge, setStatus) {
   function makeHandoff() {
     if (!original) throw new Error('Open a local image before creating an image iteration handoff.');
     if (!changeRegions().length) throw new Error('Draw at least one area to change.');
-    if (!instruction()) throw new Error('Describe what should change inside the marked area.');
+    const missing = regions.findIndex((region) => region.kind === 'change' && !region.instruction);
+    if (missing >= 0) throw new Error(`Select change box ${missing + 1} and describe what should change there.`);
     const labels = regions.filter((region) => region.kind === 'protect').map((region) => region.label || 'the marked protected detail');
-    const prompt = `# Image iteration instructions\n\nEdit the attached original.png. Requested change: ${instruction()}\n\nUse marked-preview.png to understand the user’s boxes. edit-mask.png is transparent wherever editing is allowed, including the blend margin, and opaque where the source should be preserved. Check your image tool’s mask convention and convert the mask if needed. The boxes are rough guidance, not object contours. Do not reproduce the colored boxes or labels in the output.\n\nMake the requested change within the marked area. Use the ${blendWidth()}-pixel blend margin for a natural transition of edges, texture, lighting, and shadows. Preserve the composition and content elsewhere. Keep these specifically marked details unchanged: ${labels.length ? labels.join('; ') : 'none separately marked; all unmarked areas should remain unchanged'}. Keep the output at exactly ${original.width} × ${original.height} pixels, with no crop, shift, or rescaling.\n\nA mask guides the image model but does not guarantee exact pixel preservation. Return the edited image to the user at the original dimensions. PageTweaker will merge the accepted change locally with the original and restore protected pixels. If your tool cannot use a mask, use the preview and these instructions, and state that the model’s output may change areas outside the marked region. The user should inspect the blend edge after local merge.`;
+    const changes = regions.map((region, index) => region.kind === 'change' ? `- Change box ${index + 1}: ${region.instruction}` : '').filter(Boolean).join('\n');
+    const prompt = `# Image iteration instructions\n\nEdit the attached original.png. ${instruction() ? `Overall direction: ${instruction()}\n\n` : ''}Requested changes by numbered box:\n${changes}\n\nUse marked-preview.png to locate each numbered box. edit-mask.png is transparent wherever editing is allowed, including the blend margin, and opaque where the source should be preserved. Check your image tool’s mask convention and convert the mask if needed. The boxes are rough guidance, not object contours. Do not reproduce the colored boxes or labels in the output.\n\nMake each requested change only in its corresponding box. Use the ${blendWidth()}-pixel blend margin for a natural transition of edges, texture, lighting, and shadows. Preserve the composition and content elsewhere. Keep these specifically marked details unchanged: ${labels.length ? labels.join('; ') : 'none separately marked; all unmarked areas should remain unchanged'}. Keep the output at exactly ${original.width} × ${original.height} pixels, with no crop, shift, or rescaling.\n\nA mask guides the image model but does not guarantee exact pixel preservation. If the user wants exact restoration, they can optionally bring the edited image back into PageTweaker to merge it locally with the original. Return the edited image at the original dimensions. If your tool cannot use a mask, use the preview and these instructions, and state that the model’s output may change areas outside the marked region. The user should inspect the blend edge after any local merge.`;
     return {
       prompt,
-      meta: { original: 'original.png', editMask: 'edit-mask.png', markedPreview: 'marked-preview.png', width: original.width, height: original.height, blendPixels: blendWidth(), requestedChange: instruction(), regions: regions.map((region) => ({ ...region })) },
+      meta: { original: 'original.png', editMask: 'edit-mask.png', markedPreview: 'marked-preview.png', width: original.width, height: original.height, blendPixels: blendWidth(), overallDirection: instruction(), regions: regions.map((region) => ({ ...region })) },
       assets: { 'original.png': originalPng, 'edit-mask.png': makeMask(), 'marked-preview.png': makePreview() }
     };
   }
 
-  return { reset, loadSource, loadCandidate, setActive, resize, hasWork: () => Boolean(regions.length || instruction()), makeHandoff, hasChange: () => changeRegions().length > 0 };
+  return { reset, loadSource, loadCandidate, setActive, resize, hasWork: () => Boolean(regions.length || instruction()), makeHandoff, hasChange: () => changeRegions().length > 0, readyForHandoff: () => changeRegions().length > 0 && changeRegions().every((region) => Boolean(region.instruction)) };
 }

@@ -1,10 +1,18 @@
 # AI PagePolish by PageTweaker Current State
 
-**Last verified:** 2026-09-29
+**Last verified:** 2026-09-30
 **Current release:** `v0.3.0`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.3.0>
 
-**Local development version:** `v0.4.0-dev.0`
+**Local development version:** `v0.4.0-dev.1`
+
+## Image iteration usability update — 2026-09-30
+
+- Each change box now has its own required instruction. An optional overall direction applies across boxes. The numbered instructions appear in `START-HERE.md` and the box records in `handoff.json`.
+- The image handoff is disabled until a change box has its instruction. Existing image notes/markup can still use the earlier general feedback handoff when no image iteration box exists.
+- The returned-image step is explicitly optional. A visible drop target accepts a returned image; local merge remains available when exact restoration is wanted.
+- The Handoff tab explains why instructions may need to be sent beside the ZIP. They can be copied or dragged as plain text into a compatible chat composer. Dragging text into external AI chats depends on the destination app; copying remains the reliable path.
+- Local `v0.4.0-dev.1` build verification: 33 contract tests pass; packaged UI smoke verifies distinct instructions in two boxes, handoff gating, visible copy control, prompt text drag data, a returned-image drop, merge, and saved PNG. DMG integrity and packaged app signature verification pass. DMG SHA-256: `5e67a9d8b3e7bef3fe838e29fca41f161e8c667bbd7e11c65d8b692ce30a663e`.
 
 ## Unreleased image iteration workflow — 2026-09-29
 
