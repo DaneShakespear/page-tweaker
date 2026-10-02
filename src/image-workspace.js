@@ -1,5 +1,6 @@
-function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
+function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}, onOpenSourceDrop = () => {}) {
   const workspace = document.querySelector('#imageWorkspace');
+  const surface = document.querySelector('#imageSurface');
   const display = document.querySelector('#iterationDisplay');
   const overlay = document.querySelector('#regionCanvas');
   const context = overlay.getContext('2d');
@@ -17,6 +18,7 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   let selected = -1;
   let pointer = null;
   let showingMerged = false;
+  let zoom = 1;
 
   const dimension = () => original ? { width: original.width, height: original.height } : null;
   const changeRegions = () => regions.filter((region) => region.kind === 'change');
@@ -28,6 +30,8 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
 
   function reset() {
     original = null; originalPng = ''; candidate = null; pendingCandidate = null; merged = null; regions = []; selected = -1; pointer = null; showingMerged = false;
+    zoom = 1; document.querySelector('#imageZoom').value = '100'; document.querySelector('#imageZoomValue').value = '100%';
+    surface.hidden = true; surface.style.width = ''; surface.style.height = ''; surface.style.marginTop = ''; workspace.scrollTo(0, 0);
     display.removeAttribute('src'); candidateStatus.textContent = ''; regionList.replaceChildren(); resultButton.disabled = true; saveButton.disabled = true;
     resizeCandidateButton.hidden = true;
     document.querySelector('#editInstruction').value = ''; changeInstruction.value = ''; document.querySelector('#regionKind').value = 'change'; document.querySelector('#protectLabel').value = '';
@@ -48,7 +52,7 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
     try {
       original = await decode(await desktopBridge.readImage(source));
       originalPng = original.toDataURL('image/png'); display.src = originalPng;
-      await display.decode(); resize();
+      await display.decode(); surface.hidden = false; resize();
       candidateStatus.textContent = `Original image: ${original.width} × ${original.height} pixels.`;
     } catch (error) {
       candidateStatus.textContent = `Image iteration needs a local image: ${error.message}`;
@@ -62,22 +66,39 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
     if (active) requestAnimationFrame(resize);
   }
 
-  function resize() {
+  function resize({ preserveCenter = false } = {}) {
     if (workspace.hidden || !original || !display.complete) return;
-    const scale = Math.min((workspace.clientWidth - 32) / original.width, (workspace.clientHeight - 32) / original.height, 4);
-    display.style.width = `${Math.round(original.width * scale)}px`;
-    display.style.height = `${Math.round(original.height * scale)}px`;
-    const imageBox = display.getBoundingClientRect();
-    const workspaceBox = workspace.getBoundingClientRect();
-    overlay.style.left = `${imageBox.left - workspaceBox.left}px`;
-    overlay.style.top = `${imageBox.top - workspaceBox.top}px`;
-    overlay.style.width = `${imageBox.width}px`;
-    overlay.style.height = `${imageBox.height}px`;
-    overlay.width = Math.max(1, Math.round(imageBox.width * devicePixelRatio));
-    overlay.height = Math.max(1, Math.round(imageBox.height * devicePixelRatio));
-    context.setTransform(overlay.width / imageBox.width, 0, 0, overlay.height / imageBox.height, 0, 0);
+    const oldWidth = surface.offsetWidth, oldHeight = surface.offsetHeight;
+    const center = preserveCenter && oldWidth && oldHeight ? {
+      x: (workspace.scrollLeft + workspace.clientWidth / 2 - surface.offsetLeft) / oldWidth,
+      y: (workspace.scrollTop + workspace.clientHeight / 2 - surface.offsetTop) / oldHeight
+    } : null;
+    const fitScale = Math.min((workspace.clientWidth - 32) / original.width, (workspace.clientHeight - 32) / original.height, 4);
+    surface.style.width = `${Math.max(1, Math.round(original.width * fitScale * zoom))}px`;
+    surface.style.height = `${Math.max(1, Math.round(original.height * fitScale * zoom))}px`;
+    const width = surface.clientWidth, height = surface.clientHeight;
+    surface.style.marginTop = `${Math.max(0, (workspace.clientHeight - 32 - height) / 2)}px`;
+    overlay.width = Math.max(1, Math.min(8192, Math.round(width * devicePixelRatio)));
+    overlay.height = Math.max(1, Math.min(8192, Math.round(height * devicePixelRatio)));
+    context.setTransform(overlay.width / width, 0, 0, overlay.height / height, 0, 0);
     draw();
+    if (center) {
+      workspace.scrollLeft = surface.offsetLeft + center.x * width - workspace.clientWidth / 2;
+      workspace.scrollTop = surface.offsetTop + center.y * height - workspace.clientHeight / 2;
+    }
   }
+
+  function setZoom(percent) {
+    const value = ImageIteration.clamp(Number(percent), 50, 400);
+    zoom = value / 100;
+    document.querySelector('#imageZoom').value = String(value);
+    document.querySelector('#imageZoomValue').value = `${value}%`;
+    resize({ preserveCenter: true });
+  }
+  document.querySelector('#imageZoom').addEventListener('input', (event) => setZoom(event.target.value));
+  document.querySelector('#zoomOut').addEventListener('click', () => setZoom(Math.round(zoom * 100) - 25));
+  document.querySelector('#zoomIn').addEventListener('click', () => setZoom(Math.round(zoom * 100) + 25));
+  document.querySelector('#zoomFit').addEventListener('click', () => setZoom(100));
 
   function paintRegions(ctx, width, height, handles = false) {
     const scale = original ? width / original.width : 1;
@@ -255,9 +276,10 @@ function createImageWorkspace(desktopBridge, setStatus, onEdit = () => {}) {
   candidateDrop.addEventListener('dragover', (event) => { event.preventDefault(); event.stopPropagation(); candidateDrop.classList.add('drag-over'); });
   candidateDrop.addEventListener('dragleave', () => candidateDrop.classList.remove('drag-over'));
   candidateDrop.addEventListener('drop', (event) => { event.preventDefault(); event.stopPropagation(); candidateDrop.classList.remove('drag-over'); const file = event.dataTransfer.files[0]; if (file) loadCandidate(desktopBridge.pathForFile(file)); });
-  workspace.addEventListener('dragenter', (event) => { event.preventDefault(); event.stopPropagation(); document.querySelector('#dropHint').hidden = true; });
+  workspace.addEventListener('dragenter', (event) => { event.preventDefault(); event.stopPropagation(); const hint = document.querySelector('#dropHint'); hint.textContent = 'Drop here to open a new image. Use the sidebar target to bring back an AI rendering.'; hint.hidden = false; });
   workspace.addEventListener('dragover', (event) => { event.preventDefault(); event.stopPropagation(); });
-  workspace.addEventListener('drop', (event) => { event.preventDefault(); event.stopPropagation(); document.querySelector('#dropHint').hidden = true; const file = event.dataTransfer.files[0]; if (file) loadCandidate(desktopBridge.pathForFile(file)); });
+  workspace.addEventListener('dragleave', (event) => { if (!workspace.contains(event.relatedTarget)) document.querySelector('#dropHint').hidden = true; });
+  workspace.addEventListener('drop', (event) => { document.querySelector('#dropHint').hidden = true; onOpenSourceDrop(event); });
 
   function compose() {
     if (!original || !candidate || !changeRegions().length) { candidateStatus.textContent = 'Mark an area to change before merging.'; return; }

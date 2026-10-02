@@ -255,7 +255,7 @@ async function connect() {
     await client.evaluate(`(() => { const transfer = new DataTransfer(); transfer.setData('text/uri-list', ${JSON.stringify(imageUrl)}); document.body.dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true })); })()`);
     await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(imageUrl)}`));
     assert.equal(await client.evaluate(`document.querySelector('#page').executeJavaScript("document.querySelector('img')?.naturalWidth > 0")`), true);
-    await poll(() => client.evaluate(`document.querySelector('#iterationDisplay').style.width !== ''`));
+    await poll(() => client.evaluate(`document.querySelector('#imageSurface').style.width !== ''`));
     assert.equal(await client.evaluate(`document.querySelector('#iterationDisplay').getBoundingClientRect().width > document.querySelector('#iterationDisplay').naturalWidth`), true);
     assert.equal(await client.evaluate(`document.querySelector('#imageNotes').hidden`), false);
     assert.equal(await client.evaluate(`document.querySelector('#controls').hidden`), true);
@@ -286,8 +286,8 @@ async function connect() {
     await client.evaluate(`document.querySelector('#imageTab').click()`);
     assert.equal(await client.evaluate(`document.querySelector('#export').disabled`), false);
     assert.match(await client.evaluate(`document.querySelector('.image-return').textContent`), /Optional: bring back/);
-    const regionBox = await client.evaluate(`(() => { const box = document.querySelector('#regionCanvas').getBoundingClientRect(); return { left: box.left, top: box.top, width: box.width, height: box.height }; })()`);
     const drawRegion = async (x1, y1, x2, y2) => {
+      const regionBox = await client.evaluate(`(() => { const box = document.querySelector('#regionCanvas').getBoundingClientRect(); return { left: box.left, top: box.top, width: box.width, height: box.height }; })()`);
       const first = { x: regionBox.left + regionBox.width * x1, y: regionBox.top + regionBox.height * y1 };
       const last = { x: regionBox.left + regionBox.width * x2, y: regionBox.top + regionBox.height * y2 };
       await client.command('Input.dispatchMouseEvent', { type: 'mouseMoved', ...first });
@@ -309,9 +309,23 @@ async function connect() {
     assert.equal(await client.evaluate(`document.querySelector('#export').disabled`), false);
     assert.equal(await client.evaluate(`(() => { document.querySelector('#regionList').children[0].click(); return document.querySelector('#changeInstruction').value; })()`), 'Change the center to red.');
     assert.equal(await client.evaluate(`(() => { document.querySelector('#regionList').children[1].click(); return document.querySelector('#changeInstruction').value; })()`), 'Add a small gold accent in this box.');
+    const fitImage = await client.evaluate(`(() => ({ width: document.querySelector('#regionCanvas').getBoundingClientRect().width, regions: imageWorkspace.makeHandoff().meta.regions }))()`);
+    await client.evaluate(`document.querySelector('#zoomIn').click()`);
+    assert.equal(await client.evaluate(`document.querySelector('#imageZoomValue').value`), '125%');
+    await client.evaluate(`(() => { const slider = document.querySelector('#imageZoom'); slider.value = '200'; slider.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    const zoomedImage = await client.evaluate(`(() => { const image = document.querySelector('#iterationDisplay').getBoundingClientRect(); const overlay = document.querySelector('#regionCanvas').getBoundingClientRect(); return { image: { x: image.x, y: image.y, width: image.width, height: image.height }, overlay: { x: overlay.x, y: overlay.y, width: overlay.width, height: overlay.height }, regions: imageWorkspace.makeHandoff().meta.regions }; })()`);
+    assert.ok(zoomedImage.overlay.width > fitImage.width * 1.9);
+    assert.ok(Math.abs(zoomedImage.image.x - zoomedImage.overlay.x) < 1 && Math.abs(zoomedImage.image.y - zoomedImage.overlay.y) < 1);
+    assert.ok(Math.abs(zoomedImage.image.width - zoomedImage.overlay.width) < 1 && Math.abs(zoomedImage.image.height - zoomedImage.overlay.height) < 1);
+    assert.deepEqual(zoomedImage.regions, fitImage.regions);
     await client.evaluate(`(() => { const kind = document.querySelector('#regionKind'); kind.value = 'protect'; kind.dispatchEvent(new Event('change', { bubbles: true })); document.querySelector('#protectLabel').value = 'Logo'; })()`);
     await drawRegion(.4, .4, .5, .5);
     assert.match(await client.evaluate(`document.querySelector('#regionList').textContent`), /Keep exactly: Logo/);
+    const zoomedProtect = await client.evaluate(`imageWorkspace.makeHandoff().meta.regions[2]`);
+    assert.ok(Math.abs(zoomedProtect.x - .4) < .02 && Math.abs(zoomedProtect.y - .4) < .02);
+    await client.evaluate(`document.querySelector('#zoomFit').click()`);
+    assert.equal(await client.evaluate(`document.querySelector('#imageZoomValue').value`), '100%');
+    assert.deepEqual(await client.evaluate(`imageWorkspace.makeHandoff().meta.regions[2]`), zoomedProtect);
     await client.evaluate(`document.querySelector('#export').click()`);
     try { await poll(() => client.evaluate(`!document.querySelector('#handoffReady').hidden`)); }
     catch (error) { throw new Error(`Image handoff did not finish: ${await client.evaluate(`document.querySelector('#status').textContent`)}`, { cause: error }); }
@@ -367,6 +381,15 @@ async function connect() {
     await poll(() => client.evaluate(`document.querySelector('#candidateStatus').textContent.includes('Merged PNG saved:')`));
     const savedImage = (await client.evaluate(`document.querySelector('#candidateStatus').textContent`)).replace('Merged PNG saved: ', '');
     assert.equal(fs.existsSync(savedImage), true);
+    const newSourcePoint = await client.evaluate(`(() => { const box = document.querySelector('#imageWorkspace').getBoundingClientRect(); return { x: box.x + box.width / 2, y: box.y + box.height / 2 }; })()`);
+    const newSourceDrag = { items: [], files: [imageFixture], dragOperationsMask: 1 };
+    await client.command('Input.dispatchDragEvent', { type: 'dragEnter', ...newSourcePoint, data: newSourceDrag });
+    await client.command('Input.dispatchDragEvent', { type: 'dragOver', ...newSourcePoint, data: newSourceDrag });
+    await client.command('Input.dispatchDragEvent', { type: 'drop', ...newSourcePoint, data: newSourceDrag });
+    await poll(() => client.evaluate(`document.querySelector('#page').getURL() === ${JSON.stringify(imageUrl)}`));
+    await poll(() => client.evaluate(`document.querySelector('#candidateStatus').textContent.startsWith('Original image:')`));
+    assert.equal(await client.evaluate(`document.querySelector('#regionList').children.length`), 0);
+    assert.equal(await client.evaluate(`document.querySelector('#imageZoomValue').value`), '100%');
     process.stdout.write('Image iteration handoff, protected-pixel merge, and saved PNG passed.\n');
     process.stdout.write('Packaged UI smoke passed: safe formatted content, clear-page flow, image input, interactive-control pass-through, Option-click selection, bookmarklet copy and protocol launch, persistent preview storage across relaunch, breakpoint isolation, loading, editing, markup, and AI handoff.\n');
   } finally {

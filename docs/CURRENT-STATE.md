@@ -1,10 +1,16 @@
 # AI PagePolish by PageTweaker Current State
 
-**Last verified:** 2026-09-30
+**Last verified:** 2026-10-02
 **Current release:** `v0.3.0`  
 **Release:** <https://github.com/DaneShakespear/page-tweaker/releases/tag/v0.3.0>
 
-**Local development version:** `v0.4.0-dev.2`
+**Local development version:** `v0.4.0-dev.3`
+
+## Image workspace drop and zoom — 2026-10-02
+
+- Dropping a file on the main Image workspace opens it as a new source image through the normal source-opening flow. The separate sidebar return target continues to accept completed AI renderings for merge.
+- Image zoom controls provide 50–400% of the fitted view in 25% steps, with a Fit reset. The workspace scrolls for panning. Change and protection boxes remain in image-relative coordinates while the image and drawing canvas zoom together.
+- Local `v0.4.0-dev.3` verification: 33 contract tests and packaged UI smoke pass. The smoke checks zoomed image and canvas geometry, unchanged region metadata, drawing a box at 200%, Fit reset, and dropping a new source over an edited image. DMG integrity and strict packaged-app signature pass. DMG SHA-256: `6c352adcc074ea3177101dd83519d3f1d01d877cfeb3b065998ba22a8b97dd7b`. Public `v0.3.0` is unchanged.
 
 ## Image iteration typing, clipboard, and return-size repair — 2026-09-30
 

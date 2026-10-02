@@ -24,7 +24,7 @@
     <section id="stage">
       <webview id="page" preload="" partition="persist:page-tweaker-public"></webview>
       <canvas id="markup"></canvas>
-      <div id="imageWorkspace" hidden><img id="iterationDisplay" alt="Image iteration preview"><canvas id="regionCanvas" tabindex="0" aria-label="Draw and adjust image change or protection boxes"></canvas></div>
+      <div id="imageWorkspace" hidden><div id="imageSurface" hidden><img id="iterationDisplay" alt="Image iteration preview"><canvas id="regionCanvas" tabindex="0" aria-label="Draw and adjust image change or protection boxes"></canvas></div></div>
       <div id="dropHint" hidden>Drop an HTML file, image, <code>file://</code> URL, or live website URL to open it</div>
       <div id="empty">
         <div class="empty-shell">
@@ -89,6 +89,8 @@
       <section id="imagePanel" role="tabpanel" aria-labelledby="imageTab" hidden>
         <h3>Image iteration</h3>
         <p class="hint">Draw a loose box around what may change. Everything beyond the blend edge keeps the original pixels. Add a protection box for a logo or other exact detail.</p>
+        <div class="image-zoom" role="group" aria-label="Image zoom controls"><button id="zoomOut" aria-label="Zoom out">−</button><input id="imageZoom" type="range" min="50" max="400" step="25" value="100" aria-label="Image zoom"><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomFit">Fit</button><output id="imageZoomValue">100%</output></div>
+        <p class="hint">Zoom changes the view only. Scroll the image to pan; boxes stay attached to the same image pixels.</p>
         <label>Overall direction (optional)<textarea id="editInstruction" placeholder="Example: Keep the same lighting and camera angle across all edits."></textarea></label>
         <label>Next box<select id="regionKind"><option value="change">Area to change</option><option value="protect">Keep exactly</option></select></label>
         <label id="changeInstructionRow" hidden>Change for selected box<textarea id="changeInstruction" placeholder="Example: Make this chair fabric deep blue while keeping its shape."></textarea></label>
